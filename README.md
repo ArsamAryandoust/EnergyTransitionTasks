@@ -6,9 +6,8 @@ energy sources, which is mostly about wind and solar. In this repository, we are
 providing a number of prediction tasks and datasets from different domains such 
 as mobility, climate science and material science that all contribute to solving 
 the complex set of problems involved in enhancing the global energy transition 
-towards highly renewable electricity systems.
-
-In the following, each dataset and prediction task is described in further detail.
+towards highly renewable electricity systems. In the following, each dataset and 
+prediction task is described in further detail.
 
 ### UberMovement
 
