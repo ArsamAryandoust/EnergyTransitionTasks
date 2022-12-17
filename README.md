@@ -22,3 +22,31 @@ parked at what times. This then shows what it requires in terms of power flows a
 the distribution of electric charging stations for electrifying urban mobility. 
 
 
+
+## Download
+Download this repository to your home directory:
+
+```
+cd 
+git clone https://github.com/ArsamAryandoust/TasksEnergyTransition
+cd TasksEnergyTransition
+```
+
+
+## Jupyter notebooks inside Docker containers
+
+Build Jupyter notebook container:
+
+```
+docker build -t main_notebook DockerNotebook
+```
+
+
+Start container with CPU only:
+
+```
+docker run -it -v ~/TasksEnergyTransition:/TasksEnergyTransition -p 3333:1111 main_notebook
+```
+
+Open the link that shows in your terminal with a browser. Then, replace the port 
+1111 with 3333 in your browser link to see notebooks inside the Docker container.
