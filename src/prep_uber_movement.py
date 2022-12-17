@@ -130,6 +130,10 @@ def train_val_test_split(HYPER):
                 # append all data to test dataframe
                 df_test = pd.concat([df_test, df_augmented_csvdata])
                 
+                # free up memory     
+                del df_augmented_csvdata   
+                gc.collect()
+                
             else:
                 
                 # extract the rows from dataframe with matching city zones in origin and destination
@@ -172,6 +176,10 @@ def train_val_test_split(HYPER):
                 )
                 df_val_append = df_augmented_csvdata.drop(df_train_append.index)
                 
+                # free up memory     
+                del df_augmented_csvdata   
+                gc.collect()
+                
                 # append training dataset
                 df_train = pd.concat([df_train, df_train_append])
                 
@@ -185,10 +193,6 @@ def train_val_test_split(HYPER):
                 # free up memory     
                 del df_val_append   
                 gc.collect()
-            
-            # free up memory     
-            del df_augmented_csvdata   
-            gc.collect()
             
             
             ### Save resulting data in chunks
@@ -274,7 +278,7 @@ def save_chunk(
         chunk_counter += 1
         
         # create path
-        saving_path = (
+        path_to_saving = (
             saving_path
             + filename
             + '_{}.csv'.format(chunk_counter)
@@ -284,14 +288,11 @@ def save_chunk(
         df = df.sample(frac=1, random_state=HYPER.SEED)
         
         # save chunk
-        df.iloc[:HYPER.CHUNK_SIZE_UBERMOVEMENT].to_csv(saving_path, index=False)
+        df.iloc[:HYPER.CHUNK_SIZE_UBERMOVEMENT].to_csv(path_to_saving, index=False)
         
         # delete saved chunk
         if not last_iteration:
             df = df[HYPER.CHUNK_SIZE_UBERMOVEMENT:]
-        
-        # set false for safety. Should not make a difference though.
-        last_iteration = False
         
     return df, chunk_counter
     

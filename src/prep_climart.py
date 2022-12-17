@@ -248,6 +248,7 @@ def import_h5_data(HYPER, year):
     outputs_clear_sky = h5py.File(path_to_outputs_clear_sky, 'r')
     outputs_pristine = h5py.File(path_to_outputs_pristine, 'r')
     
+    
     return inputs, outputs_clear_sky, outputs_pristine
     
 
@@ -385,8 +386,24 @@ def train_val_test_split(
     # import meta data
     _, _, feature_by_var = import_meta_json(HYPER)
     
+    # decleare empty dataframes for trainining validation and testing
+    df_train_clear_sky = pd.DataFrame()
+    df_train_pristine = pd.DataFrame()
+    
+    df_val_clear_sky = pd.DataFrame()
+    df_val_pristine = pd.DataFrame()
+    
+    df_test_clear_sky = pd.DataFrame()
+    df_test_pristine = pd.DataFrame()
+    
+    # declare data point counters
+    train_chunk_counter_clearsky, val_chunk_counter_clearsky, test_chunk_counter_clearsky = 0, 0, 0
+    train_chunk_counter_pristine, val_chunk_counter_pristine, test_chunk_counter_pristine = 0, 0, 0
+    
     for year in list_of_years:
     
+        # tell us which year we are processing
+        print('Processing data for year {}'.format(year))
         # import inputs and outputs
         inputs, outputs_clear_sky, outputs_pristine = import_h5_data(HYPER, year)
         
@@ -404,6 +421,9 @@ def train_val_test_split(
         )
         
         # free up memory
+        inputs.close()
+        outputs_clear_sky.close()
+        outputs_pristine.close()
         del inputs, outputs_clear_sky, outputs_pristine
         gc.collect()
     
@@ -416,10 +436,238 @@ def train_val_test_split(
             df_outputs_pristine
         )
         
+        # free up memory
+        del df_inputs_clear_sky, df_inputs_pristine 
+        del df_outputs_clear_sky, df_outputs_pristine
+        gc.collect()
         
         
+        # check if this is a testing year data
+        if HYPER.TEST_SPLIT_DICT_CLIMART['temporal_dict']['year']==int(year):
+            
+            # append entire datasets to test dataframes
+            df_test_clear_sky = pd.concat([df_test_clear_sky, df_clear_sky])
+            df_test_pristine = pd.concat([df_test_pristine, df_pristine])
+            
+            # free up memory
+            del df_clear_sky, df_pristine 
+            gc.collect()
+             
+        else:
+        
+        
+            # extract the rows from dataframes with indices for test coordinates
+            
+            
+            # extract the rows from dataframes with matching hours of year
+            df_test_hours_of_year_clear_sky = df_clear_sky.loc[
+                df_clear_sky['hour_of_year'].isin(
+                    HYPER.TEST_SPLIT_DICT_CLIMART['temporal_dict']['hours_of_year']
+                )
+            ]
+            df_test_hours_of_year_pristine = df_pristine.loc[
+                df_pristine['hour_of_year'].isin(
+                    HYPER.TEST_SPLIT_DICT_CLIMART['temporal_dict']['hours_of_year']
+                )
+            ]
+            
+            # append extracted rows to test dataframes
+            df_test_clear_sky = pd.concat([df_test_clear_sky, df_test_hours_of_year_clear_sky])
+            df_test_pristine = pd.concat([df_test_pristine, df_test_hours_of_year_pristine])
+        
+            # set the remaining rows for training and validation
+            df_clear_sky = df_clear_sky.drop(df_test_hours_of_year_clear_sky.index)
+            df_pristine = df_pristine.drop(df_test_hours_of_year_pristine.index)
+            
+            # free up memory
+            del df_test_hours_of_year_clear_sky, df_test_hours_of_year_pristine
+            gc.collect()
+            
+            
+            # create training and validation datasets
+            df_train_append_clear_sky = df_clear_sky.sample(
+                frac=HYPER.TRAIN_VAL_SPLIT_CLIMART,
+                random_state=HYPER.SEED
+            )
+            df_train_append_pristine = df_pristine.sample(
+                frac=HYPER.TRAIN_VAL_SPLIT_CLIMART,
+                random_state=HYPER.SEED
+            )
+            df_val_append_clear_sky = df_clear_sky.drop(df_train_append_clear_sky.index)
+            df_val_append_pristine = df_pristine.drop(df_train_append_pristine.index)
+            
+            # append training dataset
+            df_train_clear_sky = pd.concat([df_train_clear_sky, df_train_append_clear_sky])
+            df_train_pristine = pd.concat([df_train_pristine, df_train_append_pristine])
+            
+            # free up memory     
+            del df_train_append_clear_sky, df_train_append_pristine
+            gc.collect()
+        
+            # append validation dataset
+            df_val_clear_sky = pd.concat([df_val_clear_sky, df_val_append_clear_sky])
+            df_val_pristine = pd.concat([df_val_pristine, df_val_append_pristine])
+            
+            # free up memory     
+            del df_val_append_clear_sky, df_val_append_pristine
+            gc.collect()
+            
+            
+        ### Save resulting data in chunks
+        df_train_clear_sky, train_chunk_counter_clearsky = save_chunk(
+            HYPER,
+            df_train_clear_sky,
+            train_chunk_counter_clearsky,
+            HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TRAIN,
+            'training'    
+        )
+        df_train_pristine, train_chunk_counter_pristine = save_chunk(
+            HYPER,
+            df_train_pristine,
+            train_chunk_counter_pristine,
+            HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TRAIN,
+            'training'    
+        )
+        df_val_clear_sky, val_chunk_counter_clearsky = save_chunk(
+            HYPER,
+            df_val_clear_sky,
+            val_chunk_counter_clearsky,
+            HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_VAL,
+            'validation'
+        )
+        df_val_pristine, val_chunk_counter_pristine = save_chunk(
+            HYPER,
+            df_val_pristine,
+            val_chunk_counter_pristine,
+            HYPER.PATH_TO_DATA_CLIMART_PRISTINE_VAL,
+            'validation'
+        )
+        df_test_clear_sky, test_chunk_counter_clearsky = save_chunk(
+            HYPER,
+            df_test_clear_sky,
+            test_chunk_counter_clearsky,
+            HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TEST,
+            'testing'
+        )
+        df_test_pristine, test_chunk_counter_pristine = save_chunk(
+            HYPER,
+            df_test_pristine,
+            test_chunk_counter_pristine,
+            HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TEST,
+            'testing'
+        )
+        
     
+    ### Tell us the rations that result from our splitting rules
+    n_train = (train_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_train_clear_sky.index)
+    n_val = (val_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_val_clear_sky.index)
+    n_test = (test_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_test_clear_sky.index)
+    n_total = n_train + n_val + n_test
     
+    print(
+        "Training data   :    {:.0%} \n".format(n_train/n_total),
+        "Validation data :    {:.0%} \n".format(n_val/n_total),
+        "Testing data    :    {:.0%} \n".format(n_test/n_total)
+    )
+    
+    ### Save results of last iteration
+    df_train_clear_sky, train_chunk_counter_clearsky = save_chunk(
+        HYPER,
+        df_train_clear_sky,
+        train_chunk_counter_clearsky,
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TRAIN,
+        'training',
+        last_iteration=True    
+    )
+    df_train_pristine, train_chunk_counter_pristine = save_chunk(
+        HYPER,
+        df_train_pristine,
+        train_chunk_counter_pristine,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TRAIN,
+        'training',
+        last_iteration=True    
+    )
+    df_val_clear_sky, val_chunk_counter_clearsky = save_chunk(
+        HYPER,
+        df_val_clear_sky,
+        val_chunk_counter_clearsky,
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_VAL,
+        'validation',
+        last_iteration=True
+    )
+    df_val_pristine, val_chunk_counter_pristine = save_chunk(
+        HYPER,
+        df_val_pristine,
+        val_chunk_counter_pristine,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_VAL,
+        'validation',
+        last_iteration=True
+    )
+    df_test_clear_sky, test_chunk_counter_clearsky = save_chunk(
+        HYPER,
+        df_test_clear_sky,
+        test_chunk_counter_clearsky,
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TEST,
+        'testing',
+        last_iteration=True
+    )
+    df_test_pristine, test_chunk_counter_pristine = save_chunk(
+        HYPER,
+        df_test_pristine,
+        test_chunk_counter_pristine,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TEST,
+        'testing',
+        last_iteration=True
+    )
+    
+    return_df_bundle = (
+        df_train_clear_sky, 
+        df_train_pristine, 
+        df_val_clear_sky, 
+        df_val_pristine, 
+        df_test_clear_sky, 
+        df_test_pristine
+    )
+    
+    return return_df_bundle
+        
+
+    
+def save_chunk(
+    HYPER,
+    df,
+    chunk_counter,
+    saving_path,
+    filename,
+    last_iteration=False 
+):
+
+    """ """
+    
+    ### Save resulting data in chunks
+    while len(df.index) > HYPER.CHUNK_SIZE_CLIMART or last_iteration:
+        
+        # increment chunk counter 
+        chunk_counter += 1
+        
+        # create path
+        path_to_saving = (
+            saving_path
+            + filename
+            + '_{}.csv'.format(chunk_counter)
+        )
+        
+        # shuffle
+        df = df.sample(frac=1, random_state=HYPER.SEED)
+        
+        # save chunk
+        df.iloc[:HYPER.CHUNK_SIZE_CLIMART].to_csv(path_to_saving, index=False)
+        
+        # delete saved chunk
+        if not last_iteration:
+            df = df[HYPER.CHUNK_SIZE_CLIMART:]
+        
+    return df, chunk_counter    
     
     
     

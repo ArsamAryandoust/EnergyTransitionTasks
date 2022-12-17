@@ -1,6 +1,6 @@
 import os
 import random
-
+import math
 
 class HyperParameter:
 
@@ -33,10 +33,14 @@ class HyperParameter:
     PATH_TO_DATA_RAW_CLIMART_OUTPUTS_CLEAR_SKY = PATH_TO_DATA_RAW_CLIMART + 'outputs_clear_sky/'
     PATH_TO_DATA_RAW_CLIMART_OUTPUTS_PRISTINE = PATH_TO_DATA_RAW_CLIMART + 'outputs_pristine/'
     PATH_TO_DATA_CLIMART = PATH_TO_DATA + 'ClimART/'
-    PATH_TO_DATA_CLIMART_ADDITIONAL = PATH_TO_DATA_CLIMART + 'additional/'
-    PATH_TO_DATA_CLIMART_TRAIN = PATH_TO_DATA_CLIMART + 'training/'
-    PATH_TO_DATA_CLIMART_VAL = PATH_TO_DATA_CLIMART + 'validation/'
-    PATH_TO_DATA_CLIMART_TEST = PATH_TO_DATA_CLIMART + 'testing/'
+    PATH_TO_DATA_CLIMART_CLEARSKY = PATH_TO_DATA_CLIMART + 'clear_sky/'
+    PATH_TO_DATA_CLIMART_PRISTINE = PATH_TO_DATA_CLIMART + 'pristine/'
+    PATH_TO_DATA_CLIMART_CLEARSKY_TRAIN = PATH_TO_DATA_CLIMART_CLEARSKY + 'training/'
+    PATH_TO_DATA_CLIMART_PRISTINE_TRAIN = PATH_TO_DATA_CLIMART_PRISTINE + 'training/'
+    PATH_TO_DATA_CLIMART_CLEARSKY_VAL = PATH_TO_DATA_CLIMART_CLEARSKY + 'validation/'
+    PATH_TO_DATA_CLIMART_PRISTINE_VAL = PATH_TO_DATA_CLIMART_PRISTINE + 'validation/'
+    PATH_TO_DATA_CLIMART_CLEARSKY_TEST = PATH_TO_DATA_CLIMART_CLEARSKY + 'testing/'
+    PATH_TO_DATA_CLIMART_PRISTINE_TEST = PATH_TO_DATA_CLIMART_PRISTINE + 'testing/'
     
     
     # Open Catalyst
@@ -49,9 +53,11 @@ class HyperParameter:
     
     # Chunk size of data points per .csv file
     CHUNK_SIZE_UBERMOVEMENT = 20_000_000
+    CHUNK_SIZE_CLIMART = 35_000
     
     # share to split training and validation data
     TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.5
+    TRAIN_VAL_SPLIT_CLIMART = 0.5
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
@@ -68,6 +74,50 @@ class HyperParameter:
         'spatial_dict': {
             'city_share': 0.1,
             'city_zone_share': 0.1
+        }
+    }
+    
+    
+    t_step_size_h = 205
+    n_t_steps_per_year = math.ceil(365 * 24 / t_step_size_h)
+    random.seed(SEED)
+    hours_of_year = random.sample(
+        range(
+            0, 
+            n_t_steps_per_year*t_step_size_h, 
+            t_step_size_h
+        ), 
+        5
+    )
+    
+    n_lat, n_lon = 64, 128
+    n_coordinates = n_lat * n_lon
+    random.seed(SEED)
+    first_coordinates_index_list = list(range(n_coordinates))
+    share_coordinates_sampling = 0.1
+    n_coordinates = math.ceil(share_coordinates_sampling * len(first_coordinates_index_list))
+    coordinates_index_list = random.sample(
+        first_coordinates_index_list,
+        n_coordinates
+    )
+    
+    coordinate_list = []
+    for step in range(n_t_steps_per_year):
+        
+        coordinate_list_step = []
+        for entry in first_coordinates_index_list:
+            new_entry = entry + step * n_coordinates
+            coordinate_list_step.append(new_entry)
+            
+        coordinate_list += coordinate_list_step
+        
+    TEST_SPLIT_DICT_CLIMART = {
+        'temporal_dict': {
+            'year': 2014,
+            'hours_of_year': hours_of_year
+        },
+        'spatial_dict': {
+            'coordinates': coordinate_list
         }
     }
     
@@ -151,12 +201,18 @@ class HyperParameter:
         }
         
         
+        
         ### Create directories for CLimART ###
         self.check_create_dir(self.PATH_TO_DATA_CLIMART)
-        self.check_create_dir(self.PATH_TO_DATA_CLIMART_ADDITIONAL) 
-        self.check_create_dir(self.PATH_TO_DATA_CLIMART_TRAIN)
-        self.check_create_dir(self.PATH_TO_DATA_CLIMART_VAL)
-        self.check_create_dir(self.PATH_TO_DATA_CLIMART_TEST)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_CLEARSKY)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_PRISTINE)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_CLEARSKY_TRAIN)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_PRISTINE_TRAIN)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_CLEARSKY_VAL)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_PRISTINE_VAL)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_CLEARSKY_TEST)
+        self.check_create_dir(self.PATH_TO_DATA_CLIMART_PRISTINE_TEST)
+        
            
            
     def check_create_dir(self, path):
