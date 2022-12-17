@@ -1,13 +1,15 @@
 # A collection of datasets and prediction tasks for enhancing the global energy transition
 
-An effective way to reduce global greenhouse gases and mitigate climate change
-is to electricity most of our energy consumption and supply it from renewable
-energy sources, which is mostly about wind and solar. In this repository, we are 
-providing a number of prediction tasks and datasets from different domains such 
-as mobility, climate science and material science that all contribute to solving 
-the complex set of problems involved in enhancing the global energy transition 
-towards highly renewable electricity systems. In the following, each dataset and 
-prediction task is described in further detail.
+An effective way to reduce global greenhouse gas emissions and mitigate climate 
+change is to electricity most of our energy consumption and supply its electricity 
+from renewable energy sources like wind and solar. In this repository, we provide 
+a number of prediction tasks and datasets from different domains such as mobility, 
+climate modeling and material science that all contribute to solving a complex 
+set of problems involved in enhancing the global energy transition towards highly 
+renewable electricity systems.
+
+
+
 
 ### UberMovement
 
