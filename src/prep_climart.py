@@ -329,32 +329,42 @@ def augment_and_merge(
         np.floor(df_clear_sky.index.values / n_points_space) * n_hours_per_step
     ).astype(int)
     
-    # calculate lat and lon coordinates
-    lat_clear_sky = np.arcsin(df_clear_sky['z_cord'])
-    lat_pristine = np.arcsin(df_pristine['z_cord'])
-    
-    lon_clear_sky = np.arccos(df_clear_sky['x_cord'] / np.cos(lat_clear_sky))
-    lon_pristine = np.arccos(df_pristine['x_cord'] / np.cos(lat_pristine))
-    
-    # augment data with latitudes
-    df_clear_sky.insert(0, 'lat', lat_clear_sky / math.pi * 180)
-    df_pristine.insert(0, 'lat', lat_pristine / math.pi * 180)
-    
-    # augment data with longitudes
-    df_clear_sky.insert(1, 'lon', lon_clear_sky / math.pi * 180)
-    df_pristine.insert(1, 'lon', lon_pristine / math.pi * 180)
-    
-    # drop geographic columns we do not need anymore
-    df_clear_sky.drop(columns=['x_cord', 'y_cord', 'z_cord'])
-    df_pristine.drop(columns=['x_cord', 'y_cord', 'z_cord'])
-    
     # augment data with year
-    df_clear_sky.insert(2, 'year', int(year))
-    df_pristine.insert(2, 'year', int(year))
+    df_clear_sky.insert(0, 'year', int(year))
+    df_pristine.insert(0, 'year', int(year))
     
     # augment data with hour of year
-    df_clear_sky.insert(3, 'hour_of_year', hour_of_year)
-    df_pristine.insert(3, 'hour_of_year', hour_of_year)
+    df_clear_sky.insert(1, 'hour_of_year', hour_of_year)
+    df_pristine.insert(1, 'hour_of_year', hour_of_year)
+    
+    
+    ### put re-arange order of spatial coordinates for visibility ###
+    
+    # get column name lists
+    cols_clear_sky = df_clear_sky.columns.tolist()
+    cols_pristine = df_pristine.columns.tolist()
+    
+    # remove entries from column list
+    cols_clear_sky.remove('x_cord')
+    cols_clear_sky.remove('y_cord')
+    cols_clear_sky.remove('z_cord')
+    
+    cols_pristine.remove('x_cord')
+    cols_pristine.remove('y_cord')
+    cols_pristine.remove('z_cord')
+    
+    # insert them again at new spots    
+    cols_clear_sky.insert(2,'x_cord')
+    cols_clear_sky.insert(3,'y_cord')
+    cols_clear_sky.insert(4,'z_cord')
+    
+    cols_pristine.insert(2,'x_cord')
+    cols_pristine.insert(3,'y_cord')
+    cols_pristine.insert(4,'z_cord')
+    
+    # set the new column orders
+    df_clear_sky = df_clear_sky[cols_clear_sky]
+    df_pristine = df_pristine[cols_pristine]
     
     
     return df_clear_sky, df_pristine
