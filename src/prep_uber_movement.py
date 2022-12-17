@@ -2,7 +2,8 @@ import pandas as pd
 import random
 import gc
 import os
-
+import math
+import numpy as np
 
 def import_csvdata(HYPER, city):
 
@@ -415,7 +416,7 @@ def import_geojson(HYPER, city):
         
     return df_geojson
     
-    
+
  
 def save_city_id_mapping(HYPER):
     
@@ -444,33 +445,115 @@ def save_city_id_mapping(HYPER):
     
     
     
-def process_all_raw_geojson_data(HYPER):
+def degree_to_phi(degree_latlon):
     
+    """ transform degrees into radiants """
+    
+    return degree_latlon / 180 * math.pi
+
+
+
+def cos_transform(degree_latlon):
+    
+    """ """
+    
+    # transform degrees into radiants
+    phi_latlon = degree_to_phi(degree_latlon)
+    
+    return np.cos(phi_latlon)
+
+
+
+def sin_transform(degree_latlon):
+    
+    """ """
+    
+    # transform degrees into radiants
+    phi_latlon = degree_to_phi(degree_latlon)
+    
+    return np.sin(phi_latlon)
+
+
+
+def transform_col_names(col_list, name_base):
+    
+    """ """
+    
+    new_col_list = [name_base + '_' + str(entry) for entry in col_list]
+    
+    return new_col_list
+    
+    
+    
+def process_geographic_information(HYPER):
+
     """ """
     
     # get the resulting mapping
     df_city_id_mapping = save_city_id_mapping(HYPER)
     
+    # iterate over all cities
     for city in HYPER.UBERMOVEMENT_LIST_OF_CITIES:
+    
+        # import geojson for iterated city
         df_geojson = import_geojson(HYPER, city)
+        
+        # extract geojson information of city zones as latitude and longitude df
         df_latitudes, df_longitudes = process_geojson(df_geojson)
         
-        filename_lat = city + ' lat.csv'
-        filename_lon = city + ' lon.csv' 
-        saving_path_lat = (
-            HYPER.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL 
-            + filename_lat
-        )
-        saving_path_lon = (
-            HYPER.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL 
-            + filename_lon
-        )
-        df_latitudes.to_csv(saving_path_lat)
-        df_longitudes.to_csv(saving_path_lon)
+        ### Transform lat and long coordinates into unit sphere coordinate system
         
-    return df_city_id_mapping
+        # calculate values you need for 
+        df_sin_lon = df_longitudes.applymap(sin_transform)
+        df_sin_lat = df_latitudes.applymap(sin_transform)
+        df_cos_lat = df_latitudes.applymap(cos_transform)
+        df_cos_lon = df_longitudes.applymap(cos_transform)
+
+        # calculate coordaintes
+        df_x_cord = df_cos_lat.mul(df_cos_lon)
+        df_y_cord = df_cos_lat.mul(df_sin_lon)
+        df_z_cord = df_sin_lat
+        
+        
+        ### Transform column names ###
+        
+        # transform x_cord columns
+        col_list = df_x_cord.columns.to_list()
+        new_col_list = transform_col_names(col_list, 'x_cord')
+        df_x_cord.columns = new_col_list
+        
+        # transform y_cord columns
+        col_list = df_y_cord.columns.to_list()
+        new_col_list = transform_col_names(col_list, 'y_cord')
+        df_y_cord.columns = new_col_list
+        
+        # transform z_cord columns
+        col_list = df_z_cord.columns.to_list()
+        new_col_list = transform_col_names(col_list, 'z_cord')
+        df_z_cord.columns = new_col_list
+        
+        
+        ### Save into one csv file ###
+        
+        # concatenate all dataframes
+        df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
+        
+        # create file name
+        filename = city + '.csv'
+        
+        # create saving path
+        saving_path = (
+            HYPER.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL 
+            + filename
+        )
+        
+        # save dataframe
+        df_geographic_info.to_csv(saving_path)
     
     
+    return df_city_id_mapping, df_geographic_info
+ 
+ 
 
 def shuffle_data_files(
     HYPER,
