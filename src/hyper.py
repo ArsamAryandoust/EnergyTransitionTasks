@@ -59,6 +59,9 @@ class HyperParameter:
     TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.5
     TRAIN_VAL_SPLIT_CLIMART = 0.5
     
+    # Subsample values
+    SUBSAMPLE_CLIMART = 0.2
+    
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
     quarter_of_year = random.sample(range(1,5), 1)
@@ -80,32 +83,31 @@ class HyperParameter:
     
     t_step_size_h = 205
     n_t_steps_per_year = math.ceil(365 * 24 / t_step_size_h)
+    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, t_step_size_h))
+    share_hours_sampling = 0.2
+    n_hours_subsample = math.ceil(n_t_steps_per_year * share_hours_sampling)
     random.seed(SEED)
     hours_of_year = random.sample(
-        range(
-            0, 
-            n_t_steps_per_year*t_step_size_h, 
-            t_step_size_h
-        ), 
-        5
+        hours_of_year_list, 
+        n_hours_subsample
     )
     
     n_lat, n_lon = 64, 128
     n_coordinates = n_lat * n_lon
-    random.seed(SEED)
     first_coordinates_index_list = list(range(n_coordinates))
-    share_coordinates_sampling = 0.1
-    n_coordinates = math.ceil(share_coordinates_sampling * len(first_coordinates_index_list))
+    share_coordinates_sampling = 0.2
+    n_cord_subsample = math.ceil(share_coordinates_sampling * n_coordinates)
+    random.seed(SEED)
     coordinates_index_list = random.sample(
         first_coordinates_index_list,
-        n_coordinates
+        n_cord_subsample
     )
     
     coordinate_list = []
     for step in range(n_t_steps_per_year):
         
         coordinate_list_step = []
-        for entry in first_coordinates_index_list:
+        for entry in coordinates_index_list:
             new_entry = entry + step * n_coordinates
             coordinate_list_step.append(new_entry)
             

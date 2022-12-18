@@ -5,6 +5,7 @@ import h5py
 import pandas as pd
 import gc
 import math
+import random
 
 def create_input_col_name_list(
     var_dict
@@ -441,6 +442,15 @@ def train_val_test_split(
         del df_outputs_clear_sky, df_outputs_pristine
         gc.collect()
         
+        # subsample data
+        df_clear_sky = df_clear_sky.sample(
+            frac=HYPER.SUBSAMPLE_CLIMART,
+            random_state=HYPER.SEED
+        )
+        df_pristine = df_pristine.sample(
+            frac=HYPER.SUBSAMPLE_CLIMART,
+            random_state=HYPER.SEED
+        )
         
         # check if this is a testing year data
         if HYPER.TEST_SPLIT_DICT_CLIMART['temporal_dict']['year']==int(year):
@@ -455,9 +465,29 @@ def train_val_test_split(
              
         else:
         
-        
             # extract the rows from dataframes with indices for test coordinates
+            df_test_coordiantes_clear_sky = df_clear_sky[
+                df_clear_sky.index.isin(
+                    HYPER.TEST_SPLIT_DICT_CLIMART['spatial_dict']['coordinates']
+                )
+            ]
+            df_test_coordiantes_pristine = df_pristine[
+                df_pristine.index.isin(
+                    HYPER.TEST_SPLIT_DICT_CLIMART['spatial_dict']['coordinates']
+                )
+            ]
             
+            # append extracted rows to test dataframes
+            df_test_clear_sky = pd.concat([df_test_clear_sky, df_test_coordiantes_clear_sky])
+            df_test_pristine = pd.concat([df_test_pristine, df_test_coordiantes_pristine])
+            
+            # set the remaining rows for training and validation
+            df_clear_sky = df_clear_sky.drop(df_test_coordiantes_clear_sky.index)
+            df_pristine = df_pristine.drop(df_test_coordiantes_pristine.index)
+            
+            # free up memory
+            del df_test_coordiantes_clear_sky, df_test_coordiantes_pristine
+            gc.collect()
             
             # extract the rows from dataframes with matching hours of year
             df_test_hours_of_year_clear_sky = df_clear_sky.loc[
@@ -667,8 +697,85 @@ def save_chunk(
         if not last_iteration:
             df = df[HYPER.CHUNK_SIZE_CLIMART:]
         
+        # Must be set to exit loop on last iteration
+        last_iteration = False
+        
     return df, chunk_counter    
     
     
     
+def shuffle_data_files(
+    HYPER,
+    n_iter_shuffle=3,
+    n_files_simultan=10
+):
+
+    """ """
+    path_to_folder_list = [
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TRAIN,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TRAIN,
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_VAL,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_VAL,
+        HYPER.PATH_TO_DATA_CLIMART_CLEARSKY_TEST,
+        HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TEST
+    ]
     
+    
+    # do this for train, val and test datasets separately
+    for path_to_folder in path_to_folder_list:
+        
+        # get a list of files in currently iterated dataset (train,val, or test)
+        file_list = os.listdir(path_to_folder)
+        
+        # determine number of samples in dependence on file list length
+        if n_files_simultan > len(file_list):
+            n_samples = len(file_list)
+        else:
+            n_samples = n_files_simultan
+            
+        # do this for n_iter_shuffle times
+        for _ in range(n_iter_shuffle):
+        
+            # randomly sample n_samples from file list
+            random.seed(HYPER.SEED)
+            sampled_files = random.sample(file_list, n_samples)
+            
+            # declare empty dataframe
+            df = pd.DataFrame()
+            
+            # declare empty list to save number of data points of each file
+            n_data_points_list = []
+            
+            # iterate over all sampled files
+            for filename in sampled_files:
+                
+                # create path to iterated file
+                path_to_csv = path_to_folder + filename
+                
+                # import iterated file
+                df_csv = pd.read_csv(path_to_csv)
+                
+                # track the number of data points available in file
+                n_data_points_list.append(len(df_csv.index))
+                
+                # append imported file to dataframe
+                df = pd.concat([df, df_csv])
+            
+            # empty storage
+            del df_csv
+            gc.collect()
+            
+            # shuffle
+            df = df.sample(frac=1, random_state=HYPER.SEED)
+            
+            # iterate over sampled files and n_data_points simultaneously
+            for filename, n_data_points in zip(sampled_files, n_data_points_list):
+                
+                # create path to iterated file
+                path_to_csv = path_to_folder + filename
+                
+                # save shuffled slice
+                df[:n_data_points].to_csv(path_to_csv, index=False)
+                
+                # remove saved slice
+                df = df[n_data_points:]    
