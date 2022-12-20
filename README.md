@@ -31,10 +31,10 @@ The ClimART project provides data on the inputs and outputs of the Canadian Eart
 System Model for emulating atmospheric radiative transfer between the years 1850 
 and 2100 under a CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).
 The computation of atmospheric radiative transfer is the computational bottleneck 
-for current weather and climate models due to its large complexity. Training a
-machine learning model that is able to predict such model outputs at faster 
+for current weather and climate models due to its large complexity [2]. Training
+machine learning models that are able to predict such model outputs at faster 
 computational speed can therefore fill the information gaps for times and places
-where traditional model results are too computationaly expensive to perform.
+where earth system model are too computationaly expensive to be run.
 
 
 ### References
