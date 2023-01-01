@@ -11,7 +11,7 @@ renewable electricity systems.
 
 
 
-### UberMovement
+### Uber Movement
 
 The Uber Movement project provides travel time data between different city zones
 in the form of origin-destination matrices for about 50 cities around the world 
@@ -37,6 +37,17 @@ computational speed can therefore fill the information gaps for times and places
 where earth system model are too computationaly expensive to be run.
 
 
+### Open Catalyst 2022
+
+The Open Catalyst project provides data on about 1.3 million molecular relaxations
+with results from over 260 million density functional theory calculations from
+quantum mechanical simulations under a CC Attribution 4.0 International licence
+(https://creativecommons.org/licenses/by/4.0/legalcode). The goal is to predict 
+and find cost-effective catalysts for chemical reactions that we can use to produce 
+solar fuels such as hydrogen [3]. 
+
+
+
 ### References
 
 [1] Aryandoust A., Van Vliet O. & Patt A. City-scale car traffic and parking density 
@@ -45,7 +56,11 @@ https://doi.org/10.1038/s41597-019-0159-6
 
 [2] Cachay, S. R., Ramesh, V., Cole, J. N. S., Barker, H. & Rolnick D. ClimART:
 A Benchmark Dataset for Emulating Atmospheric Radiative Transfer in Weather and 
-Climate Models.
+Climate Models. In Proc. of the 35th Conference on Neural Information Processing 
+Systems Track on Datasets and Benchmarks (2021).
+
+[3] Tran, R. & et al. The Open Catalyst 2022 (OC22) Dataset and Challenge for Oxide
+Electrocatalysis. Preprint at arxiv (2022). https://doi.org/10.48550/arXiv.2206.08917 
 
 
 ## Download
