@@ -37,7 +37,7 @@ computational speed can therefore fill the information gaps for times and places
 where earth system model are too computationaly expensive to be run.
 
 
-### Open Catalyst 2022
+### Open Catalyst
 
 The Open Catalyst project provides data on about 1.3 million molecular relaxations
 with results from over 260 million density functional theory calculations from
