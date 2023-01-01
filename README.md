@@ -37,14 +37,18 @@ computational speed can therefore fill the information gaps for times and places
 where earth system model are too computationaly expensive to be run.
 
 
-### Open Catalyst 2022
+### Open Catalyst
 
 The Open Catalyst project provides data on about 1.3 million molecular relaxations
 with results from over 260 million density functional theory calculations from
 quantum mechanical simulations under a CC Attribution 4.0 International licence
 (https://creativecommons.org/licenses/by/4.0/legalcode). The goal is to predict 
-and find cost-effective catalysts for chemical reactions that we can use to produce 
-solar fuels such as hydrogen [3]. 
+and find cost-effective electrocatalysts for producing synthetic fuels like 
+hydrogen with excess renewable energy from intermittent wind and and solar [3]. 
+Common state-of-the-art electrocatalysts for both producing hydrogen and consuming
+it again use expensive noble metals such as iridium and platinum. If these can be
+replaced by new cost-effective catalysts, an earlier adoption of hydrogen energy
+storage systems may be achieved due to significant cost reductions.
 
 
 
