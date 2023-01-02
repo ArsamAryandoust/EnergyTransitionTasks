@@ -63,8 +63,9 @@ A Benchmark Dataset for Emulating Atmospheric Radiative Transfer in Weather and
 Climate Models. In Proc. of the 35th Conference on Neural Information Processing 
 Systems Track on Datasets and Benchmarks (2021).
 
-[3] Tran, R. & et al. The Open Catalyst 2022 (OC22) Dataset and Challenge for Oxide
-Electrocatalysis. Preprint at arxiv (2022). https://doi.org/10.48550/arXiv.2206.08917 
+[3] Zitnick, C. L. & et al. An Introduction to Electrocatalyst Design using Machine 
+Learning for Renewable Energy Storage. Preprint at arxiv (2022).
+https://doi.org/10.48550/arXiv.2010.09435
 
 
 ## Download
