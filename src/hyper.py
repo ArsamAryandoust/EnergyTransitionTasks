@@ -43,35 +43,45 @@ class HyperParameter:
     
     
     # Open Catalyst
-    PATH_TO_DATA_RAW_OPENCATALYST = PATH_TO_DATA_RAW + 'OpenCatalyst/'
-    PATH_TO_DATA_RAW_OPENCATALYST_TRAJECTORIES = (
-        PATH_TO_DATA_RAW_OPENCATALYST 
-        + 'oc22_trajectories/trajectories/oc22/'
+    PATH_TO_DATA_RAW_OPENCATALYST = PATH_TO_DATA_RAW + 'OpenCatalyst/OC20/'
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF = PATH_TO_DATA_RAW_OPENCATALYST + 'S2EF/'
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN = (
+        PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
+        + 's2ef_train_2M/s2ef_train_2M/'
     )
-    PATH_TO_DATA_RAW_OPENCATALYST_TRAJECTORIES_RAW = (
-        PATH_TO_DATA_RAW_OPENCATALYST_TRAJECTORIES 
-        + 'raw_trajs/'
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_ID = (
+        PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
+        + 's2ef_val_id/s2ef_val_id/'
     )
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE = (
-        PATH_TO_DATA_RAW_OPENCATALYST 
-        + 'is2res_total_train_val_test_lmdbs/data/oc22/is2re-total/'
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_ADS = (
+        PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
+        + 's2ef_val_ood_ads/s2ef_val_ood_ads/'
     )
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF = (
-        PATH_TO_DATA_RAW_OPENCATALYST 
-        + 's2ef_total_train_val_test_lmdbs/data/oc22/s2ef-total/'
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_CAT = (
+        PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
+        + 's2ef_val_ood_cat/s2ef_val_ood_cat/'
     )
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE_TRAIN = PATH_TO_DATA_RAW_OPENCATALYST_IS2RE + 'train/'
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE_VAL_ID = PATH_TO_DATA_RAW_OPENCATALYST_IS2RE + 'val_id/'
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE_VAL_OOD = PATH_TO_DATA_RAW_OPENCATALYST_IS2RE + 'val_ood/'
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE_TEST_ID = PATH_TO_DATA_RAW_OPENCATALYST_IS2RE + 'test_id/'
-    PATH_TO_DATA_RAW_OPENCATALYST_IS2RE_TEST_OOD = PATH_TO_DATA_RAW_OPENCATALYST_IS2RE + 'test_ood/'
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN = PATH_TO_DATA_RAW_OPENCATALYST_S2EF + 'train/'
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_ID = PATH_TO_DATA_RAW_OPENCATALYST_S2EF + 'val_id/'
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD = PATH_TO_DATA_RAW_OPENCATALYST_S2EF + 'val_ood/'
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TEST_ID = PATH_TO_DATA_RAW_OPENCATALYST_S2EF + 'test_id/'
-    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TEST_OOD = PATH_TO_DATA_RAW_OPENCATALYST_S2EF + 'test_ood/'
-    
-    
+    PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_BOTH = (
+        PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
+        + 's2ef_val_ood_both/s2ef_val_ood_both/'
+    )
+    PATH_TO_DATA_OPENCATALYST = PATH_TO_DATA + 'OpenCatalyst/'
+    PATH_TO_DATA_OPENCATALYST_OC20_S2EF = (
+        PATH_TO_DATA_OPENCATALYST
+        + 'OC20_S2EF/'
+    )
+    PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN = (
+        PATH_TO_DATA_OPENCATALYST_OC20_S2EF
+        + 'training/'
+    )
+    PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL = (
+        PATH_TO_DATA_OPENCATALYST_OC20_S2EF
+        + 'validation/'
+    )
+    PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST = (
+        PATH_TO_DATA_OPENCATALYST_OC20_S2EF
+        + 'testing/'
+    )
     
     
     ### Training, validation, testing splits ###
@@ -241,7 +251,14 @@ class HyperParameter:
         self.check_create_dir(self.PATH_TO_DATA_CLIMART_PRISTINE_TEST)
         
            
-           
+        ### Create directories for OpenCatalyst ###
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST)
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF)
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN)
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL)
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST)
+        
+        
     def check_create_dir(self, path):
     
         """ """
