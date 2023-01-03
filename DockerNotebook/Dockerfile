@@ -6,7 +6,7 @@ RUN apt-get install python3-pip -y
 RUN pip3 install jupyter
 RUN pip3 install pandas
 RUN pip3 install h5py
-RUN pip3 install lmdb
+RUN pip3 install ase
 
 WORKDIR /EnergyTransitionTasks
 
