@@ -6,7 +6,8 @@ RUN apt-get install python3-pip -y
 RUN pip3 install jupyter
 RUN pip3 install pandas
 RUN pip3 install h5py
+RUN pip3 install lmdb
 
-WORKDIR /TasksEnergyTransition
+WORKDIR /EnergyTransitionTasks
 
 CMD jupyter notebook --ip 0.0.0.0 --port 1111 --no-browser --allow-root

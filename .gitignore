@@ -1,4 +1,6 @@
 data
 
+build_and_run.sh
+
 src/.ipynb_checkpoints
 src/__pycache__
