@@ -97,7 +97,7 @@ class HyperParameter:
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
-    SUBSAMPLE_OPENCATALYST = 0.6
+    SUBSAMPLE_OPENCATALYST = 0.03
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)

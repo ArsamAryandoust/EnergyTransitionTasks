@@ -5,6 +5,7 @@ import math
 import pandas as pd
 import numpy as np
 
+from tqdm import tqdm
 
 
 def create_dataset_df(
@@ -23,8 +24,7 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     ### shorten file_list for tests
-    #n_datafiles
-    #file_list = file_list[:n_datafiles]
+    file_list = file_list[:100]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -36,6 +36,9 @@ def create_dataset_df(
     
     # set chunk counter for data saving to zero
     chunk_counter = 0
+    
+    # create progress bar
+    pbar = tqdm(total=len(file_list))
     
     # iterate over all filenames
     for filename in file_list:
@@ -123,6 +126,9 @@ def create_dataset_df(
             path_to_saving_folder,
             filename_saving
         )
+        
+        # update progress bar
+        pbar.update(1)
             
             
     # save remaining dataset chunk after importing data of all data files
@@ -134,7 +140,10 @@ def create_dataset_df(
         filename_saving,
         last_iteration=True 
     )
-            
+    
+    # close progress bar
+    pbar.close()
+    
     return df_dataset
 
 
