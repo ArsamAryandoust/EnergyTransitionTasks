@@ -4,7 +4,6 @@ from ase import io
 import math
 import pandas as pd
 import numpy as np
-
 from tqdm import tqdm
 
 
@@ -36,6 +35,9 @@ def create_dataset_df(
     
     # set chunk counter for data saving to zero
     chunk_counter = 0
+    
+    # tell us whats going on
+    print('Processing {} data'.format(filename_saving))
     
     # create progress bar
     pbar = tqdm(total=len(file_list))

@@ -92,8 +92,8 @@ class HyperParameter:
     CHUNK_SIZE_OPENCATALYST = 150_000
     
     # share to split training and validation data
-    TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.5
-    TRAIN_VAL_SPLIT_CLIMART = 0.5
+    TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.8
+    TRAIN_VAL_SPLIT_CLIMART = 0.8
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
@@ -170,7 +170,8 @@ class HyperParameter:
         ### Uber Movement ###
         year_list = list(range(2015, 2021))
         quarter_list = ['-1-', '-2-', '-3-', '-4-']
-        self.UBERMOVEMENT_LIST_OF_CITIES = os.listdir(self.PATH_TO_DATA_RAW_UBERMOVEMENT)[:10]
+        self.UBERMOVEMENT_LIST_OF_CITIES = os.listdir(self.PATH_TO_DATA_RAW_UBERMOVEMENT)
+        self.UBERMOVEMENT_LIST_OF_CITIES = self.UBERMOVEMENT_LIST_OF_CITIES[:14] # shorten city list
         self.UBERMOVEMENT_CITY_FILES_MAPPING = {}
         self.UBERMOVEMENT_CITY_ID_MAPPING = {}
         for city_id, city in enumerate(self.UBERMOVEMENT_LIST_OF_CITIES):
