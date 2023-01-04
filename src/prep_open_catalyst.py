@@ -5,39 +5,36 @@ import math
 import pandas as pd
 import numpy as np
 
-def process_raw_data(HYPER):
+def create_dataset_df(
+    HYPER, 
+    path_to_dataset_folder,
+    saving_path
+):
 
     """ """
     
     # declare empty dataframe
-    df_training = pd.DataFrame()
-    df_validation = pd.DataFrame()
-    df_testing = pd.DataFrame()
-    
-    ###
-    # Process training data
-    ###
+    df_dataset = pd.DataFrame()
     
     # get a list of all files on a particular path, here training data
-    file_list = os.listdir(HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN)
+    file_list = os.listdir(path_to_dataset_folder)
     
     # drop .txt files
     file_list = [element for element in file_list if '.txt' not in element]
-    
+
     ### shorten file_list for tests
-    file_list = file_list[:3]
+    #file_list = file_list[:3]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
     n_sample = math.floor(HYPER.SUBSAMPLE_OPENCATALYST * n_datapoints_per_file)
     import_index_str = ':{}'.format(n_sample)
     
-    
     # iterate over all filenames
     for filename in file_list:
         
         # create path to iterated file
-        path_to_file = HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN + filename
+        path_to_file = path_to_dataset_folder + filename
         
         # import dataset
         atoms_object_list = io.read(path_to_file, index=import_index_str)
@@ -101,12 +98,59 @@ def process_raw_data(HYPER):
             df_datapoint_part1 = pd.DataFrame(value_dict, index=[0])
             df_datapoint_part2 = pd.DataFrame(value_array, columns=cols_list)
             df_datapoint = pd.concat([df_datapoint_part1, df_datapoint_part2], axis=1)
-            df_training = pd.concat([df_training, df_datapoint])
-                        
-        
+            df_dataset = pd.concat([df_dataset, df_datapoint])
+            
+            
+    # save dataset
+    df_dataset.to_csv(saving_path, index=False)
+            
+    return df_dataset
+
+
+
+def process_raw_data(HYPER):
+
+    """ """
     
+    # generate training dataset
+    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN + 'training.csv'
+    df_training = create_dataset_df(
+        HYPER, 
+        HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN,
+        saving_path
+    )
+    
+    # generate validation dataset from in distribution validation data
+    df_validation = create_dataset_df(
+        HYPER, 
+        HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_ID,
+        saving_path
+    )
+    
+    # generate testing dataset from a constellation of out of distribution datasets
+    # in terms of catalysts and adsorbates
+    df_testing_1 = create_dataset_df(
+        HYPER, 
+        HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_BOTH,
+        saving_path
+    )
+    df_testing_2 = create_dataset_df(
+        HYPER, 
+        HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_CAT,
+        saving_path
+    )
+    df_testing_3 = create_dataset_df(
+        HYPER, 
+        HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_ADS,
+        saving_path
+    )
+    
+    # concatenate testing datasets
+    df_testing = pd.concat([df_testing_1, df_testing_2, df_testing_3])
+
     
     return df_training, df_validation, df_testing
+
 
 
 def import_raw_data_samples(HYPER):
