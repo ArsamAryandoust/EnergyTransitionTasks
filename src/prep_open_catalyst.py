@@ -23,7 +23,7 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     ### shorten file_list for tests
-    #file_list = file_list[:3]
+    file_list = file_list[:3]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -121,6 +121,7 @@ def process_raw_data(HYPER):
     )
     
     # generate validation dataset from in distribution validation data
+    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL + 'validation.csv'
     df_validation = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_ID,
@@ -129,16 +130,19 @@ def process_raw_data(HYPER):
     
     # generate testing dataset from a constellation of out of distribution datasets
     # in terms of catalysts and adsorbates
+    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_both.csv'
     df_testing_1 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_BOTH,
         saving_path
     )
+    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_cat.csv'
     df_testing_2 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_CAT,
         saving_path
     )
+    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_ads.csv'
     df_testing_3 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_ADS,
