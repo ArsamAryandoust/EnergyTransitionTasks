@@ -21,7 +21,7 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     ### shorten file_list for tests
-    file_list = file_list[:3]
+    #file_list = file_list[:3]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -111,7 +111,6 @@ def create_dataset_df(
             # concatenate datapoint to existing dataset
             df_dataset = pd.concat([df_dataset, df_datapoint])
             
-        
             
         # save dataset chunk after importing data of this data file
         df_dataset, chunk_counter = save_chunk(
@@ -121,6 +120,7 @@ def create_dataset_df(
             path_to_saving_folder,
             filename_saving
         )
+            
             
     # save remaining dataset chunk after importing data of all data files
     df_dataset, chunk_counter = save_chunk(
@@ -221,7 +221,6 @@ def process_raw_data(HYPER):
 
     
     return df_training, df_validation, df_testing
-
 
 
 def import_raw_data_samples(HYPER):
