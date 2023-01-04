@@ -89,7 +89,7 @@ class HyperParameter:
     # Chunk size of data points per .csv file
     CHUNK_SIZE_UBERMOVEMENT = 20_000_000
     CHUNK_SIZE_CLIMART = 35_000
-    CHUNK_SIZE_OPENCATALYST = 150 #150_000
+    CHUNK_SIZE_OPENCATALYST = 150_000
     
     # share to split training and validation data
     TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.5
@@ -97,7 +97,7 @@ class HyperParameter:
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
-    SUBSAMPLE_OPENCATALYST = 0.1
+    SUBSAMPLE_OPENCATALYST = 0.6
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
