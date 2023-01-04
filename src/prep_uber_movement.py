@@ -4,6 +4,8 @@ import gc
 import os
 import math
 import numpy as np
+from tqdm import tqdm
+
 
 def import_csvdata(HYPER, city):
 
@@ -64,6 +66,9 @@ def train_val_test_split(HYPER):
     
     # Tell us which cities are chosen for testing
     print("The following cities are chosen for test", list_of_cities_test)
+    
+    # create progress bar
+    pbar = tqdm(total=len(HYPER.UBERMOVEMENT_LIST_OF_CITIES))
     
     # decleare empty dataframes for trainining validation and testing
     df_train = pd.DataFrame()
@@ -217,6 +222,9 @@ def train_val_test_split(HYPER):
                 HYPER.PATH_TO_DATA_UBERMOVEMENT_TEST,
                 'testing_data'
             )
+            
+        # update progress bar
+        pbar.update(1)
 
     ### Tell us the rations that result from our splitting rules
     n_train = (train_chunk_counter * HYPER.CHUNK_SIZE_UBERMOVEMENT) + len(df_train.index)
