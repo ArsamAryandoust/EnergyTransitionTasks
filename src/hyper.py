@@ -90,12 +90,14 @@ class HyperParameter:
     CHUNK_SIZE_UBERMOVEMENT = 20_000_000
     CHUNK_SIZE_CLIMART = 35_000
     
+    
     # share to split training and validation data
     TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.5
     TRAIN_VAL_SPLIT_CLIMART = 0.5
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
+    SUBSAMPLE_OPENCATALYST = 0.02
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
