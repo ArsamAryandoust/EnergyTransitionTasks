@@ -5,6 +5,8 @@ import math
 import pandas as pd
 import numpy as np
 
+
+
 def create_dataset_df(
     HYPER, 
     path_to_dataset_folder,
@@ -21,7 +23,8 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     ### shorten file_list for tests
-    #file_list = file_list[:3]
+    #n_datafiles
+    #file_list = file_list[:n_datafiles]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -135,6 +138,7 @@ def create_dataset_df(
     return df_dataset
 
 
+
 def save_chunk(
     HYPER,
     df,
@@ -173,6 +177,7 @@ def save_chunk(
         last_iteration = False
         
     return df, chunk_counter
+
 
 
 def process_raw_data(HYPER):
@@ -221,6 +226,7 @@ def process_raw_data(HYPER):
 
     
     return df_training, df_validation, df_testing
+
 
 
 def import_raw_data_samples(HYPER):
