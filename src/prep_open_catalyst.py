@@ -39,7 +39,6 @@ def print_features_of_datapoint(sample_datapoint):
     """ """
     
     print('\n A single datapoint contains the following properties.')
-    
     print('\n Global number of atoms:\n', sample_datapoint.get_global_number_of_atoms())
     print('\n Chemical formula:\n', sample_datapoint.get_chemical_formula())
     print('\n Symbols concise:\n', sample_datapoint.symbols)
@@ -49,13 +48,17 @@ def print_features_of_datapoint(sample_datapoint):
     print('\n Center of mass:\n', sample_datapoint.get_center_of_mass())
     print('\n Periodic boundary condition (pbc):\n', sample_datapoint.pbc)
     print('\n Cell:\n', sample_datapoint.cell)
-    #print('\n Cell reciprocal:\n', sample_datapoint.cell.reciprocal())
-    #print('\n Cell angles:\n', sample_datapoint.cell.cellpar())
     print('\n Symbols extensive:\n', sample_datapoint.get_chemical_symbols())
     print('\n Atomic number in periodic table:\n', sample_datapoint.numbers)
     print('\n Masses:\n', sample_datapoint.get_masses())
     print('\n Tags:\n', sample_datapoint.get_tags())
     print('\n Positions:\n', sample_datapoint.positions)
-    #print('\n Scaled positions:\n', sample_datapoint.get_scaled_positions())
-    print('\n Forces:\n', sample_datapoint.get_forces())
-    #print('\n Constraints:\n', sample_datapoint.constraints)
+    print('\n Forces with applied constraints (Tags):\n', sample_datapoint.get_forces())
+    
+    """
+    print('\n Cell reciprocal:\n', sample_datapoint.cell.reciprocal())
+    print('\n Cell angles:\n', sample_datapoint.cell.cellpar())
+    print('\n Scaled positions:\n', sample_datapoint.get_scaled_positions())
+    print('\n Forces raw:\n', sample_datapoint.get_forces(apply_constraint=False))
+    print('\n Constraints:\n', sample_datapoint.constraints)
+    """
