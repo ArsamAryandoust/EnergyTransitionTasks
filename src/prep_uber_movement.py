@@ -590,6 +590,12 @@ def shuffle_data_files(
         else:
             n_samples = n_files_simultan
             
+        # tell us whats going on
+        print('Shuffling data for {}'.format(path_to_folder))    
+        
+        # create progress bar
+        pbar = tqdm(total=n_iter_shuffle)
+            
         # do this for n_iter_shuffle times
         for _ in range(n_iter_shuffle):
         
@@ -636,5 +642,8 @@ def shuffle_data_files(
                 
                 # remove saved slice
                 df = df[n_data_points:]
-            
-            
+                
+            # update progress bar
+            pbar.update(1)
+        
+        
