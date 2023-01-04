@@ -8,13 +8,11 @@ import numpy as np
 def create_dataset_df(
     HYPER, 
     path_to_dataset_folder,
-    saving_path
+    path_to_saving_folder,
+    filename_saving
 ):
 
     """ """
-    
-    # declare empty dataframe
-    df_dataset = pd.DataFrame()
     
     # get a list of all files on a particular path, here training data
     file_list = os.listdir(path_to_dataset_folder)
@@ -29,6 +27,12 @@ def create_dataset_df(
     n_datapoints_per_file = 5000
     n_sample = math.floor(HYPER.SUBSAMPLE_OPENCATALYST * n_datapoints_per_file)
     import_index_str = ':{}'.format(n_sample)
+    
+    # declare empty dataframe
+    df_dataset = pd.DataFrame()
+    
+    # set chunk counter for data saving to zero
+    chunk_counter = 0
     
     # iterate over all filenames
     for filename in file_list:
@@ -95,17 +99,80 @@ def create_dataset_df(
                 cols_list.append(col_name_y)
                 cols_list.append(col_name_z)
             
+            # create a first part of datapoint consisting of value dictionary
             df_datapoint_part1 = pd.DataFrame(value_dict, index=[0])
+            
+            # create a second part of datapoint consisting of value array
             df_datapoint_part2 = pd.DataFrame(value_array, columns=cols_list)
+            
+            # merge both datapoint parts into a complete datapoint row as DataFrame
             df_datapoint = pd.concat([df_datapoint_part1, df_datapoint_part2], axis=1)
+            
+            # concatenate datapoint to existing dataset
             df_dataset = pd.concat([df_dataset, df_datapoint])
             
+        
             
-    # save dataset
-    df_dataset.to_csv(saving_path, index=False)
+        # save dataset chunk after importing data of this data file
+        df_dataset, chunk_counter = save_chunk(
+            HYPER,
+            df_dataset,
+            chunk_counter,
+            path_to_saving_folder,
+            filename_saving
+        )
+            
+    # save remaining dataset chunk after importing data of all data files
+    df_dataset, chunk_counter = save_chunk(
+        HYPER,
+        df_dataset,
+        chunk_counter,
+        path_to_saving_folder,
+        filename_saving,
+        last_iteration=True 
+    )
             
     return df_dataset
 
+
+def save_chunk(
+    HYPER,
+    df,
+    chunk_counter,
+    path_to_saving_folder,
+    filename_saving,
+    last_iteration=False 
+):
+
+    """ """
+    
+    ### Save resulting data in chunks
+    while len(df.index) > HYPER.CHUNK_SIZE_OPENCATALYST or last_iteration:
+        
+        # increment chunk counter 
+        chunk_counter += 1
+        
+        # create path
+        saving_path = (
+            path_to_saving_folder
+            + filename_saving
+            + '_{}.csv'.format(chunk_counter)
+        )
+        
+        # shuffle
+        df = df.sample(frac=1, random_state=HYPER.SEED)
+        
+        # save chunk
+        df.iloc[:HYPER.CHUNK_SIZE_OPENCATALYST].to_csv(saving_path, index=False)
+        
+        # delete saved chunk
+        if not last_iteration:
+            df = df[HYPER.CHUNK_SIZE_OPENCATALYST:]
+        
+        # Must be set to exit loop on last iteration
+        last_iteration = False
+        
+    return df, chunk_counter
 
 
 def process_raw_data(HYPER):
@@ -113,40 +180,40 @@ def process_raw_data(HYPER):
     """ """
     
     # generate training dataset
-    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN + 'training.csv'
     df_training = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN,
-        saving_path
+        HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN,
+        'training'
     )
     
     # generate validation dataset from in distribution validation data
-    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL + 'validation.csv'
     df_validation = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_ID,
-        saving_path
+        HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL,
+        'validation'
     )
     
     # generate testing dataset from a constellation of out of distribution datasets
     # in terms of catalysts and adsorbates
-    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_both.csv'
     df_testing_1 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_BOTH,
-        saving_path
+        HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST,
+        'testing_ood_both'
     )
-    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_cat.csv'
     df_testing_2 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_CAT,
-        saving_path
+        HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST,
+        'testing_ood_cat'
     )
-    saving_path = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST + 'testing_ood_ads.csv'
     df_testing_3 = create_dataset_df(
         HYPER, 
         HYPER.PATH_TO_DATA_RAW_OPENCATALYST_S2EF_VAL_OOD_ADS,
-        saving_path
+        HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST,
+        'testing_ood_ads'
     )
     
     # concatenate testing datasets
