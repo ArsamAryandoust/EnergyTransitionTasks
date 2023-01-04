@@ -7,6 +7,7 @@ RUN pip3 install jupyter
 RUN pip3 install pandas
 RUN pip3 install h5py
 RUN pip3 install ase
+RUN pip3 install tqdm
 
 WORKDIR /EnergyTransitionTasks
 
