@@ -14,7 +14,7 @@ class HyperParameter:
     PROCESS_CLIMART = False
     
     # Choose which data to shuffle
-    SHUFFLE_UBERMOVEMENT = False
+    SHUFFLE_UBERMOVEMENT = True
     SHUFFLE_CLIMART = True
     
     

@@ -75,7 +75,7 @@ Download this repository to your home directory:
 
 ```
 cd 
-git clone https://github.com/ArsamAryandoust/TasksEnergyTransition
+git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
 cd TasksEnergyTransition
 ```
 
@@ -84,7 +84,7 @@ cd TasksEnergyTransition
 
 ```
 docker build -t main Docker
-docker run -v ~/TasksEnergyTransition:/TasksEnergyTransition main
+docker run -v ~/EnergyTransitionTasks:/EnergyTransitionTasks main
 ```
 
 
@@ -92,7 +92,7 @@ docker run -v ~/TasksEnergyTransition:/TasksEnergyTransition main
 
 ```
 docker build -t main_notebook DockerNotebook
-docker run -it -v ~/TasksEnergyTransition:/TasksEnergyTransition -p 3333:1111 main_notebook
+docker run -it -v ~/EnergyTransitionTasks:/EnergyTransitionTasks -p 3333:1111 main_notebook
 ```
 
 Open the link that shows in your terminal with a browser. Then, replace the port 
