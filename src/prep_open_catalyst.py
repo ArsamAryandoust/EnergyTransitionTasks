@@ -22,8 +22,8 @@ def create_dataset_df(
     # drop .txt files
     file_list = [element for element in file_list if '.txt' not in element]
 
-    ### shorten file_list for tests
-    file_list = file_list[:100]
+    # shorten file_list for tests
+    #file_list = file_list[:100]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
