@@ -23,7 +23,7 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     # shorten file_list for tests
-    #file_list = file_list[:100]
+    file_list = file_list[:10]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -91,21 +91,7 @@ def create_dataset_df(
             value_array = value_array.reshape(-1, len(value_array))
             
             # create column names for dataframe
-            cols_list = []
-            for i in range(n_atoms):
-                col_name_x = 'pos_x{}'.format(i)
-                col_name_y = 'pos_y{}'.format(i)
-                col_name_z = 'pos_z{}'.format(i)
-                cols_list.append(col_name_x)
-                cols_list.append(col_name_y)
-                cols_list.append(col_name_z)
-            for i in range(n_atoms):
-                col_name_x = 'force_x{}'.format(i)
-                col_name_y = 'force_y{}'.format(i)
-                col_name_z = 'force_z{}'.format(i)
-                cols_list.append(col_name_x)
-                cols_list.append(col_name_y)
-                cols_list.append(col_name_z)
+            cols_list = create_column_pos_force(n_atoms)
             
             # create a first part of datapoint consisting of value dictionary
             df_datapoint_part1 = pd.DataFrame(value_dict, index=[0])
@@ -119,7 +105,13 @@ def create_dataset_df(
             # concatenate datapoint to existing dataset
             df_dataset = pd.concat([df_dataset, df_datapoint])
             
-            
+        
+        # sort the columns such that all positions and forces are next to each other
+        max_atoms = df_dataset['n_atoms'].max()    
+        cols_list_add = create_column_pos_force(max_atoms)
+        cols_list = ['n_atoms', 'symbols_atoms', 'energy'] + cols_list_add
+        df_dataset = df_dataset[cols_list]
+        
         # save dataset chunk after importing data of this data file
         df_dataset, chunk_counter = save_chunk(
             HYPER,
@@ -149,6 +141,29 @@ def create_dataset_df(
     return df_dataset
 
 
+def create_column_pos_force(n_atoms):
+
+    """ """
+    
+    # create column names for dataframe
+    cols_list = []
+    for i in range(n_atoms):
+        col_name_x = 'pos_x{}'.format(i)
+        col_name_y = 'pos_y{}'.format(i)
+        col_name_z = 'pos_z{}'.format(i)
+        cols_list.append(col_name_x)
+        cols_list.append(col_name_y)
+        cols_list.append(col_name_z)
+    for i in range(n_atoms):
+        col_name_x = 'force_x{}'.format(i)
+        col_name_y = 'force_y{}'.format(i)
+        col_name_z = 'force_z{}'.format(i)
+        cols_list.append(col_name_x)
+        cols_list.append(col_name_y)
+        cols_list.append(col_name_z)
+        
+        
+    return cols_list
 
 def save_chunk(
     HYPER,

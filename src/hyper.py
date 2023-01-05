@@ -9,13 +9,13 @@ class HyperParameter:
     """
     
     # Choose which data to process
-    PROCESS_OPENCATALYST = False
+    PROCESS_OPENCATALYST = True
     PROCESS_UBERMOVEMENT = False
     PROCESS_CLIMART = False
     
     # Choose which data to shuffle
-    SHUFFLE_UBERMOVEMENT = True
-    SHUFFLE_CLIMART = True
+    SHUFFLE_UBERMOVEMENT = False
+    SHUFFLE_CLIMART = False
     
     
     # Random seed
@@ -112,7 +112,7 @@ class HyperParameter:
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
-    SUBSAMPLE_OPENCATALYST = 0.1
+    SUBSAMPLE_OPENCATALYST = 0.01
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
