@@ -9,8 +9,6 @@ set of problems involved in enhancing the global energy transition towards highl
 renewable electricity systems.
 
 
-
-
 ### Uber Movement
 
 The Uber Movement project provides travel time data between different city zones
@@ -52,25 +50,43 @@ storage systems may be achieved due to significant cost reductions. Data from th
 periodic table of elements is collected from here: https://pubchem.ncbi.nlm.nih.gov/periodic-table/.
 
 
+### Building Electricity
+
+The Building Electricity dataset provides electricity consumption profiles of about 
+100 and 400 single buildings in 2014, aerial imagery data of these buildings and
+and meteorlogical conditions in the area of these buildings during the same year
+under an MIT license (https://opensource.org/licenses/MIT). The goal is to predict
+the electric consumption profile of single buildings for the next 24h in 15-min
+time steps (96 values) at different times as the only ground truth data in the 
+prediction task from only remotely sensed features consisting of meterological data
+and aerial imagery of buildings [4].
+
+
 
 
 ### References
 
-[1] Aryandoust A., Van Vliet O. & Patt A. City-scale car traffic and parking density 
-maps from Uber Movement travel time data, Scientific Data 6, 158 (2019). 
+[1] Aryandoust, A., Van Vliet, O. & Patt, A. City-scale car traffic and parking 
+density maps from Uber Movement travel time data, Scientific Data 6, 158 (2019). 
 https://doi.org/10.1038/s41597-019-0159-6
 
 [2] Cachay, S. R., Ramesh, V., Cole, J. N. S., Barker, H. & Rolnick D. ClimART:
 A Benchmark Dataset for Emulating Atmospheric Radiative Transfer in Weather and 
 Climate Models. In Proc. of the 35th Conference on Neural Information Processing 
-Systems Track on Datasets and Benchmarks (2021).
+Systems Track on Datasets and Benchmarks (2021). https://doi.org/10.48550/arXiv.2111.14671
 
 [3] Zitnick, C. L. & et al. An Introduction to Electrocatalyst Design using Machine 
 Learning for Renewable Energy Storage. Preprint at arxiv (2022).
 https://doi.org/10.48550/arXiv.2010.09435
 
+[4] Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric 
+load forecasts using less data with active deep learning, Nature Machine 
+Intelligence 4, 977-991 (2022). https://doi.org/10.1038/s42256-022-00552-x
+
+
 
 ## Download
+
 Download this repository to your home directory:
 
 ```
