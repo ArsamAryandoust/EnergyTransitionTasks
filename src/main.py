@@ -2,9 +2,12 @@ import hyper
 import hyper_ubermovement
 import hyper_climart
 import hyper_opencatalyst
+import hyper_buildingelectricity
 import prep_uber_movement
 import prep_open_catalyst
 import prep_climart
+import prep_building_electricity
+
 
 # create main hyper paramter instance
 HYPER = hyper.HyperParameter()
@@ -53,6 +56,21 @@ if HYPER.PROCESS_OPENCATALYST:
     
     # create train validation testing data
     _, _, _ = prep_open_catalyst.train_val_test_create(HYPER_OPENCATALYST)
+    
+
+# process building electricity data    
+if HYPER.PROCESS_BUILDINGELECTRICITY:
+    
+    # tell us whats going on
+    print('Processing Building Electricity data')
+    
+    # create hyper parameters
+    HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
+    
+    
+    ###
+    # Call functions for data processing here
+    ###
     
     
 # Shuffle Uber Movement data
