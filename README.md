@@ -48,7 +48,9 @@ hydrogen with excess renewable energy from intermittent wind and and solar [3].
 Common state-of-the-art electrocatalysts for both producing hydrogen and consuming
 it again use expensive noble metals such as iridium and platinum. If these can be
 replaced by new cost-effective catalysts, an earlier adoption of hydrogen energy
-storage systems may be achieved due to significant cost reductions.
+storage systems may be achieved due to significant cost reductions. Data from the
+periodic table of elements is collected from here: https://pubchem.ncbi.nlm.nih.gov/periodic-table/.
+
 
 
 
