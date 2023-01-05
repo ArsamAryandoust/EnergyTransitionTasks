@@ -76,7 +76,7 @@ Download this repository to your home directory:
 ```
 cd 
 git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
-cd TasksEnergyTransition
+cd EnergyTransitionTasks
 ```
 
 
