@@ -80,20 +80,22 @@ cd TasksEnergyTransition
 ```
 
 
-## Jupyter notebooks inside Docker containers
+## Docker container
 
-Build Jupyter notebook container:
+```
+docker build -t main Docker
+docker run -v ~/TasksEnergyTransition:/TasksEnergyTransition main
+```
+
+
+## Jupyter notebooks inside Docker containers
 
 ```
 docker build -t main_notebook DockerNotebook
-```
-
-
-Start container with CPU only:
-
-```
 docker run -it -v ~/TasksEnergyTransition:/TasksEnergyTransition -p 3333:1111 main_notebook
 ```
 
 Open the link that shows in your terminal with a browser. Then, replace the port 
 1111 with 3333 in your browser link to see notebooks inside the Docker container.
+
+
