@@ -6,6 +6,8 @@ import pandas as pd
 import gc
 import math
 import random
+from tqdm import tqdm
+
 
 def create_input_col_name_list(
     var_dict
@@ -720,6 +722,8 @@ def shuffle_data_files(
         HYPER.PATH_TO_DATA_CLIMART_PRISTINE_TEST
     ]
     
+    # create progress bar
+    pbar = tqdm(total=n_iter_shuffle*len(path_to_folder_list))
     
     # do this for train, val and test datasets separately
     for path_to_folder in path_to_folder_list:
@@ -778,4 +782,8 @@ def shuffle_data_files(
                 df[:n_data_points].to_csv(path_to_csv, index=False)
                 
                 # remove saved slice
-                df = df[n_data_points:]    
+                df = df[n_data_points:]
+                
+                
+            # update progress bar
+            pbar.update(1) 

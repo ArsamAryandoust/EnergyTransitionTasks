@@ -577,6 +577,8 @@ def shuffle_data_files(
         HYPER.PATH_TO_DATA_UBERMOVEMENT_TEST
     ]
     
+    # create progress bar
+    pbar = tqdm(total=n_iter_shuffle*len(path_to_folder_list))
     
     # do this for train, val and test datasets separately
     for path_to_folder in path_to_folder_list:
@@ -593,8 +595,6 @@ def shuffle_data_files(
         # tell us whats going on
         print('Shuffling data for {}'.format(path_to_folder))    
         
-        # create progress bar
-        pbar = tqdm(total=n_iter_shuffle)
             
         # do this for n_iter_shuffle times
         for _ in range(n_iter_shuffle):
