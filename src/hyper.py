@@ -44,6 +44,7 @@ class HyperParameter:
     
     # Open Catalyst
     PATH_TO_DATA_RAW_OPENCATALYST = PATH_TO_DATA_RAW + 'OpenCatalyst/OC20/'
+    PATH_TO_DATA_RAW_OPENCATALYST_PTE = PATH_TO_DATA_RAW + 'OpenCatalyst/PubChemElements_all.csv'
     PATH_TO_DATA_RAW_OPENCATALYST_S2EF = PATH_TO_DATA_RAW_OPENCATALYST + 'S2EF/'
     PATH_TO_DATA_RAW_OPENCATALYST_S2EF_TRAIN = (
         PATH_TO_DATA_RAW_OPENCATALYST_S2EF 
@@ -69,6 +70,10 @@ class HyperParameter:
     PATH_TO_DATA_OPENCATALYST_OC20_S2EF = (
         PATH_TO_DATA_OPENCATALYST
         + 'OC20_S2EF/'
+    )
+    PATH_TO_DATA_OPENCATALYST_OC20_S2EF_ADD = (
+        PATH_TO_DATA_OPENCATALYST_OC20_S2EF 
+        + 'additional/'
     )
     PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN = (
         PATH_TO_DATA_OPENCATALYST_OC20_S2EF
@@ -97,7 +102,7 @@ class HyperParameter:
     
     # Subsample values
     SUBSAMPLE_CLIMART = 0.2
-    SUBSAMPLE_OPENCATALYST = 0.03
+    SUBSAMPLE_OPENCATALYST = 0.2
     
     # out of distribution test splitting rules in time and space
     random.seed(SEED)
@@ -257,11 +262,12 @@ class HyperParameter:
         ### Create directories for OpenCatalyst ###
         self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST)
         self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF)
+        self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_ADD)
         self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TRAIN)
         self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_VAL)
         self.check_create_dir(self.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_TEST)
         
-        
+
     def check_create_dir(self, path):
     
         """ """

@@ -178,11 +178,11 @@ def save_chunk(
         df = df.sample(frac=1, random_state=HYPER.SEED)
         
         # save chunk
-        df.iloc[:HYPER.CHUNK_SIZE_OPENCATALYST].to_csv(saving_path, index=False)
+        df.iloc[:HYPER.CHUNK_SIZE_OPENCATALYST].dropna(axis=1, how='all').to_csv(saving_path, index=False)
         
         # delete saved chunk
         if not last_iteration:
-            df = df[HYPER.CHUNK_SIZE_OPENCATALYST:]
+            df = df[HYPER.CHUNK_SIZE_OPENCATALYST:].dropna(axis=1, how='all')
         
         # Must be set to exit loop on last iteration
         last_iteration = False
@@ -238,7 +238,21 @@ def process_raw_data(HYPER):
     
     return df_training, df_validation, df_testing
 
+def create_augment_data(HYPER):
 
+    """ """
+
+    # load dataset from raw .csv file
+    df_periodic_table = pd.read_csv(HYPER.PATH_TO_DATA_RAW_OPENCATALYST_PTE)
+    
+    # create saving path
+    path_to_saving = HYPER.PATH_TO_DATA_OPENCATALYST_OC20_S2EF_ADD + 'periodic_table.csv'
+    
+    # save dataframe on new path
+    df_periodic_table.to_csv(path_to_saving, index=False)
+    
+    return df_periodic_table
+    
 
 def import_raw_data_samples(HYPER):
 
