@@ -1,51 +1,53 @@
-from hyper import HyperParamter
+from hyper import HyperParameter
 import os
 import random
 
 
-class HyperUberMovement(HyperParamter):
+class HyperUberMovement(HyperParameter):
 
     """
     Bundles a bunch of hyper parameters.
     """
     
-    # data paths
-    PATH_TO_DATA_RAW_UBERMOVEMENT = PATH_TO_DATA_RAW + 'UberMovement/'
-    PATH_TO_DATA_UBERMOVEMENT = PATH_TO_DATA + 'UberMovement/'
-    PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL = PATH_TO_DATA_UBERMOVEMENT + 'additional/'
-    PATH_TO_DATA_UBERMOVEMENT_TRAIN = PATH_TO_DATA_UBERMOVEMENT + 'training/'
-    PATH_TO_DATA_UBERMOVEMENT_VAL = PATH_TO_DATA_UBERMOVEMENT + 'validation/'
-    PATH_TO_DATA_UBERMOVEMENT_TEST = PATH_TO_DATA_UBERMOVEMENT + 'testing/'
-
-    # Chunk size of data points per .csv file
-    CHUNK_SIZE_UBERMOVEMENT = 20_000_000
-   
-    # share to split training and validation data
-    TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.8
-    
-    # out of distribution test splitting rules in time
-    random.seed(SEED)
-    quarter_of_year = random.sample(range(1,5), 1)
-    random.seed(SEED)
-    hours_of_day = random.sample(range(24), 4)
-    
-    # dictionary saving rules
-    TEST_SPLIT_DICT_UBERMOVEMENT = {
-        'temporal_dict': {
-            'year': 2017,
-            'quarter_of_year': quarter_of_year,
-            'hours_of_day': hours_of_day
-        },
-        'spatial_dict': {
-            'city_share': 0.1,
-            'city_zone_share': 0.1
-        }
-    }
-    
     
     def __init__(self):
     
-        """ Set some paths by reading folders """
+        """ """
+        
+        # data paths
+        self.PATH_TO_DATA_RAW_UBERMOVEMENT = HyperParameter.PATH_TO_DATA_RAW + 'UberMovement/'
+        self.PATH_TO_DATA_UBERMOVEMENT = HyperParameter.PATH_TO_DATA + 'UberMovement/'
+        self.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL = self.PATH_TO_DATA_UBERMOVEMENT + 'additional/'
+        self.PATH_TO_DATA_UBERMOVEMENT_TRAIN = self.PATH_TO_DATA_UBERMOVEMENT + 'training/'
+        self.PATH_TO_DATA_UBERMOVEMENT_VAL = self.PATH_TO_DATA_UBERMOVEMENT + 'validation/'
+        self.PATH_TO_DATA_UBERMOVEMENT_TEST = self.PATH_TO_DATA_UBERMOVEMENT + 'testing/'
+
+        # Chunk size of data points per .csv file
+        self.CHUNK_SIZE_UBERMOVEMENT = 20_000_000
+       
+        # share to split training and validation data
+        self.TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.8
+        
+        # out of distribution test splitting rules in time
+        random.seed(HyperParameter.SEED)
+        quarter_of_year = random.sample(range(1,5), 1)
+        random.seed(HyperParameter.SEED)
+        hours_of_day = random.sample(range(24), 4)
+        
+        # dictionary saving rules
+        self.TEST_SPLIT_DICT_UBERMOVEMENT = {
+            'temporal_dict': {
+                'year': 2017,
+                'quarter_of_year': quarter_of_year,
+                'hours_of_day': hours_of_day
+            },
+            'spatial_dict': {
+                'city_share': 0.1,
+                'city_zone_share': 0.1
+            }
+        }
+        
+        
         
         ### Uber Movement ###
         year_list = list(range(2015, 2021))
@@ -103,11 +105,11 @@ class HyperUberMovement(HyperParamter):
             self.UBERMOVEMENT_CITY_FILES_MAPPING[city] = file_dict
             self.UBERMOVEMENT_CITY_ID_MAPPING[city] = city_id
             
-       
+        
         ### Create directories for Uber Movement ###
-        self.check_create_dir(self.PATH_TO_DATA_UBERMOVEMENT)
-        self.check_create_dir(self.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL)
-        self.check_create_dir(self.PATH_TO_DATA_UBERMOVEMENT_TEST)
-        self.check_create_dir(self.PATH_TO_DATA_UBERMOVEMENT_VAL)
-        self.check_create_dir(self.PATH_TO_DATA_UBERMOVEMENT_TRAIN)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_UBERMOVEMENT)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_UBERMOVEMENT_TEST)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_UBERMOVEMENT_VAL)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_UBERMOVEMENT_TRAIN)
         
