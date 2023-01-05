@@ -23,7 +23,7 @@ def create_dataset_df(
     file_list = [element for element in file_list if '.txt' not in element]
 
     # shorten file_list for tests
-    #file_list = file_list[:10]
+    file_list = file_list[:10]
     
     # determine how many structures/datapoints per file you want to load
     n_datapoints_per_file = 5000
@@ -60,6 +60,12 @@ def create_dataset_df(
             # get structure atom symbols as string
             symbols_atoms = atoms_object.symbols.__str__()
             
+            # volume
+            volume = atoms_object.get_volume()
+            
+            # center of mass
+            center_of_mass = atoms_object.get_center_of_mass()
+            
             # get structure energy we want to predict (label)
             energy = atoms_object.info['energy']
     
@@ -77,6 +83,10 @@ def create_dataset_df(
             value_dict = {
                 'n_atoms': n_atoms,
                 'symbols_atoms': symbols_atoms,
+                'volume': volume,
+                'center_of_mass_x': center_of_mass[0],
+                'center_of_mass_y': center_of_mass[1],
+                'center_of_mass_z': center_of_mass[2],
                 'energy': energy
             }
             # create value list for dataframe
@@ -109,7 +119,7 @@ def create_dataset_df(
         # sort the columns such that all positions and forces are next to each other
         max_atoms = df_dataset['n_atoms'].max()    
         cols_list_add = create_column_pos_force(max_atoms)
-        cols_list = ['n_atoms', 'symbols_atoms', 'energy'] + cols_list_add
+        cols_list = list(value_dict.keys()) + cols_list_add
         df_dataset = df_dataset[cols_list]
         
         # save dataset chunk after importing data of this data file
