@@ -28,6 +28,9 @@ class HyperUberMovement(HyperParameter):
         # share to split training and validation data
         self.TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.8
         
+        # Subsample values
+        self.SUBSAMPLE_UBERMOVEMENT = 0.05
+        
         # out of distribution test splitting rules in time
         random.seed(HyperParameter.SEED)
         quarter_of_year = random.sample(range(1,5), 1)
@@ -53,7 +56,7 @@ class HyperUberMovement(HyperParameter):
         year_list = list(range(2015, 2021))
         quarter_list = ['-1-', '-2-', '-3-', '-4-']
         self.UBERMOVEMENT_LIST_OF_CITIES = os.listdir(self.PATH_TO_DATA_RAW_UBERMOVEMENT)
-        self.UBERMOVEMENT_LIST_OF_CITIES = self.UBERMOVEMENT_LIST_OF_CITIES[:14] # shorten city list
+        self.UBERMOVEMENT_LIST_OF_CITIES = self.UBERMOVEMENT_LIST_OF_CITIES[:14] # shorten city list to 14 ideally
         self.UBERMOVEMENT_CITY_FILES_MAPPING = {}
         self.UBERMOVEMENT_CITY_ID_MAPPING = {}
         for city_id, city in enumerate(self.UBERMOVEMENT_LIST_OF_CITIES):

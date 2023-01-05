@@ -33,6 +33,12 @@ def process_csvdata(HYPER, df_csv_dict, city):
     # copy raw dataframe
     df_augmented_csvdata = df_csv_dict['df']
     
+    # subsample data    
+    df_augmented_csvdata = df_augmented_csvdata.sample(
+        frac=HYPER.SUBSAMPLE_UBERMOVEMENT,
+        random_state=HYPER.SEED
+    )
+    
     # augment raw dataframe
     df_augmented_csvdata.insert(0, 'city_id', HYPER.UBERMOVEMENT_CITY_ID_MAPPING[city])
     df_augmented_csvdata.insert(3, 'year', df_csv_dict['year'])
@@ -80,6 +86,9 @@ def train_val_test_split(HYPER):
     
     # iterate over all available cities
     for city in HYPER.UBERMOVEMENT_LIST_OF_CITIES:
+        
+        # tell us whats going on
+        print('Processing data for', city)
         
         # check if city is in testing city list
         if city in list_of_cities_test:
@@ -301,6 +310,9 @@ def save_chunk(
         # delete saved chunk
         if not last_iteration:
             df = df[HYPER.CHUNK_SIZE_UBERMOVEMENT:]
+            
+        # Must be set to exit loop on last iteration
+        last_iteration = False
         
     return df, chunk_counter
     
