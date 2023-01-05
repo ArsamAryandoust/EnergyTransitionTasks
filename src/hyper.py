@@ -10,8 +10,12 @@ class HyperParameter:
     
     # Choose which data to process
     PROCESS_OPENCATALYST = False
-    PROCESS_UBERMOVEMENT = True
+    PROCESS_UBERMOVEMENT = False
     PROCESS_CLIMART = False
+    
+    # Choose which data to shuffle
+    SHUFFLE_UBERMOVEMENT = True
+    SHUFFLE_CLIMART = True
     
     
     # Random seed
