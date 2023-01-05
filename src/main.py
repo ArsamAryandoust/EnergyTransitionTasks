@@ -9,18 +9,6 @@ import prep_climart
 # create main hyper paramter instance
 HYPER = hyper.HyperParameter()
 
-# process open catalyst project data
-if hyper.PROCESS_OPENCATALYST:
-    
-    # create hyper parameters
-    HYPER_OPENCATALYST = hyper_opencatalyst.HyperOpenCatalyst()
-    
-    # augment data
-    _ = prep_open_catalyst.create_augment_data(HYPER_OPENCATALYST)
-    
-    # create train validation testing data
-    _, _, _ = prep_open_catalyst.train_val_test_create(HYPER_OPENCATALYST)
-    
 
 # process uber movement data
 if HYPER.PROCESS_UBERMOVEMENT:
@@ -43,6 +31,19 @@ if HYPER.PROCESS_CLIMART:
     
     # create train validation testing splits
     _, _, _, _, _, _ = prep_climart.train_val_test_split(HYPER_CLIMART)
+    
+
+# process open catalyst project data
+if HYPER.PROCESS_OPENCATALYST:
+    
+    # create hyper parameters
+    HYPER_OPENCATALYST = hyper_opencatalyst.HyperOpenCatalyst()
+    
+    # augment data
+    _ = prep_open_catalyst.create_augment_data(HYPER_OPENCATALYST)
+    
+    # create train validation testing data
+    _, _, _ = prep_open_catalyst.train_val_test_create(HYPER_OPENCATALYST)
     
     
 # Shuffle Uber Movement data
