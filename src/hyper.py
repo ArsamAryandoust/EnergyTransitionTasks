@@ -8,6 +8,12 @@ class HyperParameter:
     Bundles a bunch of hyper parameters.
     """
     
+    # Choose which data to process
+    PROCESS_OPENCATALYST = False
+    PROCESS_UBERMOVEMENT = True
+    PROCESS_CLIMART = False
+    
+    
     # Random seed
     SEED = 3
     
