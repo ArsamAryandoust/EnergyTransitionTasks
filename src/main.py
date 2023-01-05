@@ -17,12 +17,19 @@ if HYPER.PROCESS_OPENCATALYST:
 if HYPER.PROCESS_UBERMOVEMENT:
     _, _ = prep_uber_movement.process_geographic_information(HYPER)
     _, _, _ = prep_uber_movement.train_val_test_split(HYPER)
-    prep_uber_movement.shuffle_data_files(HYPER)
     
     
 # process climart data
 if HYPER.PROCESS_CLIMART:
     _, _, _, _, _, _ = prep_climart.train_val_test_split(HYPER)
+    
+    
+    
+# Shuffle data
+if HYPER.SHUFFLE_UBERMOVEMENT:
+    prep_uber_movement.shuffle_data_files(HYPER)
+    
+if HYPER.SHUFFLE_CLIMART:
     prep_climart.shuffle_data_files(HYPER)
     
     
