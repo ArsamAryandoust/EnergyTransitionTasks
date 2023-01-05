@@ -37,7 +37,7 @@ class HyperClimart(HyperParameter):
         # share to split training and validation data
         self.TRAIN_VAL_SPLIT_CLIMART = 0.8
         
-        # Subsample values
+        # Subsample share
         self.SUBSAMPLE_CLIMART = 0.2
         
         # out of distribution test splitting rules in time
