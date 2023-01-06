@@ -120,6 +120,9 @@ def process_meteo_and_load_profiles(
     # create a new dataframe you want to fill
     df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
     
+    # get total number of data points 
+    n_data_total = len(df_consumption_new)
+    
     # test split
     df_testing = df_consumption_new.sample(frac=HYPER.TEST_SPLIT, random_state=HYPER.SEED)
     
@@ -130,7 +133,11 @@ def process_meteo_and_load_profiles(
     df_training = df_consumption_new.sample(frac=HYPER.TRAIN_VAL_SPLIT, random_state=HYPER.SEED)
     df_validation = df_consumption_new.drop(df_training.index)
     
-    
+    print(
+        "Training data   :    {:.0%} \n".format(len(df_training)/n_total),
+        "Validation data :    {:.0%} \n".format(len(df_validation)/n_total),
+        "Testing data    :    {:.0%} \n".format(len(df_testing)/n_total)
+    )
     
     return df_training, df_validation, df_testing
 
