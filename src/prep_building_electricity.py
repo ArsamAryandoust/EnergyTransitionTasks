@@ -39,9 +39,6 @@ def process_meteo_and_load_profiles(
     # create a list of all building IDs
     building_id_list = list(df_consumption.columns.values[1:])
     
-    # shorten for test
-    #building_id_list = building_id_list[:100]
-    
     # declare df row counter
     counter_df_row = 0
     
@@ -123,7 +120,19 @@ def process_meteo_and_load_profiles(
     # create a new dataframe you want to fill
     df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
     
-    return df_consumption_new
+    # test split
+    df_testing = df_consumption_new.sample(frac=HYPER.TEST_SPLIT, random_state=HYPER.SEED)
+    
+    # drop indices taken for testing from remaining data
+    df_consumption_new = df_consumption_new.drop(df_testing.index)
+    
+    # do training split
+    df_training = df_consumption_new.sample(frac=HYPER.TRAIN_VAL_SPLIT, random_state=HYPER.SEED)
+    df_validation = df_consumption_new.drop(df_training.index)
+    
+    
+    
+    return df_training, df_validation, df_testing
 
 
 def process_building_imagery(HYPER, df_building_images):
@@ -162,6 +171,7 @@ def process_building_imagery(HYPER, df_building_images):
     df_building_images_new.to_csv(saving_path, index=False)
 
     return df_building_images_new
+
 
 def import_all_data(HYPER):
     

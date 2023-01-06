@@ -23,6 +23,10 @@ class HyperBuildingElectricity(HyperParameter):
             'radiation_toa', 'snow_mass', 'snowfall', 'temperature', 'wind_speed'
         ]
         
+        # splits
+        self.TEST_SPLIT = 0.5
+        self.TRAIN_VAL_SPLIT = 0.8
+                
         # data paths
         self.PATH_TO_RAW_BUILDING_ELECTRICITY = (
             HyperParameter.PATH_TO_DATA_RAW
