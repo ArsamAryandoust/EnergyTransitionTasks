@@ -123,11 +123,14 @@ def process_all_data(
     # only replace its column names
     df_building_images_new.columns = new_columns_list
     
+    
     ###
     # Process meteorological data ###
     ###
     
     df_meteo_dict_new = df_meteo_dict
+    
+    
     
     return df_consumption_new, df_building_images_new, df_meteo_dict_new
 
