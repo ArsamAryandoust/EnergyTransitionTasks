@@ -114,14 +114,14 @@ def process_all_data(
         # create new entry
         new_entry = 'building_{}'.format(entry)
         
-        new_columns_list.append(entry)
+        # append new entry to new column list
+        new_columns_list.append(new_entry)
     
     # copy old dataframe 1 to 1    
     df_building_images_new = df_building_images
     
     # only replace its column names
     df_building_images_new.columns = new_columns_list
-    
     
     ###
     # Process meteorological data ###
