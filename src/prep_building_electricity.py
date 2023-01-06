@@ -10,7 +10,7 @@ def prepare_building_electricity_data(HYPER):
     df_consumption, df_building_images, df_meteo_dict = import_all_data(HYPER)
 
     # process all data into desired format
-    df_consumption_new, df_building_images_new, df_meteo_dict_new = process_all_data(
+    df_consumption_new, df_building_images_new = process_all_data(
         HYPER, 
         df_consumption, 
         df_building_images, 
@@ -33,10 +33,22 @@ def process_all_data(
     ###
     
     # create new df column format
-    new_df_columns = ['time_stamp', 'year', 'month', 'day', 'hour', 'quarter_hour', 'building_id', 'cluster_id']
+    new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 'building_id']
+    
+    # fill a separate list 
+    new_df_columns = new_df_columns_base.copy()
+    
+    # append column entries for meteorological data
+    for column_name in HYPER.METEO_NAME_LIST:
+        for pred_time_step in range(HYPER.PREDICTION_WINDOW):
+            entry_name = '{}_{}'.format(column_name, pred_time_step+1)
+            new_df_columns.append(entry_name)
+    
+    # append column entries for electric load
     for pred_time_step in range(HYPER.PREDICTION_WINDOW):
         entry_name = 'load_{}'.format(pred_time_step+1)
         new_df_columns.append(entry_name)
+        
         
     # create a new dataframe you want to fill
     df_consumption_new = pd.DataFrame(columns=new_df_columns)
@@ -67,16 +79,19 @@ def process_all_data(
         
         # transform building id into integer
         building_id = int(building_id)
+
+        # create key to corresponding meteo data
+        key_meteo = 'meteo_{}_2014.csv'.format(cluster_id)
         
-        # determine where iteration ends
-        iter_end = len(time_stamps)- HYPER.PREDICTION_WINDOW
+        # get corresponding meteorological data
+        df_meteo = df_meteo_dict[key_meteo]
+        
+        # drop local_time column
+        df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps
-        for i in range(0, iter_end, HYPER.PREDICTION_WINDOW):
+        for i in range(0, len(time_stamps), HYPER.PREDICTION_WINDOW):
             
-            # get iterated load profile
-            load_profile = building_load[i:(i+HYPER.PREDICTION_WINDOW)].values
-        
             # get time stamp
             time = time_stamps[i]
             
@@ -87,8 +102,27 @@ def process_all_data(
             hour = int(time[11:13])
             quarter_hour = int(time[14:16])
             
-            # create entry values in desired format
-            entry = [time, year, month, day, hour, quarter_hour, building_id, cluster_id]
+            # get iterated meteorological data
+            meteo_dict = {}
+            for meteo_name in HYPER.METEO_NAME_LIST:
+                meteo_dict[meteo_name] = df_meteo[meteo_name][i:(i+HYPER.PREDICTION_WINDOW)].values
+            
+            # get iterated load profile data
+            load_profile = building_load[i:(i+HYPER.PREDICTION_WINDOW)].values
+        
+            # declare empty list to save all entries of a single data point
+            entry = []
+            
+            # Add temporal and spatial features to entry. Ensures same order as new_df_columns
+            for entry_name in new_df_columns_base:
+                command = 'entry.append({})'.format(entry_name)
+                exec(command)
+                
+            # add meteorological data to entry
+            for meteo_name, meteo_profile in meteo_dict.items():
+                entry+= list(meteo_profile)
+                
+            # add load profile to entry
             entry+= list(load_profile)
             
             # append to dataframe
@@ -123,16 +157,10 @@ def process_all_data(
     # only replace its column names
     df_building_images_new.columns = new_columns_list
     
-    
-    ###
-    # Process meteorological data ###
-    ###
-    
-    df_meteo_dict_new = df_meteo_dict
+   
     
     
-    
-    return df_consumption_new, df_building_images_new, df_meteo_dict_new
+    return df_consumption_new, df_building_images_new
 
 
 
