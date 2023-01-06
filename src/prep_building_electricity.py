@@ -2,35 +2,15 @@ import pandas as pd
 import os
 
 
-def prepare_building_electricity_data(HYPER):
-
-    """ """
-    
-    # import data first
-    df_consumption, df_building_images, df_meteo_dict = import_all_data(HYPER)
-
-    # process all data into desired format
-    df_consumption_new, df_building_images_new = process_all_data(
-        HYPER, 
-        df_consumption, 
-        df_building_images, 
-        df_meteo_dict
-    )
-    
 
 
-def process_all_data(
+def process_meteo_and_load_profiles(
     HYPER, 
-    df_consumption, 
-    df_building_images, 
+    df_consumption,
     df_meteo_dict
 ):
     
     """ """
-    
-    ###
-    # Process consumption data ###
-    ###
     
     # create new df column format
     new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 'building_id']
@@ -63,7 +43,7 @@ def process_all_data(
     building_id_list = list(df_consumption.columns.values[1:])
     
     # shorten for test
-    building_id_list = building_id_list[:10]
+    building_id_list = building_id_list[:100]
     
     # declare df row counter
     counter_df_row = 0
@@ -131,10 +111,17 @@ def process_all_data(
             # increment df row counter
             counter_df_row += 1
             
+            
+    # Save data here
     
-    ###
-    # Process building image data ###
-    ###    
+    
+    
+    return df_consumption_new
+
+
+def process_building_imagery(HYPER, df_building_images):
+
+    """ """
     
     # get list of columns
     columns_df_list = df_building_images.columns
@@ -157,10 +144,6 @@ def process_all_data(
     # only replace its column names
     df_building_images_new.columns = new_columns_list
     
-   
-    ###
-    # Save data
-    ###
     
     # create saving path for building imagery
     saving_path = (
@@ -170,13 +153,8 @@ def process_all_data(
     
     # save df_building_images_new
     df_building_images_new.to_csv(saving_path, index=False)
-    
-    
-    
-    return df_consumption_new, df_building_images_new
 
-
-
+    return df_building_images_new
 
 def import_all_data(HYPER):
     
