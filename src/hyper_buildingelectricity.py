@@ -17,15 +17,15 @@ class HyperBuildingElectricity(HyperParameter):
         # data paths
         self.PATH_TO_BUILDING_YEAR_PROFILES_FILE  = (
             HyperParameter.PATH_TO_DATA_RAW
-            + 'BuildingElectricity/profiles_400/building-year_profiles/'
+            + 'BuildingElectricity/profiles_400/building-year profiles/'
             + 'feature_scaled/2014 building-year profiles.csv'
         )
         self.PATH_TO_METEO_DATA_FOLDER  = (
             HyperParameter.PATH_TO_DATA_RAW
             + 'BuildingElectricity/profiles_400/meteo data/'
         )
-        self.PATH_TO_AERIAL_IMAGERY_FOLDER  = (
+        self.PATH_TO_AERIAL_IMAGERY_FILE  = (
             HyperParameter.PATH_TO_DATA_RAW
-            + 'BuildingElectricity/profiles_400/building imagery/histogram/rgb/'
+            + 'BuildingElectricity/profiles_400/building imagery/histogram/rgb/pixel_values.csv'
         )
         
