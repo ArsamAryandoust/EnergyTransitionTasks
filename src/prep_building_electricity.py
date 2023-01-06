@@ -134,10 +134,21 @@ def process_meteo_and_load_profiles(
     df_validation = df_consumption_new.drop(df_training.index)
     
     print(
-        "Training data   :    {:.0%} \n".format(len(df_training)/n_total),
-        "Validation data :    {:.0%} \n".format(len(df_validation)/n_total),
-        "Testing data    :    {:.0%} \n".format(len(df_testing)/n_total)
+        "Training data   :    {:.0%} \n".format(len(df_training)/n_data_total),
+        "Validation data :    {:.0%} \n".format(len(df_validation)/n_data_total),
+        "Testing data    :    {:.0%} \n".format(len(df_testing)/n_data_total)
     )
+    
+    # save results
+    saving_path = HYPER.PATH_TO_DATA_BUILDING_ELECTRICITY_TRAIN + 'training_data.csv'
+    df_training.to_csv(saving_path, index=False)
+    
+    saving_path = HYPER.PATH_TO_DATA_BUILDING_ELECTRICITY_VAL + 'validation_data.csv'
+    df_validation.to_csv(saving_path, index=False)
+    
+    saving_path = HYPER.PATH_TO_DATA_BUILDING_ELECTRICITY_TEST + 'testing_data.csv'
+    df_testing.to_csv(saving_path, index=False)
+    
     
     return df_training, df_validation, df_testing
 
