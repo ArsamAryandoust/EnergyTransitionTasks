@@ -67,10 +67,8 @@ if HYPER.PROCESS_BUILDINGELECTRICITY:
     # create hyper parameters
     HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
     
-    
-    ###
-    # Call functions for data processing here
-    ###
+    # call function to process all data
+    prep_building_electricity.process_all_data(HYPER_BUILDINGELECTRICITY)
     
     
 # Shuffle Uber Movement data
