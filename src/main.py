@@ -75,7 +75,7 @@ if HYPER.PROCESS_BUILDINGELECTRICITY:
     _ = process_building_imagery(HYPER, df_building_images)
     
     # process meteo and load profiles
-    _ = process_meteo_and_load_profiles(
+    _, _, _ = process_meteo_and_load_profiles(
         HYPER, 
         df_consumption, 
         df_meteo_dict
@@ -84,6 +84,7 @@ if HYPER.PROCESS_BUILDINGELECTRICITY:
     # empty memory
     del df_consumption, df_building_images, df_meteo_dict
     gc.collect()
+    
     
 # Shuffle Uber Movement data
 if HYPER.SHUFFLE_UBERMOVEMENT:
