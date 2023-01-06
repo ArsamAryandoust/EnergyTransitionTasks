@@ -45,7 +45,29 @@ class HyperBuildingElectricity(HyperParameter):
             self.PATH_TO_DATA
             + 'BuildingElectricity/'
         )
+        self.PATH_TO_DATA_BUILDING_ELECTRICITY_ADD = (
+            self.PATH_TO_DATA_BUILDING_ELECTRICITY
+            + 'additional/'
+        )
+        self.PATH_TO_DATA_BUILDING_ELECTRICITY_TRAIN = (
+            self.PATH_TO_DATA_BUILDING_ELECTRICITY
+            + 'training/'
+        )
+        self.PATH_TO_DATA_BUILDING_ELECTRICITY_VAL = (
+            self.PATH_TO_DATA_BUILDING_ELECTRICITY
+            + 'validation/'
+        )
+        self.PATH_TO_DATA_BUILDING_ELECTRICITY_TEST = (
+            self.PATH_TO_DATA_BUILDING_ELECTRICITY
+            + 'testing/'
+        )
         
         
         # create directories
         HyperParameter.check_create_dir(self, self.PATH_TO_DATA_BUILDING_ELECTRICITY)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_BUILDING_ELECTRICITY_ADD)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_BUILDING_ELECTRICITY_TRAIN)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_BUILDING_ELECTRICITY_VAL)
+        HyperParameter.check_create_dir(self, self.PATH_TO_DATA_BUILDING_ELECTRICITY_TEST)
+        
+        

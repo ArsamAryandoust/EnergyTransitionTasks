@@ -158,6 +158,19 @@ def process_all_data(
     df_building_images_new.columns = new_columns_list
     
    
+    ###
+    # Save data
+    ###
+    
+    # create saving path for building imagery
+    saving_path = (
+        HYPER.PATH_TO_DATA_BUILDING_ELECTRICITY_ADD 
+        + 'building_images_pixel_histograms_rgb.csv'
+    )
+    
+    # save df_building_images_new
+    df_building_images_new.to_csv(saving_path, index=False)
+    
     
     
     return df_consumption_new, df_building_images_new
