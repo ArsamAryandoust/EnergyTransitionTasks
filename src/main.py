@@ -7,6 +7,7 @@ import prep_uber_movement
 import prep_open_catalyst
 import prep_climart
 import prep_building_electricity
+import gc
 
 
 # create main hyper paramter instance
@@ -67,9 +68,22 @@ if HYPER.PROCESS_BUILDINGELECTRICITY:
     # create hyper parameters
     HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
     
-    # call function to process all data
-    prep_building_electricity.process_all_data(HYPER_BUILDINGELECTRICITY)
+    # import all data
+    df_consumption, df_building_images, df_meteo_dict = import_all_data(HYPER)
+
+    # process building imagery
+    _ = process_building_imagery(HYPER, df_building_images)
     
+    # process meteo and load profiles
+    _ = process_meteo_and_load_profiles(
+        HYPER, 
+        df_consumption, 
+        df_meteo_dict
+    )
+    
+    # empty memory
+    del df_consumption, df_building_images, df_meteo_dict
+    gc.collect()
     
 # Shuffle Uber Movement data
 if HYPER.SHUFFLE_UBERMOVEMENT:
