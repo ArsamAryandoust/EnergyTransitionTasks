@@ -1,6 +1,6 @@
-import pandas as pd
 import os
-
+import pandas as pd
+import numpy as np
 
 
 
@@ -30,9 +30,6 @@ def process_meteo_and_load_profiles(
         new_df_columns.append(entry_name)
         
         
-    # create a new dataframe you want to fill
-    df_consumption_new = pd.DataFrame(columns=new_df_columns)
-    
     # drop the year entries
     df_consumption.drop(index=1, inplace=True)
     
@@ -43,10 +40,21 @@ def process_meteo_and_load_profiles(
     building_id_list = list(df_consumption.columns.values[1:])
     
     # shorten for test
-    building_id_list = building_id_list[:100]
+    #building_id_list = building_id_list[:100]
     
     # declare df row counter
     counter_df_row = 0
+    
+    # decleare empty values array
+    values_array = np.zeros(
+        (
+            len(building_id_list) * 365, 
+            (
+                len(new_df_columns_base) 
+                + HYPER.PREDICTION_WINDOW * (len(HYPER.METEO_NAME_LIST) + 1)
+            )
+        )
+    )
     
     # iterate over all building IDs
     for building_id in building_id_list:
@@ -90,31 +98,30 @@ def process_meteo_and_load_profiles(
             # get iterated load profile data
             load_profile = building_load[i:(i+HYPER.PREDICTION_WINDOW)].values
         
-            # declare empty list to save all entries of a single data point
-            entry = []
             
-            # Add temporal and spatial features to entry. Ensures same order as new_df_columns
-            for entry_name in new_df_columns_base:
-                command = 'entry.append({})'.format(entry_name)
+            # Add features to values_array. Ensures same order as new_df_columns.
+            for index_df_col, entry_name in enumerate(new_df_columns_base):
+                command = 'values_array[counter_df_row, index_df_col] = {}'.format(entry_name)
                 exec(command)
                 
             # add meteorological data to entry
             for meteo_name, meteo_profile in meteo_dict.items():
-                entry+= list(meteo_profile)
+                for i in range(len(meteo_profile)):
+                    index_df_col += 1
+                    values_array[counter_df_row, index_df_col] = meteo_profile[i]
                 
             # add load profile to entry
-            entry+= list(load_profile)
+            for i in range(len(load_profile)):
+                index_df_col += 1
+                values_array[counter_df_row, index_df_col] = load_profile[i]
             
-            # append to dataframe
-            df_consumption_new.loc[counter_df_row] = entry
     
             # increment df row counter
             counter_df_row += 1
-            
-            
-    # Save data here
     
-    
+            
+    # create a new dataframe you want to fill
+    df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
     
     return df_consumption_new
 
