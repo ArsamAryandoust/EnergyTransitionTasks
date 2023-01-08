@@ -33,11 +33,12 @@ def process_csvdata(HYPER, df_csv_dict, city):
     # copy raw dataframe
     df_augmented_csvdata = df_csv_dict['df']
     
-    # subsample data    
+    # subsample or shuffle data (for frac=1)    
     df_augmented_csvdata = df_augmented_csvdata.sample(
         frac=HYPER.SUBSAMPLE_UBERMOVEMENT,
         random_state=HYPER.SEED
     )
+    
     
     # augment raw dataframe
     df_augmented_csvdata.insert(0, 'city_id', HYPER.UBERMOVEMENT_CITY_ID_MAPPING[city])
