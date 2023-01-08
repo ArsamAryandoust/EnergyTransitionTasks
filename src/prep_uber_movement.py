@@ -39,7 +39,6 @@ def process_csvdata(HYPER, df_csv_dict, city):
         random_state=HYPER.SEED
     )
     
-    
     # augment raw dataframe
     df_augmented_csvdata.insert(0, 'city_id', HYPER.UBERMOVEMENT_CITY_ID_MAPPING[city])
     df_augmented_csvdata.insert(3, 'year', df_csv_dict['year'])
@@ -51,6 +50,9 @@ def process_csvdata(HYPER, df_csv_dict, city):
         columns={'hod':'hour_of_day', 'sourceid':'source_id', 'dstid':'destination_id'}, 
         inplace=True
     )
+    
+    # remove any rows with nan entry
+    df_augmented_csvdata = df_augmented_csvdata[df_augmented_csvdata.isnull().sum(axis=1)<1]
     
     return df_augmented_csvdata
     
