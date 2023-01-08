@@ -17,6 +17,9 @@ class HyperBuildingElectricity(HyperParameter):
         # decide the size of prediction window in 15-min time steps
         self.PREDICTION_WINDOW = 96 # corresponds to 24h = 1 days
         
+        # decide the size of historic time window for meteo data in 15-min time steps
+        self.HISTORIC_WINDOW = 96 # corresponds to 24h = 1 days
+        
         # decide which meteorological data to consider
         self.METEO_NAME_LIST = [
             'air_density', 'cloud_cover', 'precipitation', 'radiation_surface',

@@ -69,20 +69,20 @@ if HYPER.PROCESS_BUILDINGELECTRICITY:
     HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
     
     # import all data
-    df_consumption, df_building_images, df_meteo_dict = import_all_data(HYPER)
+    df_consumption, df_building_images, df_meteo_dict = prep_building_electricity.import_all_data(HYPER_BUILDINGELECTRICITY)
 
     # process building imagery
-    _ = process_building_imagery(HYPER, df_building_images)
+    _ = prep_building_electricity.process_building_imagery(HYPER_BUILDINGELECTRICITY, df_building_images)
     
     # process meteo and load profiles
-    _, _, _ = process_meteo_and_load_profiles(
-        HYPER, 
+    _, _, _ = prep_building_electricity.process_meteo_and_load_profiles(
+        HYPER_BUILDINGELECTRICITY, 
         df_consumption, 
         df_meteo_dict
     )
     
     # empty memory
-    del df_consumption, df_building_images, df_meteo_dict
+    del _, df_consumption, df_building_images, df_meteo_dict
     gc.collect()
     
     
