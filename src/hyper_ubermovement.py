@@ -29,7 +29,7 @@ class HyperUberMovement(HyperParameter):
         self.TRAIN_VAL_SPLIT_UBERMOVEMENT = 0.8
         
         # Subsample values
-        self.SUBSAMPLE_UBERMOVEMENT = 0.05
+        self.SUBSAMPLE_UBERMOVEMENT = 1
         
         # out of distribution test splitting rules in time
         random.seed(HyperParameter.SEED)
