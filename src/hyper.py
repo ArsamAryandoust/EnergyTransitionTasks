@@ -10,8 +10,8 @@ class HyperParameter:
     # Choose which data to process
     PROCESS_UBERMOVEMENT = False
     PROCESS_CLIMART = False
-    PROCESS_OPENCATALYST = False
-    PROCESS_BUILDINGELECTRICITY = True
+    PROCESS_OPENCATALYST = True
+    PROCESS_BUILDINGELECTRICITY = False
     
     # Choose which data to shuffle
     SHUFFLE_UBERMOVEMENT = False
