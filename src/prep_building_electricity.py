@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-
+from tqdm import tqdm
 
 
 def process_meteo_and_load_profiles(
@@ -20,7 +20,7 @@ def process_meteo_and_load_profiles(
     
     # append column entries for meteorological data
     for column_name in HYPER.METEO_NAME_LIST:
-        for pred_time_step in range(HYPER.PREDICTION_WINDOW):
+        for pred_time_step in range(HYPER.HISTORIC_WINDOW):
             entry_name = '{}_{}'.format(column_name, pred_time_step+1)
             new_df_columns.append(entry_name)
     
@@ -45,13 +45,16 @@ def process_meteo_and_load_profiles(
     # decleare empty values array
     values_array = np.zeros(
         (
-            len(building_id_list) * 365, 
+            len(building_id_list) * 364, 
             (
                 len(new_df_columns_base) 
                 + HYPER.PREDICTION_WINDOW * (len(HYPER.METEO_NAME_LIST) + 1)
             )
         )
     )
+    
+    # create progress bar
+    pbar = tqdm(total=len(building_id_list))
     
     # iterate over all building IDs
     for building_id in building_id_list:
@@ -75,7 +78,7 @@ def process_meteo_and_load_profiles(
         df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps
-        for i in range(0, len(time_stamps), HYPER.PREDICTION_WINDOW):
+        for i in range(HYPER.HISTORIC_WINDOW, len(time_stamps), HYPER.PREDICTION_WINDOW):
             
             # get time stamp
             time = time_stamps[i]
@@ -90,11 +93,11 @@ def process_meteo_and_load_profiles(
             # get iterated meteorological data
             meteo_dict = {}
             for meteo_name in HYPER.METEO_NAME_LIST:
-                meteo_dict[meteo_name] = df_meteo[meteo_name][i:(i+HYPER.PREDICTION_WINDOW)].values
+                meteo_values = df_meteo[meteo_name][(i-HYPER.HISTORIC_WINDOW):i].values
+                meteo_dict[meteo_name] = meteo_values
             
             # get iterated load profile data
             load_profile = building_load[i:(i+HYPER.PREDICTION_WINDOW)].values
-        
             
             # Add features to values_array. Ensures same order as new_df_columns.
             for index_df_col, entry_name in enumerate(new_df_columns_base):
@@ -116,6 +119,8 @@ def process_meteo_and_load_profiles(
             # increment df row counter
             counter_df_row += 1
     
+        # increment progbar
+        pbar.update(1) 
             
     # create a new dataframe you want to fill
     df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
