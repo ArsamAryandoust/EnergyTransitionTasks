@@ -65,7 +65,7 @@ class HyperOpenCatalyst(HyperParameter):
         self.CHUNK_SIZE_OPENCATALYST = 150_000
         
         # Subsample values
-        self.SUBSAMPLE_OPENCATALYST = 0.01
+        self.SUBSAMPLE_OPENCATALYST = 0.2
         
         ### Create directories for OpenCatalyst ###
         HyperParameter.check_create_dir(self, self.PATH_TO_DATA_OPENCATALYST)

@@ -30,9 +30,6 @@ def create_dataset_df(
     n_sample = math.floor(HYPER.SUBSAMPLE_OPENCATALYST * n_datapoints_per_file)
     import_index_str = ':{}'.format(n_sample)
     
-    # declare empty dataframe
-    df_dataset = pd.DataFrame()
-    
     # set chunk counter for data saving to zero
     chunk_counter = 0
     
@@ -42,14 +39,26 @@ def create_dataset_df(
     # create progress bar
     pbar = tqdm(total=len(file_list))
     
+    # declare empty dataframe
+    df_dataset = pd.DataFrame()
+    
     # iterate over all filenames
     for filename in file_list:
         
-        # create path to iterated file
+        
+        # declare values array with 'empty' strings and sufficient Unicode length
+        n_atoms_assumed = 500
+        values_array = np.full((n_sample, 7+2*3*n_atoms_assumed), 'empty', dtype='<U32')
+        
+        # create path to iterated files
         path_to_file = path_to_dataset_folder + filename
         
         # import dataset
         atoms_object_list = io.read(path_to_file, index=import_index_str)
+        
+        # row counter
+        counter_row_valuesarray = 0
+        n_atoms_max = 0
         
         # iterate over all atoms objects. Each is a datapoint/atom-structure
         for atoms_object in atoms_object_list:
@@ -79,48 +88,55 @@ def create_dataset_df(
             positions_array = positions.flatten()
             forces_array = positions.flatten()
             
-            # create value dict for first entries
-            value_dict = {
-                'n_atoms': n_atoms,
-                'symbols_atoms': symbols_atoms,
-                'volume': volume,
-                'center_of_mass_x': center_of_mass[0],
-                'center_of_mass_y': center_of_mass[1],
-                'center_of_mass_z': center_of_mass[2],
-                'energy': energy
-            }
-            # create value list for dataframe
-            value_array = np.concatenate(
-                (
-                    positions_array,
-                    forces_array
-                )
-            )
+            # fill the first part of values_array
+            values_array[counter_row_valuesarray, :7] = [
+                n_atoms, 
+                symbols_atoms, 
+                volume, 
+                center_of_mass[0], 
+                center_of_mass[1], 
+                center_of_mass[2], 
+                energy
+            ]
             
-            # reshape values array
-            value_array = value_array.reshape(-1, len(value_array))
+            # fill the second part of values_array with positions_array entries
+            values_array[counter_row_valuesarray, 7:(7+len(positions_array))] = positions_array
             
-            # create column names for dataframe
-            cols_list = create_column_pos_force(n_atoms)
+            # fill the second part of values_array with forces_array entries
+            values_array[counter_row_valuesarray, (7+3*n_atoms_assumed):(7+3*n_atoms_assumed+len(forces_array))] = forces_array
             
-            # create a first part of datapoint consisting of value dictionary
-            df_datapoint_part1 = pd.DataFrame(value_dict, index=[0])
-            
-            # create a second part of datapoint consisting of value array
-            df_datapoint_part2 = pd.DataFrame(value_array, columns=cols_list)
-            
-            # merge both datapoint parts into a complete datapoint row as DataFrame
-            df_datapoint = pd.concat([df_datapoint_part1, df_datapoint_part2], axis=1)
-            
-            # concatenate datapoint to existing dataset
-            df_dataset = pd.concat([df_dataset, df_datapoint])
-            
+            # update max number of atoms
+            if n_atoms > n_atoms_max:
+                n_atoms_max = n_atoms
+                
+            # increment row counter
+            counter_row_valuesarray += 1
+
         
-        # sort the columns such that all positions and forces are next to each other
-        max_atoms = df_dataset['n_atoms'].max()    
-        cols_list_add = create_column_pos_force(max_atoms)
-        cols_list = list(value_dict.keys()) + cols_list_add
-        df_dataset = df_dataset[cols_list]
+        # shorten values_array
+        values_array[:, (7+3*n_atoms_max):(7+2*3*n_atoms_max)] = values_array[:, (7+3*n_atoms_assumed):(7+3*n_atoms_assumed + 3*n_atoms_max)]
+        values_array = values_array[:, :(7+2*3*n_atoms_max)]
+        
+        # create column names for dataframe
+        cols_list = create_column_pos_force(n_atoms_max)    
+        cols_list = [
+            'n_atoms', 
+            'symbols_atoms', 
+            'volume', 
+            'center_of_mass_x', 
+            'center_of_mass_y', 
+            'center_of_mass_z',
+            'energy'
+        ] + cols_list
+        
+        # create dataframe from filled values_array
+        df_file = pd.DataFrame(data=values_array, columns=cols_list)
+        
+        # replace 'empty' entries
+        df_file.replace('empty', np.nan, inplace=True)
+        
+        # concatenate dataframe of file with remaining dataset
+        df_dataset = pd.concat([df_dataset, df_file])
         
         # save dataset chunk after importing data of this data file
         df_dataset, chunk_counter = save_chunk(
