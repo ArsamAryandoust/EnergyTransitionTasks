@@ -56,6 +56,8 @@ class HyperUberMovement(HyperParameter):
         year_list = list(range(2015, 2021))
         quarter_list = ['-1-', '-2-', '-3-', '-4-']
         self.UBERMOVEMENT_LIST_OF_CITIES = os.listdir(self.PATH_TO_DATA_RAW_UBERMOVEMENT)
+        self.UBERMOVEMENT_LIST_OF_CITIES.remove('Sydney') # Sydney is problematic for current applications, remove it
+        self.UBERMOVEMENT_LIST_OF_CITIES.remove('Perth') # Perth is problematic for current applications, remove it
         self.UBERMOVEMENT_LIST_OF_CITIES = self.UBERMOVEMENT_LIST_OF_CITIES[:14] # shorten city list to 14 ideally
         self.UBERMOVEMENT_CITY_FILES_MAPPING = {}
         self.UBERMOVEMENT_CITY_ID_MAPPING = {}
