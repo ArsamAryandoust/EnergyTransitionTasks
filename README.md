@@ -37,6 +37,7 @@ replaced by new cost-effective catalysts, an earlier adoption of hydrogen energy
 storage systems may be achieved due to significant cost reductions. Data from the
 periodic table of elements is collected from here: https://pubchem.ncbi.nlm.nih.gov/periodic-table/.
 
+A critical view on hydrogen is provided in https://blogs.ethz.ch/energy/h2-or-not/
 
 ### ClimART
 
