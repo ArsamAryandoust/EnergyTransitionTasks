@@ -9,6 +9,35 @@ solving the complex set of problems involved in enhancing the global energy tran
 towards highly renewable electricity systems.
 
 
+## Getting started
+
+Download this repository to your home directory:
+
+```
+cd 
+git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
+cd EnergyTransitionTasks
+```
+
+Build and run Docker for processing data:
+
+```
+docker build -t main Docker
+docker run -v ~/EnergyTransitionTasks:/EnergyTransitionTasks main
+```
+
+Build and run Docker for processing data with Jupyter notebooks:
+
+```
+docker build -t main_notebook DockerNotebook
+docker run -it -v ~/EnergyTransitionTasks:/EnergyTransitionTasks -p 3333:1111 main_notebook
+```
+
+Open the link that shows in your terminal with a browser. Then, replace the port 
+1111 with 3333 in your browser link to see notebooks inside the Docker container.
+
+---
+
 ### Uber Movement
 
 The Uber Movement project provides travel time data between different city zones
@@ -63,6 +92,7 @@ prediction task from only remotely sensed features consisting of meterological d
 and aerial imagery of buildings [4].
 
 
+---
 
 ### References
 
@@ -82,36 +112,4 @@ Systems Track on Datasets and Benchmarks (2021). https://doi.org/10.48550/arXiv.
 [4] Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric 
 load forecasts using less data with active deep learning, Nature Machine 
 Intelligence 4, 977-991 (2022). https://doi.org/10.1038/s42256-022-00552-x
-
-
-
-## Download
-
-Download this repository to your home directory:
-
-```
-cd 
-git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
-cd EnergyTransitionTasks
-```
-
-
-## Docker container
-
-```
-docker build -t main Docker
-docker run -v ~/EnergyTransitionTasks:/EnergyTransitionTasks main
-```
-
-
-## Jupyter notebooks inside Docker containers
-
-```
-docker build -t main_notebook DockerNotebook
-docker run -it -v ~/EnergyTransitionTasks:/EnergyTransitionTasks -p 3333:1111 main_notebook
-```
-
-Open the link that shows in your terminal with a browser. Then, replace the port 
-1111 with 3333 in your browser link to see notebooks inside the Docker container.
-
 
