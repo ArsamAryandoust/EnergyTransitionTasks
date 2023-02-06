@@ -25,8 +25,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.0074671"
-     inkscape:cx="112.65877"
-     inkscape:cy="428.30185"
+     inkscape:cx="113.65135"
+     inkscape:cy="429.29442"
      inkscape:window-width="2149"
      inkscape:window-height="1024"
      inkscape:window-x="2767"
@@ -47,12 +47,12 @@
        x="9.1680002"
        y="57.637516" />
     <rect
-       style="font-variation-settings:normal;fill:#000000;fill-opacity:0.03;fill-rule:evenodd;stroke:#213f3f;stroke-width:1.136;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.573152;stop-color:#000000"
+       style="font-variation-settings:normal;fill:#000000;fill-opacity:0.03;fill-rule:evenodd;stroke:#213f3f;stroke-width:0.668323;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.573152;stop-color:#000000"
        id="rect236-3"
-       width="124.57798"
-       height="76.059555"
-       x="9.1682959"
-       y="73.658997" />
+       width="124.82668"
+       height="26.272602"
+       x="8.9344568"
+       y="73.425156" />
     <text
        xml:space="preserve"
        style="font-size:7.7611px;line-height:1.25;font-family:sans-serif;stroke-width:0.264583"
@@ -154,32 +154,32 @@
    style="font-size:65%;baseline-shift:sub"
    id="tspan1918-2">2</tspan></tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.5"
-       d="m 23.163423,57.615846 0.259698,91.472064"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.182143px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 23.162289,57.617203 0.261966,42.517027"
        id="path2088" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.5"
-       d="m 38.745627,57.931547 0.259698,91.472063"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.180513px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 38.744471,57.932916 0.26201,41.752681"
        id="path2088-3" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:none;opacity:0.5"
-       d="m 54.99673,57.850824 0.259698,91.472066"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.181437;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 54.995586,57.852186 55.257572,100.0382"
        id="path2088-7" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:none"
-       d="m 70.848898,57.724894 0.259698,91.472066"
+       style="fill:none;stroke:#000000;stroke-width:0.3408;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 70.847395,57.727472 71.110099,99.73738"
        id="path2088-5" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.5"
-       d="m 86.757681,57.598168 0.259698,91.472062"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.181053px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 86.756532,57.599533 0.261996,42.004748"
        id="path2088-9" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.5"
-       d="m 103.39348,57.588531 0.2597,91.472069"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.137993px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 103.56,57.588701 0.14985,42.662359"
        id="path2088-2" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.266003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.5"
-       d="m 118.37123,57.618032 0.2597,91.472068"
+       style="opacity:0.5;fill:none;stroke:#000000;stroke-width:0.181516px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 118.37009,57.619393 0.26198,42.222085"
        id="path2088-28" />
   </g>
 </svg>
