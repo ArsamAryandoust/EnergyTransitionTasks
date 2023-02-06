@@ -1,15 +1,17 @@
-# A collection of datasets and prediction tasks for enhancing the global energy transition
+# Prediction tasks and datasets for enhancing the global energy transition
 
 An effective way to reduce global greenhouse gas emissions and mitigate climate 
 change is to electrify most of our energy consumption and supply its electricity 
-from renewable energy sources like wind and solar. In this repository, we provide 
-a number of prediction tasks and datasets from different domains such as mobility, 
-material science, climate modeling and load forecasting that all contribute to 
-solving the complex set of problems involved in enhancing the global energy transition 
-towards highly renewable electricity systems.
+from renewable sources like wind and solar. In this repository, we provide a number 
+of prediction tasks and datasets from different domains such as mobility, material 
+science, climate modeling and load forecasting that all contribute to solving the 
+complex set of problems involved in enhancing the global energy transition towards 
+highly renewable electricity systems. All data is prepared in the following data
+format.
 
+<img src="/figures/data_format.png" />
 
-## Getting started
+## Download
 
 Download this repository to your home directory:
 
@@ -18,6 +20,8 @@ cd
 git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
 cd EnergyTransitionTasks
 ```
+
+## Docker
 
 Build and run Docker for processing data:
 
@@ -37,6 +41,7 @@ Open the link that shows in your terminal with a browser. Then, replace the port
 1111 with 3333 in your browser link to see notebooks inside the Docker container.
 
 ---
+
 
 ### Uber Movement
 
