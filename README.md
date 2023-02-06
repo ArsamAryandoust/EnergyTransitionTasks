@@ -2,14 +2,25 @@
 
 An effective way to reduce global greenhouse gas emissions and mitigate climate 
 change is to electrify most of our energy consumption and supply its electricity 
-from renewable sources like wind and solar. In this repository, we provide a number 
-of prediction tasks and datasets from different domains such as mobility, material 
-science, climate modeling and load forecasting that all contribute to solving the 
-complex set of problems involved in enhancing the global energy transition towards 
-highly renewable electricity systems. All data is prepared in the following data
-format.
+from renewable sources like wind and solar. In this repository, we provide prediction 
+tasks and datasets from different domains such as mobility, material science, 
+climate modeling and load forecasting that all contribute to solving the complex 
+set of problems involved in enhancing the global energy transition to highly renewable 
+systems. 
+
 
 <img src="/figures/data_format.png" />
+
+
+All data is prepared in the above tabular data format as a .csv file, where each 
+row represents a single data point consisting of n-dimensional features x<sub>1</sub> 
+to x<sub>n</sub> and m-dimensional labels y<sub>1</sub> to y<sub>m</sub>. For 
+unsupervised learning tasks, no labels are available. For unregular datasets, n 
+and m represent the dimension of the longest feature and label vectors available 
+in our datasets; every data point/row then only contains features up to the relevant 
+vector entry, and is sparse for the remaining parts.
+
+
 
 ## Download
 
@@ -40,9 +51,18 @@ docker run -it -v ~/EnergyTransitionTasks:/EnergyTransitionTasks -p 3333:1111 ma
 Open the link that shows in your terminal with a browser. Then, replace the port 
 1111 with 3333 in your browser link to see notebooks inside the Docker container.
 
+
+### Contributions
+
+If you have any published or unpublished dataset that fits our purpose, your contribution
+is highly appreciated. For changes to code, please download this repository, create 
+a new branch, push your changes to the repository, and create a pull request to 
+the latest\_release branch.
+
+
 ---
-
-
+In the following, we provide a short summary of each prediciton task and dataset, 
+and its relevance and potential pitfalls for enhancing the global energy transition.
 
 ### Uber Movement
 
