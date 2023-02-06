@@ -5,8 +5,8 @@ change is to electrify most of our energy consumption and supply its electricity
 from renewable sources like wind and solar. In this repository, we provide prediction 
 tasks and datasets from different domains such as mobility, material science, 
 climate modeling and load forecasting that all contribute to solving the complex 
-set of problems involved in enhancing the global energy transition to highly renewable 
-systems. 
+set of problems involved in enhancing the global energy transition to highly or 
+fully renewable systems. 
 
 
 <img src="/figures/data_format.png" />
@@ -22,7 +22,7 @@ vector entry, and is sparse for the remaining parts.
 
 
 
-## Download
+### Download
 
 Download this repository to your home directory:
 
@@ -32,7 +32,7 @@ git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
 cd EnergyTransitionTasks
 ```
 
-## Docker
+### Docker
 
 Build and run Docker for processing data:
 
@@ -54,11 +54,15 @@ Open the link that shows in your terminal with a browser. Then, replace the port
 
 ### Contributions
 
-If you have any published or unpublished dataset that fits our purpose, your contribution
+If you have published or unpublished datasets that fit our purpose, your contribution
 is highly appreciated. For changes to code, please download this repository, create 
 a new branch, push your changes to the repository, and create a pull request to 
 the latest\_release branch.
 
+If you are using the datasets we provide here and have identified any problems 
+with these or want to suggest ways to improve these, your feedback is highly 
+appreciated. For this, please go to the Discussions tab, create a New discussion,
+and give us your detailed feedback.
 
 ---
 In the following, we provide a short summary of each prediciton task and dataset, 
