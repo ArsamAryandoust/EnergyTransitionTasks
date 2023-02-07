@@ -1,4 +1,4 @@
-<img src="https://img.shields.io/badge/contributors-1-blue"/> <img src="https://img.shields.io/badge/datasets-4-blue"/>
+<img src="https://img.shields.io/badge/datasets-4-blue"/>
 
 # Prediction tasks and datasets for enhancing the global energy transition
 
@@ -25,7 +25,7 @@ vector entry, and is sparse for the remaining parts.
 
 
 
-### Download
+### Getting started
 
 Download this repository to your home directory:
 
