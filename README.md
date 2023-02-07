@@ -25,7 +25,7 @@ vector entry, and is sparse for the remaining parts.
 
 
 
-### Download
+### Getting started
 
 Download this repository to your home directory:
 
