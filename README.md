@@ -17,7 +17,7 @@ fully renewable systems.
 
 All data is prepared in the above tabular data format as a .csv file, where each 
 row represents a single data point consisting of n-dimensional features x<sub>1</sub> 
-to x<sub>n</sub> and m-dimensional labels y<sub>1</sub> to y<sub>m</sub>. For 
+... x<sub>n</sub> and m-dimensional labels y<sub>1</sub> ... y<sub>m</sub>. For 
 unsupervised learning tasks, no labels are available. For unregular datasets, n 
 and m represent the dimension of the longest feature and label vectors available 
 in our datasets; every data point/row then only contains features up to the relevant 
