@@ -1,4 +1,8 @@
+<img src="https://img.shields.io/badge/contributors-1-blue"/>
+
+
 # Prediction tasks and datasets for enhancing the global energy transition
+
 
 An effective way to reduce global greenhouse gas emissions and mitigate climate 
 change is to electrify most of our energy consumption and supply its electricity 
