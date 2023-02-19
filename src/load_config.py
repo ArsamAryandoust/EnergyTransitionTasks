@@ -211,16 +211,218 @@ def config_CA(config):
     """
     Augments configuration file for processing ClimArt dataset.
     """
-    pass      
+    
+    # get base config
+    dictionary = config['climart']
+    
+    # add data paths
+    dictionary['path_to_data_raw_climart'] = (
+        config['general']['path_to_data_raw'] 
+        + 'ClimART/'
+    )
+    dictionary['path_to_raw_climart_statistics'] = (
+        dictionary['path_to_data_raw_climart']
+        + 'statistics/'
+    )
+    dictionary['path_to_raw_climart_inputs'] = (
+        dictionary['path_to_data_raw_climart']
+        + 'inputs/'
+    )
+    dictionary['path_to_raw_climart_outputs_clear_sky'] = (
+        dictionary['path_to_data_raw_climart']
+        + 'outputs_clear_sky/'
+    )
+    dictionary['path_to_raw_climart_outputs_pristine'] = (
+        dictionary['path_to_data_raw_climart']
+        + 'outputs_pristine/'
+    )
+    dictionary['path_to_data_climart'] = (
+        config['general']['path_to_data'] 
+        + 'ClimART/'
+    )
+    dictionary['path_to_data_climart_clearsky'] = (
+        dictionary['path_to_data_climart']
+        + 'clear_sky/'
+    )
+    dictionary['path_to_data_climart_pristine'] = (
+        dictionary['path_to_data_climart']
+        + 'pristine/'
+    )
+    dictionary['path_to_data_climart_clearsky_train'] = (
+        dictionary['path_to_data_climart_clearsky']
+        + 'training/'
+    )
+    dictionary['path_to_data_climart_pristine_train'] = (
+        dictionary['path_to_data_climart_pristine']
+        + 'training/'
+    )
+    dictionary['path_to_data_climart_clearsky_val'] = (
+        dictionary['path_to_data_climart_clearsky']
+        + 'validation/'
+    )
+    dictionary['path_to_data_climart_pristine_val'] = (
+        dictionary['path_to_data_climart_pristine']
+        + 'validation/'
+    )
+    dictionary['path_to_data_climart_clearsky_test'] = (
+        dictionary['path_to_data_climart_clearsky']
+        + 'testing/'
+    )
+    dictionary['path_to_data_climart_pristine_test'] = (
+        dictionary['path_to_data_climart_pristine']
+        + 'testing/'
+    )
+    
+    
+    # out of distribution test splitting rules in time
+    t_step_size_h = 205
+    n_t_steps_per_year = math.ceil(365 * 24 / t_step_size_h)
+    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, t_step_size_h))
+    share_hours_sampling = 0.2
+    n_hours_subsample = math.ceil(n_t_steps_per_year * share_hours_sampling)
+    random.seed(HyperParameter.SEED)
+    hours_of_year = random.sample(
+        hours_of_year_list, 
+        n_hours_subsample
+    )
+    
+    # out of distribution test splitting rules in space
+    n_lat, n_lon = 64, 128
+    n_coordinates = n_lat * n_lon
+    first_coordinates_index_list = list(range(n_coordinates))
+    share_coordinates_sampling = 0.2
+    n_cord_subsample = math.ceil(share_coordinates_sampling * n_coordinates)
+    random.seed(HyperParameter.SEED)
+    coordinates_index_list = random.sample(
+        first_coordinates_index_list,
+        n_cord_subsample
+    )
+    
+    coordinate_list = []
+    for step in range(n_t_steps_per_year):
+        
+        coordinate_list_step = []
+        for entry in coordinates_index_list:
+            new_entry = entry + step * n_coordinates
+            coordinate_list_step.append(new_entry)
+            
+        coordinate_list += coordinate_list_step
+        
+    # dictionary saving rules
+    dictionary['test_plit_dict_climart'] = {
+        'temporal_dict': {
+            'year': 2014,
+            'hours_of_year': hours_of_year
+        },
+        'spatial_dict': {
+            'coordinates': coordinate_list
+        }
+    }
+    
+    # save a list with names of meta file names
+    dictionary['climart_meta_filenames_dict'] = {
+        'meta':'META_INFO.json',
+        'stats':'statistics.npz'
+    }
+    
+    # create directory structure for saving results
+    for path in [
+        dictionary['path_to_data_climart'], 
+        dictionary['path_to_data_climart_clearsky'],
+        dictionary['path_to_data_climart_pristine'],
+        dictionary['path_to_data_climart_clearsky_train'],
+        dictionary['path_to_data_climart_pristine_train'],
+        dictionary['path_to_data_climart_clearsky_val'],
+        dictionary['path_to_data_climart_pristine_val'],
+        dictionary['path_to_data_climart_clearsky_test'],
+        dictionary['path_to_data_climart_pristine_test']
+    ]:
+        check_create_dir(path)
+    
+    config['climart'] = dictionary
+    return config
     
     
 def config_OC(config):
     """
     Augments configuration file for processing Open Catalyst dataset.
     """
-    pass        
+    
+    # get base config
+    dictionary = config['open_catalyst']
+            
+    # add data paths
+    dictionary['path_to_data_raw_opencatalyst'] = (
+        config['general']['path_to_data_raw'] 
+        + 'OpenCatalyst/OC20/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_pte'] = (
+        config['general']['path_to_data_raw'] 
+        + 'OpenCatalyst/PubChemElements_all.csv'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef'] = (
+        dictionary['path_to_data_raw_opencatalyst']
+        + 'S2EF/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef_train'] = (
+        dictionary['path_to_data_raw_opencatalyst_s2ef']
+        + 's2ef_train_2M/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef_val_id'] = (
+        dictionary['path_to_data_raw_opencatalyst_s2ef']
+        + 's2ef_val_id/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_ads'] = (
+        dictionary['path_to_data_raw_opencatalyst_s2ef']
+        + 's2ef_val_ood_ads/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_cat'] = (
+        dictionary['path_to_data_raw_opencatalyst_s2ef']
+        + 's2ef_val_ood_cat/'
+    )
+    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_both'] = (
+        dictionary['path_to_data_raw_opencatalyst_s2ef']
+        + 's2ef_val_ood_both/'
+    )
+    dictionary['path_to_data_opencatalyst'] = (
+        config['general']['path_to_data'] 
+        + 'OpenCatalyst/'
+    )
+    dictionary['path_to_data_opencatalyst_oc20_s2ef'] = (
+        dictionary['path_to_data_opencatalyst']
+        + 'OC20_S2EF/'
+    )
+    dictionary['path_to_data_opencatalyst_oc20_s2ef_add'] = (
+        dictionary['path_to_data_opencatalyst_oc20_s2ef']
+        + 'additional/'
+    )
+    dictionary['path_to_data_opencatalyst_oc20_s2ef_train'] = (
+        dictionary['path_to_data_opencatalyst_oc20_s2ef']
+        + 'training/'
+    )
+    dictionary['path_to_data_opencatalyst_oc20_s2ef_val'] = (
+        dictionary['path_to_data_opencatalyst_oc20_s2ef']
+        + 'validation/'
+    )
+    dictionary['path_to_data_opencatalyst_oc20_s2ef_test'] = (
+        dictionary['path_to_data_opencatalyst_oc20_s2ef']
+        + 'testing/'
+    )
+    
+    # create directory structure for saving results
+    for path in [
+        dictionary['path_to_data_opencatalyst'], 
+        dictionary['path_to_data_opencatalyst_oc20_s2ef'],
+        dictionary['path_to_data_opencatalyst_oc20_s2ef_add'],
+        dictionary['path_to_data_opencatalyst_oc20_s2ef_train'],
+        dictionary['path_to_data_opencatalyst_oc20_s2ef_val'],
+        dictionary['path_to_data_opencatalyst_oc20_s2ef_test']
+    ]:
+        check_create_dir(path)
     
     
+    config['open_catalyst'] = dictionary
+    return config
     
     
     
