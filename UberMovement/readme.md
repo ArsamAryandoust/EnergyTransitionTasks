@@ -1,4 +1,4 @@
-### Uber Movement
+# Uber Movement
 
 The Uber Movement project provides travel time data between different city zones
 in the form of origin-destination matrices for about 50 cities around the world 
@@ -11,6 +11,8 @@ it will allow us to know how much power must flow to which parts of a city when
 electricity generation from solar power is to be used to charge electrc vehicles 
 during mid-day.
 
+
+### Citation:
 [1] Aryandoust, A., Van Vliet, O. & Patt, A. City-scale car traffic and parking 
 density maps from Uber Movement travel time data, Scientific Data 6, 158 (2019). 
 https://doi.org/10.1038/s41597-019-0159-6
