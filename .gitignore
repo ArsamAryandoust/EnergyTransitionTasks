@@ -1,5 +1,4 @@
 data
 
-src/datasets/*.ipynb
 src/datasets/.ipynb_checkpoints
 src/__pycache__
