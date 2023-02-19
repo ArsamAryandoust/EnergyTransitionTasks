@@ -13,6 +13,10 @@ building_electricity:
     test_split: 0.5
     train_val_split: 0.8
 
+uber_movement: 
+    chunk_size_ubermovement: 20_000_000
+    train_val_split_ubermovement: 0.8
+    subsample_ubermovement: 1
 
 climart:
     chunk_size_climart: 35_000
