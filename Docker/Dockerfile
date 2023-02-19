@@ -10,6 +10,7 @@ RUN pip3 install pandas
 RUN pip3 install h5py
 RUN pip3 install ase
 RUN pip3 install tqdm
+RUN pip3 install pyyaml
 
 ENV PATH="${PATH}:/EnergyTransitionTasks/src"
 WORKDIR /EnergyTransitionTasks
