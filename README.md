@@ -4,7 +4,7 @@
 
 Datasets:
 
-* [Building Electricity](../tree/config_file/BuildingElectricity)
+* [Building Electricity](./tree/config_file/BuildingElectricity)
 * 
 
 
