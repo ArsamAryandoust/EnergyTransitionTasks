@@ -1,5 +1,15 @@
 import os
+import yaml
 
+def get_config_from_yaml:
+    """
+    Get config from yaml file
+    """
+    
+    with open("config.yml", "r") as configfile:
+        config = yaml.safe_load(configfile)
+
+    return config
 
 def check_create_dir(path):
     """
@@ -13,8 +23,7 @@ def check_create_dir(path):
 
 def config_BE(config):
     """
-    Augments configuration file with settings for processing Building Electricity 
-    dataset.
+    Augments configuration filefor processing Building Electricity dataset.
     """
     
     # get base config
@@ -71,8 +80,27 @@ def config_BE(config):
     
 def config_UM(config):
     """
-    Augments configuration file with settings for processing Uber Movement dataset.
+    Augments configuration file for processing Uber Movement dataset.
     """
     pass    
+    
+    
+def config_CA(config):
+    """
+    Augments configuration file for processing ClimArt dataset.
+    """
+    pass      
+    
+    
+def config_OC(config):
+    """
+    Augments configuration file for processing Open Catalyst dataset.
+    """
+    pass        
+    
+    
+    
+    
+    
     
 
