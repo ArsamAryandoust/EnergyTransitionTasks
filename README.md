@@ -24,38 +24,7 @@ in our datasets; every data point/row then only contains features up to the rele
 vector entry, and is sparse for the remaining parts.
 
 
-
-### Getting started
-
-Download this repository to your home directory:
-
-```
-cd 
-git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
-cd EnergyTransitionTasks
-```
-
-### Docker
-
-Build and run Docker for processing data:
-
-```
-docker build -t main Docker
-docker run -v ~/EnergyTransitionTasks:/EnergyTransitionTasks main
-```
-
-Build and run Docker for processing data with Jupyter notebooks:
-
-```
-docker build -t main_notebook DockerNotebook
-docker run -it -v ~/EnergyTransitionTasks:/EnergyTransitionTasks -p 3333:1111 main_notebook
-```
-
-Open the link that shows in your terminal with a browser. Then, replace the port 
-1111 with 3333 in your browser link to see notebooks inside the Docker container.
-
-
-### Contributions
+### Contributing
 
 If you have published or unpublished datasets that fit our purpose, your contribution
 is highly appreciated. For changes to code, please download this repository, create 
@@ -67,9 +36,43 @@ with these or want to suggest ways to improve these, your feedback is highly
 appreciated. For this, please go to the Discussions tab, create a New discussion,
 and give us your detailed feedback.
 
----
-In the following, we provide a short summary of each prediciton task and dataset, 
-and its relevance and potential pitfalls for enhancing the global energy transition.
+
+### Download
+
+Download this repository with all data samples to your home directory:
+
+```
+cd 
+git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
+cd EnergyTransitionTasks
+```
+
+
+### Docker
+
+Build and run Docker for processing data:
+The easiest way to build and run the Docker container is with the `build_and_run.sh` 
+script we provide. To do this, execute the following command:
+
+```
+./build_and_run.sh
+```
+
+
+### Process data
+
+All raw datasets can be processed using the `main.py` file inside the `src` folder.
+All available options can be found by executing the following command inside Docker:
+```
+python3 src/main.py --help
+```
+
+For example, processing the Building Electricity dataset can be done with:
+```
+python3 src/main.py -building_electricity
+```
+
+
 
 ### Uber Movement
 
@@ -100,6 +103,7 @@ storage systems may be achieved due to significant cost reductions. Data from th
 periodic table of elements is collected from here: https://pubchem.ncbi.nlm.nih.gov/periodic-table/.
 
 A critical view on hydrogen is provided in https://blogs.ethz.ch/energy/h2-or-not/
+
 
 ### ClimART
 
