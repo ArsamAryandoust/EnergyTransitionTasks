@@ -1,16 +1,3 @@
-"""
-import hyper
-import hyper_ubermovement
-import hyper_climart
-import hyper_opencatalyst
-import hyper_buildingelectricity
-import prep_uber_movement
-import prep_open_catalyst
-import prep_climart
-import prep_building_electricity
-import gc
-"""
-
 import parse_args
 import load_config
 
@@ -18,8 +5,8 @@ import load_config
 
 if __name__ == "__main__":
     """
-    Executing main.py inside this prevents ability to execute main.py from other 
-    parts of program.
+    Parses the command line arguments and loads the configurations from config.yml
+    and then executes program accordingly.
     """
     
     # get the command line arguments
@@ -50,9 +37,16 @@ if __name__ == "__main__":
     if args.shuffle_CA:
         print("Shuffling processed ClimArt data.")
         
-        
+
+
 
 """
+import prep_uber_movement
+import prep_open_catalyst
+import prep_climart
+import prep_building_electricity
+import gc
+
 # create main hyper paramter instance
 HYPER = hyper.HyperParameter()
 
