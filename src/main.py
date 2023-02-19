@@ -83,7 +83,7 @@ def parse_arguments() -> argparse.Namespace:
         args.building_electricity or args.uber_movement or args.open_catalyst or
         args.shuffle_UM or args.shuffle_CA
     ):
-        print("Must select at least one dataset to proces or shuffle!")
+        print("Must select at least one dataset to process or shuffle!")
         exit(1)
 
     
