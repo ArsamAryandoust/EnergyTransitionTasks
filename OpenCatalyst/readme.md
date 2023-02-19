@@ -9,7 +9,9 @@ The authors publish all data on self-hosted repositories under a CC Attribution 
 ### Citation:
 [1] Zitnick, C. L. et al. An Introduction to Electrocatalyst Design using Machine 
 Learning for Renewable Energy Storage. Preprint at https://arxiv.org/abs/2010.09435 (2022).
+
 [2] Chanussot, L. et al. Open Catalyst 2020 (OC20) Dataset and Community Challenges. 
 American Chemical Society 11 (10), 6059–6072 (2021).
+
 [3] Tran, R. et al. The Open Catalyst 2022 (OC22) Dataset and Challenges for Oxide 
 Electrocatalysts. Preprint at https://arxiv.org/abs/2206.08917 (2022).
