@@ -44,22 +44,22 @@ def parse_arguments() -> argparse.Namespace:
     # processing
     parser.add_argument(
         "-building_electricity", 
-        help="Process datasets for Building Electricity prediciton task",
+        help="Process datasets for Building Electricity task",
         action="store_true"
     )
     parser.add_argument(
         "-uber_movement", 
-        help="Process datasets for Uber Movement prediciton task",
+        help="Process datasets for Uber Movement task",
         action="store_true"
     )
     parser.add_argument(
         "-climart", 
-        help="Process datasets for ClimART prediciton task",
+        help="Process datasets for ClimART task",
         action="store_true"
     )
     parser.add_argument(
         "-open_catalyst", 
-        help="Process datasets for Open Catalyst prediciton task",
+        help="Process datasets for Open Catalyst task",
         action="store_true"
     )
     
@@ -81,7 +81,7 @@ def parse_arguments() -> argparse.Namespace:
     # do some checks for validity of args
     if not (
         args.building_electricity or args.uber_movement or args.open_catalyst or
-        args.shuffle_UM or args.shuffle_CA
+        args.climart or args.shuffle_UM or args.shuffle_CA
     ):
         print("Must select at least one dataset to process or shuffle!")
         exit(1)
