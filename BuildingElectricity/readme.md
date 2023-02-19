@@ -1,14 +1,8 @@
 # Building Electricity
 
-The Building Electricity dataset provides electricity consumption profiles of about 
-100 and 400 single buildings in 2014, aerial imagery data of these buildings and
-and meteorlogical conditions in the area of these buildings during the same year
-under an MIT license (https://opensource.org/licenses/MIT). The goal is to predict
-the electric consumption profile of single buildings for the next 24h in 15-min
-time steps (96 values) at different times as the only ground truth data in the 
-prediction task from only remotely sensed features consisting of meterological data
-and aerial imagery of buildings [1].
+Aryandoust et al. predict the electric load profile of single buildings for a future time window of 24 h at a given time, given purely remotely sensed features, that is, the aerial image of buildings and the meteorological conditions in the region of these buildings for a past time window of 24 h [1]. Among many different types of electric load forecasts that are useful for enhancing the energy transition, this falls into the category of short-term spatio-temporal forecasts and can be used for both planning and dispatch of renewable systems. The task aims at assessing the information content of candidate data points prior to physically measuring or streaming these, a method known as active learning, so as to reduce the use of smart meters and data queries to the most informative data only. Enhancing solutions to this task at scale, however, bears the risk of having significantly larger computation-related GHG emissions compared with distributing smart meters and querying their data at random using passive learning, as the assessment of informativeness of data points is found to cost 4-11 times more computational time in the original study.
 
+The authors publish their datasets under an MIT license (\url{https://opensource.org/licenses/MIT}) in a Harvard Dataverse repository (\url{https://doi.org/10.7910/DVN/3VYYET}). Their prediction task includes two datasets, one containing 92 buildings which we refer to as the \emph{building-92} dataset, and the other containing 459 buildings which we refer to as the \emph{building-459} dataset.
 
 ### Citation:
 [1] Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric 

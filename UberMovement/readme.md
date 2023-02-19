@@ -1,15 +1,8 @@
 # Uber Movement
 
-The Uber Movement project provides travel time data between different city zones
-in the form of origin-destination matrices for about 50 cities around the world 
-under a CC BY-NC 3.0 US license (https://creativecommons.org/licenses/by-nc/3.0/us/). 
-Travel time data can be used, among many other things in planning urban mobility, 
-to infer where cars are parked at what times throughout a day, week, season and 
-year in a city [1]. This information is important for planning and operating power 
-systems in places where we are transitioning to using electric cars. For example, 
-it will allow us to know how much power must flow to which parts of a city when 
-electricity generation from solar power is to be used to charge electrc vehicles 
-during mid-day.
+Aryandoust et al. use travel time changes between different zones of a city to infer probabilities of driving and choosing a destination, and sample spatio-temporal car parking maps on the scale of entire cities with these [1]. Their car parking maps are primarily used for planning the distribution and sizing of charging stations in renewable power systems when electrifying mobility and utilizing storage capacities for vehicle-to-grid electricity system services. We can predict origin-destination matrices of travel time between any two city zones at a given time, given the geographic information of city zones and information about circadian rhythms of a city. This allows us to expand the analysis of car parking maps to cities where no travel time data is available, or improve parking maps for cities where data is missing and travel time matrices are highly sparse. Missing data itself, however, contains information like a lack of traveling demand between two city zones at a given time. Predicting missing travel time data therefore bears the risks of worsening the performance of the downstream task for sampling parking maps by filling informative sparsity.
+
+The authors use travel time data published by the Uber Movement project (\url{https://movement.uber.com}) that are currently available under a CC BY-NC 3.0 US license (\url{https://creativecommons.org/licenses/by-nc/3.0/us/}) for 51 cities around the globe. The geographic information of city zones is further available under a custom license for each city.  
 
 
 ### Citation:
