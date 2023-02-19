@@ -4,7 +4,7 @@
 
 Datasets:
 
-* [Building Electricity](../BuildingElectricity)
+* [Building Electricity](BuildingElectricity)
 * 
 
 
