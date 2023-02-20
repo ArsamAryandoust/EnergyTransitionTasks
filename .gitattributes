@@ -1,4 +1,4 @@
-UberMovement/*.csv filter=lfs diff=lfs merge=lfs -text
-ClimART/*.csv filter=lfs diff=lfs merge=lfs -text
-OpenCatalyst/*.csv filter=lfs diff=lfs merge=lfs -text
-BuildingElectricity/*.csv filter=lfs diff=lfs merge=lfs -text
+datasets/UberMovement/*.csv filter=lfs diff=lfs merge=lfs -text
+datasets/ClimART/*.csv filter=lfs diff=lfs merge=lfs -text
+datasets/OpenCatalyst/*.csv filter=lfs diff=lfs merge=lfs -text
+datasets/BuildingElectricity/*.csv filter=lfs diff=lfs merge=lfs -text
