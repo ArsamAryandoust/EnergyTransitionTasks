@@ -4,6 +4,7 @@ def parse_arguments() -> argparse.Namespace:
     """ 
     Parses the command line arguments passed to the program
     """
+    
     parser = argparse.ArgumentParser(
         prog="EnergyTransitionTasks",
         description= """ Processes raw energy transition tasks datasets. We currently 

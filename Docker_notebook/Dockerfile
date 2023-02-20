@@ -10,7 +10,5 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 RUN pip3 install jupyter
 
-# ENV PATH="${PATH}:/EnergyTransitionTasks/src"
 WORKDIR /EnergyTransitionTasks
-
 CMD jupyter notebook --ip 0.0.0.0 --port 1111 --no-browser --allow-root
