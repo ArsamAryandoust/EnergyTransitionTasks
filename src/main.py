@@ -14,7 +14,7 @@ if __name__ == "__main__":
     args = parse_args.parse_arguments()
     
     # get config from yaml file
-    config = load_config.get_config_from_yaml()
+    config = get_config_from_yaml()
         
     if args.building_electricity:
         print("Processing Building Electricity dataset.")
