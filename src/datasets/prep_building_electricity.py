@@ -154,7 +154,6 @@ def process_meteo_and_load_profiles(
     saving_path = HYPER.PATH_TO_DATA_BUILDING_ELECTRICITY_TEST + 'testing_data.csv'
     df_testing.to_csv(saving_path, index=False)
     
-    
     return df_training, df_validation, df_testing
 
 

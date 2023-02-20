@@ -3,7 +3,7 @@ import yaml
 import random
 
 
-def get_config_from_yaml:
+def get_config_from_yaml() -> dict:
     """
     Get config from yaml file
     """
@@ -14,7 +14,7 @@ def get_config_from_yaml:
     return config
 
 
-def check_create_dir(path):
+def check_create_dir(path: str):
     """
     Check if passed path exist and create if it doesn't.
     """
@@ -23,7 +23,7 @@ def check_create_dir(path):
         os.mkdir(path)
         
 
-def config_BE(config):
+def config_BE(config: dict) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
@@ -83,7 +83,7 @@ def config_BE(config):
     return config
     
     
-def config_UM(config):
+def config_UM(config: dict) -> dict:
     """
     Augments configuration file for processing Uber Movement dataset.
     """
@@ -207,7 +207,7 @@ def config_UM(config):
     return config
     
     
-def config_CA(config):
+def config_CA(config: dict) -> dict:
     """
     Augments configuration file for processing ClimArt dataset.
     """
@@ -343,7 +343,7 @@ def config_CA(config):
     return config
     
     
-def config_OC(config):
+def config_OC(config: dict) -> dict:
     """
     Augments configuration file for processing Open Catalyst dataset.
     """

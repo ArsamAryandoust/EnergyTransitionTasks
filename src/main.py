@@ -1,5 +1,6 @@
 import parse_args
 import load_config
+import datasets
 
 
 
@@ -46,6 +47,32 @@ import prep_open_catalyst
 import prep_climart
 import prep_building_electricity
 import gc
+
+# process building electricity data    
+if HYPER.PROCESS_BUILDINGELECTRICITY:
+    
+    # tell us whats going on
+    print('Processing Building Electricity data')
+    
+    # create hyper parameters
+    HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
+    
+    # import all data
+    df_consumption, df_building_images, df_meteo_dict = prep_building_electricity.import_all_data(HYPER_BUILDINGELECTRICITY)
+
+    # process building imagery
+    _ = prep_building_electricity.process_building_imagery(HYPER_BUILDINGELECTRICITY, df_building_images)
+    
+    # process meteo and load profiles
+    _, _, _ = prep_building_electricity.process_meteo_and_load_profiles(
+        HYPER_BUILDINGELECTRICITY, 
+        df_consumption, 
+        df_meteo_dict
+    )
+    
+    # empty memory
+    del _, df_consumption, df_building_images, df_meteo_dict
+    gc.collect()
 
 # create main hyper paramter instance
 HYPER = hyper.HyperParameter()
@@ -96,32 +123,6 @@ if HYPER.PROCESS_OPENCATALYST:
     _, _, _ = prep_open_catalyst.train_val_test_create(HYPER_OPENCATALYST)
     
 
-# process building electricity data    
-if HYPER.PROCESS_BUILDINGELECTRICITY:
-    
-    # tell us whats going on
-    print('Processing Building Electricity data')
-    
-    # create hyper parameters
-    HYPER_BUILDINGELECTRICITY = hyper_buildingelectricity.HyperBuildingElectricity()
-    
-    # import all data
-    df_consumption, df_building_images, df_meteo_dict = prep_building_electricity.import_all_data(HYPER_BUILDINGELECTRICITY)
-
-    # process building imagery
-    _ = prep_building_electricity.process_building_imagery(HYPER_BUILDINGELECTRICITY, df_building_images)
-    
-    # process meteo and load profiles
-    _, _, _ = prep_building_electricity.process_meteo_and_load_profiles(
-        HYPER_BUILDINGELECTRICITY, 
-        df_consumption, 
-        df_meteo_dict
-    )
-    
-    # empty memory
-    del _, df_consumption, df_building_images, df_meteo_dict
-    gc.collect()
-    
     
 # Shuffle Uber Movement data
 if HYPER.SHUFFLE_UBERMOVEMENT:

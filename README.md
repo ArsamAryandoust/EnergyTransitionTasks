@@ -48,12 +48,13 @@ cd EnergyTransitionTasks
 
 ### Docker
 
-Build and run Docker for processing data:
-The easiest way to build and run the Docker container is with the `build_and_run.sh` 
-script we provide. To do this, execute the following command:
+The easiest way to build and run a Docker container for processing data is with 
+the `build.sh` and `run.sh` scripts we provide. To do this, execute the following 
+commands:
 
 ```
-./build_and_run.sh
+./build.sh
+./run.sh
 ```
 
 
