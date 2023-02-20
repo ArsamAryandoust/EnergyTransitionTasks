@@ -6,7 +6,7 @@ services:
             dockerfile: Docker_testintegration/Dockerfile
         volumes: 
             - .:/EnergyTransitionTasks
-            - ../shared_cp:/shared_cp
+            - ../../shared_cp:/shared_cp
 
     unittest:
         build:
@@ -14,5 +14,5 @@ services:
             dockerfile: Docker_testunit/Dockerfile
         volumes:
             - .:/EnergyTransitionTasks
-            - ../shared_cp:/shared_cp
+            - ../../shared_cp:/shared_cp
 

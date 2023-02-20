@@ -3,50 +3,61 @@ import sys
 sys.path.append('/EnergyTransitionTasks/src')
 
 class TestSomeFunctions(unittest.TestCase):
-
-    """ Tests functions defined in data.py
+    """ 
+    Tests functions defined in single .py file
     """
 
     @classmethod
     def setUpClass(cls):
-        
-        """ Runs once before the first test.
+        """ 
+        Runs once before the first test.
         """
 
-        pass
+        print('Unit test template ran correctly for code before first test!')
 
 
     @classmethod
     def tearDownClass(cls):
-        
-        """ Runs once after the last test.
+        """ 
+        Runs once after the last test.
         """
 
-        pass
+        print('Unit test template ran correctly for code after last test!')
 
 
     def setUp(self):
-        
-        """ Runs before every test.
+        """ 
+        Runs before every test.
         """
         
-        pass
+        print('Unit test template ran correctly for code before every test!')
         
 
     def tearDown(self):
-
-        """ Runs after every test.
+        """ 
+        Runs after every test.
         """
         
-        pass
+        print('Unit test template ran correctly for code after every test!')
         
         
-    def test_somefirstfunction(self):
-    
-        print('the file test/unit/test_somefunctions.py is successfully executed through docker.')
+    def test_templatefunction_1(self):
+        print(
+            'Unit test test_templatefunction_1 ran correctly from',
+            'test/unit/test_template.py inside Docker!'
+        )
+        
+    def test_templatefunction_2(self):
+        print(
+            'Unit test test_templatefunction_2 ran correctly from',
+            'test/unit/test_template.py inside Docker!'
+        )
 
 
 if __name__ == '__main__':
-
+    """
+    Executes every method defined in classes herited from unittest.TestCase and
+    corresponding functions before and after.
+    """
     unittest.main()
 
