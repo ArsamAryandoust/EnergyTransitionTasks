@@ -26,7 +26,7 @@ def parse_arguments() -> argparse.Namespace:
     
     # processing
     parser.add_argument(
-        "-building_electricity", "-BE", "-be"
+        "-building_electricity", "-BE", "-be",
         help="Process datasets for Building Electricity task",
         action="store_true"
     )
