@@ -9,6 +9,9 @@
 * [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 
+
+### Summary
+ 
 Artificial intelligence (AI) and its subfield of machine learning (ML) have a 
 significant potential for enhancing technologies, policies and social processes 
 that we urgently need for mitigating and adapting to climate change. Improving the 
@@ -37,7 +40,7 @@ and give us your detailed feedback.
 
 ### Download
 
-Download this repository with all data samples to your home directory:
+Download this repository and a sample of each dataset to your home directory:
 
 ```
 cd 
