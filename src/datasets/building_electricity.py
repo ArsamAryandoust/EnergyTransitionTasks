@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import numpy as np
+import gc
 from tqdm import tqdm
 
 def process_all_datasets(config: dict):
@@ -24,7 +25,6 @@ def process_all_datasets(config: dict):
     
     
 def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
-    
     """
     Imports consumption data
     """
@@ -58,7 +58,6 @@ def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     
 
 def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
-
     """
     
     """
