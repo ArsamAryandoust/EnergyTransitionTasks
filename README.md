@@ -24,12 +24,12 @@ design of new AI and ML models for solving them.
 
 ### Contributing
 
-If you have published or unpublished datasets that fit our purpose, your contribution
+* If you have published or unpublished datasets that fit our purpose, your contribution
 is highly appreciated. For changes to code, please download this repository, create 
 a new branch, push your changes to the repository, and create a pull request to 
 the `latest_release` branch.
 
-If you are using the datasets we provide here and have identified any problems 
+* If you are using the datasets we provide here and have identified any problems 
 with these or want to suggest ways to improve these, your feedback is highly 
 appreciated. For this, please go to the `Discussions` tab, create a `New discussion`,
 and give us your detailed feedback.
