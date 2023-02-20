@@ -1,5 +1,5 @@
 import parse_args
-import load_config
+from load_config import get_config_from_yaml
 from datasets import building_electricity
 
 
@@ -18,7 +18,6 @@ if __name__ == "__main__":
         
     if args.building_electricity:
         print("Processing Building Electricity dataset.")
-        config = load_config.config_BE(config)
         building_electricity.process_all_datasets(config)
         
     if args.uber_movement:

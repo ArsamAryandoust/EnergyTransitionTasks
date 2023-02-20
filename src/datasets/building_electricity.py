@@ -4,23 +4,31 @@ import numpy as np
 import gc
 from tqdm import tqdm
 
+from load_config import config_BE
+
 def process_all_datasets(config: dict):
     """
     Processes all Building Electricity datasets.
     """
     
-    # import all data
-    df_consumption, df_building_images, df_meteo_dict = import_all_data(config['building_electricity'])
+    # iterated over all subtasks
+    for subtask in config['building_electricity']['subtask_list']:
+        
+        # augment config with currently iterated subtask
+        config = config_BE(config, subtask)
+        
+        # import all data
+        df_consumption, df_building_images, df_meteo_dict = import_all_data(config['building_electricity'])
 
-    # process building imagery
-    process_building_imagery(config['building_electricity'], df_building_images)
-    
-    # process meteo and load profiles
-    process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
-    
-    # empty memory
-    del df_consumption, df_building_images, df_meteo_dict
-    gc.collect()
+        # process building imagery
+        process_building_imagery(config['building_electricity'], df_building_images)
+        
+        # process meteo and load profiles
+        process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
+        
+        # empty memory
+        del df_consumption, df_building_images, df_meteo_dict
+        gc.collect()
     
     
     
@@ -92,7 +100,6 @@ def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     # save df_building_images_new
     df_building_images_new.to_csv(saving_path, index=False)
 
-    return
     
 def process_meteo_and_load_profiles(
     config: dict, 
@@ -245,7 +252,5 @@ def process_meteo_and_load_profiles(
     
     saving_path = config['building_electricity']['path_to_data_building_electricity_test'] + 'testing_data.csv'
     df_testing.to_csv(saving_path, index=False)
-    
-    return
     
     

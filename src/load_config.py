@@ -23,7 +23,7 @@ def check_create_dir(path: str):
         os.mkdir(path)
         
 
-def config_BE(config: dict) -> dict:
+def config_BE(config: dict, subtask: str) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
@@ -34,7 +34,7 @@ def config_BE(config: dict) -> dict:
     # add data paths
     dictionary['path_to_raw_building_electricity'] = (
         config['general']['path_to_data_raw'] 
-        + 'BuildingElectricity/profiles_400/'
+        + 'BuildingElectricity/{}/'.format(subtask)
     )
     dictionary['path_to_raw_building_year_profiles_file'] = (
         dictionary['path_to_raw_building_electricity']
@@ -52,26 +52,31 @@ def config_BE(config: dict) -> dict:
         config['general']['path_to_data']
         + 'BuildingElectricity/'
     )
-    dictionary['path_to_data_building_electricity_add'] = (
+    dictionary['path_to_data_building_electricity_subtask'] = (
         dictionary['path_to_data_building_electricity']
+        + '{}/'.format(subtask)
+    )
+    dictionary['path_to_data_building_electricity_add'] = (
+        dictionary['path_to_data_building_electricity_subtask']
         + 'additional/'
     )
     dictionary['path_to_data_building_electricity_train'] = (
-        dictionary['path_to_data_building_electricity']
+        dictionary['path_to_data_building_electricity_subtask']
         + 'training/'
     )
     dictionary['path_to_data_building_electricity_val'] = (
-        dictionary['path_to_data_building_electricity']
+        dictionary['path_to_data_building_electricity_subtask']
         + 'validation/'
     )
     dictionary['path_to_data_building_electricity_test'] = (
-        dictionary['path_to_data_building_electricity']
+        dictionary['path_to_data_building_electricity_subtask']
         + 'testing/'
     )
     
     # create directory structure for saving results
     for path in [
-        dictionary['path_to_data_building_electricity'], 
+        dictionary['path_to_data_building_electricity'],
+        dictionary['path_to_data_building_electricity_subtask'],
         dictionary['path_to_data_building_electricity_add'],
         dictionary['path_to_data_building_electricity_train'],
         dictionary['path_to_data_building_electricity_val'],
