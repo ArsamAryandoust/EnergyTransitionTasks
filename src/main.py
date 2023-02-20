@@ -19,6 +19,7 @@ if __name__ == "__main__":
     if args.building_electricity:
         print("Processing Building Electricity dataset.")
         config = load_config.config_BE(config)
+        building_electricity.process_all_datasets(config)
         
     if args.uber_movement:
         print("Processing Uber Movement dataset.")
