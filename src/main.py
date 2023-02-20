@@ -1,6 +1,6 @@
 import parse_args
 import load_config
-import datasets
+from datasets import building_electricity
 
 
 
