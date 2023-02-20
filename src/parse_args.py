@@ -26,22 +26,22 @@ def parse_arguments() -> argparse.Namespace:
     
     # processing
     parser.add_argument(
-        "-building_electricity", 
+        "-building_electricity", "-BE",
         help="Process datasets for Building Electricity task",
         action="store_true"
     )
     parser.add_argument(
-        "-uber_movement", 
+        "-uber_movement", "-UM",
         help="Process datasets for Uber Movement task",
         action="store_true"
     )
     parser.add_argument(
-        "-climart", 
+        "-climart", "-CA",
         help="Process datasets for ClimART task",
         action="store_true"
     )
     parser.add_argument(
-        "-open_catalyst", 
+        "-open_catalyst", "-OC", 
         help="Process datasets for Open Catalyst task",
         action="store_true"
     )
