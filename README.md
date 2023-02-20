@@ -4,10 +4,10 @@
 
 ### Datasets
 
-* [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/BuildingElectricity)
-* [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/UberMovement)
-* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/ClimART)
-* [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/OpenCatalyst)
+* [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
+* [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
+* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
+* [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 
 Artificial intelligence (AI) and its subfield of machine learning (ML) have a 
 significant potential for enhancing technologies, policies and social processes 
