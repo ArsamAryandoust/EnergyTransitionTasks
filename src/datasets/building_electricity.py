@@ -21,7 +21,7 @@ def process_all_datasets(config: dict):
     
     
     
-def import_all_data(config: dict) -> (pd.Dataframe, pd.Dataframe, pd.Dataframe):
+def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     
     """
     Imports consumption data
