@@ -72,3 +72,14 @@ python3 src/main.py -building_electricity
 ```
 
 
+### Tests
+
+The easiest way to build and run Docker containers for integration and unit tests
+is through docker compose. To do this, simply execute the following commands:
+```
+docker-compose build
+docker-compose up
+```
+
+
+
