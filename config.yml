@@ -14,6 +14,8 @@ building_electricity:
     temporal_test_split: 0.25
     spatial_test_split: 0.2
     val_test_split: 0.2
+    datapoints_per_file: 150_000
+
 
 uber_movement: 
     chunk_size_ubermovement: 20_000_000

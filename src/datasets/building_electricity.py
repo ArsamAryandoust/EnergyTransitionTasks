@@ -288,10 +288,6 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     temporal_ood = config['building_electricity']['ood_split_dict']['temporal_dict']
     spatial_ood = config['building_electricity']['ood_split_dict']['spatial_dict']
     
-    # declare empty dataframes to fill
-    df_validation = pd.DataFrame()
-    df_training = pd.DataFrame()
-    
     # create temporal ood split
     df_testing = df_dataset.loc[
         (df_dataset['month'].isin(temporal_ood['month_list']))
@@ -323,6 +319,9 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
         frac=config['building_electricity']['val_test_split'], 
         random_state=config['general']['seed']
     )
+    
+    # remove validation data split from testing dataset
+    df_testing = df_testing.drop(df_validation.index)
         
     print(
         "Training data   :    {:.0%} \n".format(len(df_training)/n_data_total),
@@ -330,22 +329,37 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
         "Testing data    :    {:.0%} \n".format(len(df_testing)/n_data_total)
     )
         
-    # save results
-    saving_path = (
-        config['building_electricity']['path_to_data_train'] 
-        + 'training_data.csv'
+    # save results in chunks
+    save_in_chunks(
+        config,
+        config['building_electricity']['path_to_data_train'] + 'training_data', 
+        df_training
     )
-    df_training.to_csv(saving_path, index=False)
+    save_in_chunks(
+        config,
+        config['building_electricity']['path_to_data_val'] + 'validation_data', 
+        df_validation
+    )
+    save_in_chunks(
+        config,
+        config['building_electricity']['path_to_data_test'] + 'testing_data', 
+        df_testing
+    )
     
-    saving_path = (
-        config['building_electricity']['path_to_data_val'] 
-        + 'validation_data.csv'
-    )
-    df_validation.to_csv(saving_path, index=False)
+
+def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
+    """
+    S
+    """
     
-    saving_path = (
-        config['building_electricity']['path_to_data_test'] 
-        + 'testing_data.csv'
-    )
-    df_testing.to_csv(saving_path, index=False)
-        
+    df = df.sample(frac=1, random_state=config['general']['seed'])
+    for file_counter in range(1, 312321321312):
+        path_to_saving = saving_path '_{}.csv'.format(file_counter)
+        df.iloc[
+            :config['building_electricity']['datapoints_per_file']
+        ].to_csv(path_to_saving, index=False)
+        df = df[config['building_electricity']['datapoints_per_file']:]
+        if len(df) == 0:
+            break
+            
+            
