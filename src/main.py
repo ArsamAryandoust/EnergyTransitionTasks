@@ -37,7 +37,10 @@ if __name__ == "__main__":
         
     if args.shuffle_CA:
         print("Shuffling processed ClimArt data.")
-        
+    
+    
+    print("Successfully executed all instructions!")
+    exit(0) 
 
 
 

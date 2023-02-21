@@ -140,7 +140,8 @@ def process_meteo_and_load_profiles(
     # declare df row counter
     counter_df_row = 0
     
-    # decleare empty values array
+    # decleare empty values array. Filling matrix pre-allocates memory and decreases
+    # computational time significantly.
     values_array = np.zeros(
         (
             len(building_id_list) * math.floor(
