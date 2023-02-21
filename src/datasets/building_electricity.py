@@ -26,7 +26,7 @@ def process_all_datasets(config: dict):
         process_building_imagery(config['building_electricity'], df_building_images)
         
         # process meteo data and load profiles
-        process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
+        df_dataset = process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
         
         # empty memory
         del df_consumption, df_building_images, df_meteo_dict
@@ -105,9 +105,10 @@ def process_meteo_and_load_profiles(
     config: dict, 
     df_consumption: pd.DataFrame,
     df_meteo_dict: pd.DataFrame
-):
+) -> pd.DataFrame:
     """
-    Main data processing.
+    Main data processing. Takes electric load profiles and meteorological data
+    and combines these into a single dataset dataframe.
     """
     
     ###
@@ -144,8 +145,6 @@ def process_meteo_and_load_profiles(
     # create a list of all building IDs
     building_id_list = list(df_consumption.columns.values[1:])
     
-    # declare df row counter
-    counter_df_row = 0
     
     # decleare empty values array. Filling matrix pre-allocates memory and decreases
     # computational time significantly.
@@ -168,6 +167,9 @@ def process_meteo_and_load_profiles(
     
     # create progress bar
     pbar = tqdm(total=len(building_id_list))
+    
+    # declare df row counter
+    datapoint_counter = 0
     
     # iterate over all building IDs
     for building_id in building_id_list:
@@ -214,45 +216,54 @@ def process_meteo_and_load_profiles(
             load_profile = building_load[i:(i+config['building_electricity']['prediction_window'])].values
             
             # add features to values_array. Ensures same order as new_df_columns.
-            for index_df_col, entry_name in enumerate(new_df_columns_base):
-                command = 'values_array[counter_df_row, index_df_col] = {}'.format(entry_name)
+            for index_col, entry_name in enumerate(new_df_columns_base):
+                command = 'values_array[datapoint_counter, index_col] = {}'.format(entry_name)
                 exec(command)
                 
             # add meteorological data to entry
             for meteo_name, meteo_profile in meteo_dict.items():
                 for i in range(len(meteo_profile)):
-                    index_df_col += 1
-                    values_array[counter_df_row, index_df_col] = meteo_profile[i]
+                    index_col += 1
+                    values_array[datapoint_counter, index_col] = meteo_profile[i]
                 
             # add load profile to entry
             for i in range(len(load_profile)):
-                index_df_col += 1
-                values_array[counter_df_row, index_df_col] = load_profile[i]
+                index_col += 1
+                values_array[datapoint_counter, index_col] = load_profile[i]
             
-    
             # increment df row counter
-            counter_df_row += 1
+            datapoint_counter += 1
     
         # increment progbar
         pbar.update(1) 
             
-    exit(0)
+    # create dataframe from filled matrix values
+    df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
     
-    # create a new dataframe you want to fill
-    df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
+    # free up memory
+    del value_array
+    gc.collect()
+    
+    return df_dataset
+    
+    
+def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
+    """
+    Splits and saves datasets according to configuration rules.
+    """
     
     # get total number of data points 
-    n_data_total = len(df_consumption_new)
+    n_data_total = len(df_dataset)
     
     # test split
-    df_testing = df_consumption_new.sample(frac=config['building_electricity']['test_split'], random_state=config['general']['seed'])
+    df_testing = df_dataset.sample(frac=config['building_electricity']['test_split'], random_state=config['general']['seed'])
     
     # drop indices taken for testing from remaining data
-    df_consumption_new = df_consumption_new.drop(df_testing.index)
+    df_dataset = df_dataset.drop(df_testing.index)
     
     # do training split
-    df_training = df_consumption_new.sample(frac=config['building_electricity']['train_val_split'], random_state=config['general']['seed'])
-    df_validation = df_consumption_new.drop(df_training.index)
+    df_training = df_dataset.sample(frac=config['building_electricity']['train_val_split'], random_state=config['general']['seed'])
+    df_validation = df_dataset.drop(df_training.index)
     
     print(
         "Training data   :    {:.0%} \n".format(len(df_training)/n_data_total),
@@ -270,4 +281,4 @@ def process_meteo_and_load_profiles(
     saving_path = config['building_electricity']['path_to_data_test'] + 'testing_data.csv'
     df_testing.to_csv(saving_path, index=False)
     
-    
+    exit(0)
