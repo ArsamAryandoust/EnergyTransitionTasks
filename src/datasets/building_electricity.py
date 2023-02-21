@@ -151,8 +151,10 @@ def process_meteo_and_load_profiles(
     # computational time significantly.
     values_array = np.zeros(
         (
-            len(building_id_list) * math.floor(
-                365 - config['building_electricity']['historic_window'] / 96 
+            len(building_id_list) * (
+                len(time_stamps)
+                - config['building_electricity']['historic_window']
+                - config['building_electricity']['prediction_window']
             ),
             (
                 len(new_df_columns_base) 
@@ -190,8 +192,7 @@ def process_meteo_and_load_profiles(
         # iterate over all time stamps in prediction window steps
         for i in range(
             config['building_electricity']['historic_window'], 
-            len(time_stamps), 
-            config['building_electricity']['prediction_window']
+            len(time_stamps) - config['building_electricity']['prediction_window']
         ):
             # get time stamp
             time = time_stamps[i]
@@ -212,7 +213,7 @@ def process_meteo_and_load_profiles(
             # get iterated load profile data
             load_profile = building_load[i:(i+config['building_electricity']['prediction_window'])].values
             
-            # Add features to values_array. Ensures same order as new_df_columns.
+            # add features to values_array. Ensures same order as new_df_columns.
             for index_df_col, entry_name in enumerate(new_df_columns_base):
                 command = 'values_array[counter_df_row, index_df_col] = {}'.format(entry_name)
                 exec(command)
@@ -235,6 +236,8 @@ def process_meteo_and_load_profiles(
         # increment progbar
         pbar.update(1) 
             
+    exit(0)
+    
     # create a new dataframe you want to fill
     df_consumption_new = pd.DataFrame(data=values_array, columns=new_df_columns)
     
