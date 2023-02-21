@@ -32,55 +32,55 @@ def config_BE(config: dict, subtask: str) -> dict:
     dictionary = config['building_electricity']
     
     # add data paths
-    dictionary['path_to_raw_building_electricity'] = (
+    dictionary['path_to_raw'] = (
         config['general']['path_to_data_raw'] 
         + 'BuildingElectricity/{}/'.format(subtask)
     )
     dictionary['path_to_raw_building_year_profiles_file'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'building-year profiles/feature_scaled/2014 building-year profiles.csv'
     )
     dictionary['path_to_raw_meteo_data_folder'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'meteo data/'
     )
     dictionary['path_to_raw_aerial_imagery_file'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'building imagery/histogram/rgb/pixel_values.csv'
     )
-    dictionary['path_to_data_building_electricity'] = (
+    dictionary['path_to_data'] = (
         config['general']['path_to_data']
         + 'BuildingElectricity/'
     )
-    dictionary['path_to_data_building_electricity_subtask'] = (
-        dictionary['path_to_data_building_electricity']
+    dictionary['path_to_data_subtask'] = (
+        dictionary['path_to_data']
         + '{}/'.format(subtask)
     )
-    dictionary['path_to_data_building_electricity_add'] = (
-        dictionary['path_to_data_building_electricity_subtask']
+    dictionary['path_to_data_add'] = (
+        dictionary['path_to_data_subtask']
         + 'additional/'
     )
-    dictionary['path_to_data_building_electricity_train'] = (
-        dictionary['path_to_data_building_electricity_subtask']
+    dictionary['path_to_data_train'] = (
+        dictionary['path_to_data_subtask']
         + 'training/'
     )
-    dictionary['path_to_data_building_electricity_val'] = (
-        dictionary['path_to_data_building_electricity_subtask']
+    dictionary['path_to_data_val'] = (
+        dictionary['path_to_data_subtask']
         + 'validation/'
     )
-    dictionary['path_to_data_building_electricity_test'] = (
-        dictionary['path_to_data_building_electricity_subtask']
+    dictionary['path_to_data_test'] = (
+        dictionary['path_to_data_subtask']
         + 'testing/'
     )
     
     # create directory structure for saving results
     for path in [
-        dictionary['path_to_data_building_electricity'],
-        dictionary['path_to_data_building_electricity_subtask'],
-        dictionary['path_to_data_building_electricity_add'],
-        dictionary['path_to_data_building_electricity_train'],
-        dictionary['path_to_data_building_electricity_val'],
-        dictionary['path_to_data_building_electricity_test']
+        dictionary['path_to_data'],
+        dictionary['path_to_data_subtask'],
+        dictionary['path_to_data_add'],
+        dictionary['path_to_data_train'],
+        dictionary['path_to_data_val'],
+        dictionary['path_to_data_test']
     ]:
         check_create_dir(path)
         

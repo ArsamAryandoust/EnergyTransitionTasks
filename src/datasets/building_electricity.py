@@ -14,7 +14,6 @@ def process_all_datasets(config: dict):
     
     # iterated over all subtasks
     for subtask in config['building_electricity']['subtask_list']:
-        
         # augment config with currently iterated subtask paths
         config = config_BE(config, subtask)
         
@@ -32,7 +31,6 @@ def process_all_datasets(config: dict):
         # empty memory
         del df_consumption, df_building_images, df_meteo_dict
         gc.collect()
-    
     
     
 def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
@@ -55,7 +53,6 @@ def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     
     # iterate over all filenames
     for filename in meteo_filename_list:
-        
         # create full path to iterated file
         path_to_meteo_file = config['path_to_raw_meteo_data_folder'] + filename
         
@@ -96,7 +93,7 @@ def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     
     # create saving path for building imagery
     saving_path = (
-        config['path_to_data_building_electricity_add']
+        config['path_to_data_add']
         + 'building_images_pixel_histograms_rgb.csv'
     )
     
@@ -151,7 +148,9 @@ def process_meteo_and_load_profiles(
             ),
             (
                 len(new_df_columns_base) 
-                + config['building_electricity']['historic_window'] * len(config['building_electricity']['meteo_name_list'])
+                + config['building_electricity']['historic_window'] * (
+                    len(config['building_electricity']['meteo_name_list'])
+                )
                 + config['building_electricity']['prediction_window']
             )
         )
@@ -162,7 +161,6 @@ def process_meteo_and_load_profiles(
     
     # iterate over all building IDs
     for building_id in building_id_list:
-    
         # get cluster id as integer
         cluster_id = df_consumption[building_id].iloc[0].astype(int)
         
@@ -182,8 +180,11 @@ def process_meteo_and_load_profiles(
         df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps
-        for i in range(config['building_electricity']['historic_window'], len(time_stamps), config['building_electricity']['prediction_window']):
-            
+        for i in range(
+            config['building_electricity']['historic_window'], 
+            len(time_stamps), 
+            config['building_electricity']['prediction_window']
+        ):
             # get time stamp
             time = time_stamps[i]
             
@@ -249,13 +250,13 @@ def process_meteo_and_load_profiles(
     )
     
     # save results
-    saving_path = config['building_electricity']['path_to_data_building_electricity_train'] + 'training_data.csv'
+    saving_path = config['building_electricity']['path_to_data_train'] + 'training_data.csv'
     df_training.to_csv(saving_path, index=False)
     
-    saving_path = config['building_electricity']['path_to_data_building_electricity_val'] + 'validation_data.csv'
+    saving_path = config['building_electricity']['path_to_data_val'] + 'validation_data.csv'
     df_validation.to_csv(saving_path, index=False)
     
-    saving_path = config['building_electricity']['path_to_data_building_electricity_test'] + 'testing_data.csv'
+    saving_path = config['building_electricity']['path_to_data_test'] + 'testing_data.csv'
     df_testing.to_csv(saving_path, index=False)
     
     
