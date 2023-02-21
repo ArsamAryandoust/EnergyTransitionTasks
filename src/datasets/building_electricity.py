@@ -18,19 +18,28 @@ def process_all_datasets(config: dict):
         config = config_BE(config, subtask)
         
         # import all data
-        df_consumption, df_building_images, df_meteo_dict = import_all_data(
-            config['building_electricity']
-        )
+        (
+            df_consumption, 
+            df_building_images, 
+            df_meteo_dict
+        ) = import_all_data(config['building_electricity'])
 
         # process building imagery
-        process_building_imagery(config['building_electricity'], df_building_images)
+        process_building_imagery(
+            config['building_electricity'], 
+            df_building_images
+        )
 
         # free up memory
         del df_building_images
         gc.collect()
                 
         # process meteo data and load profiles
-        df_dataset = process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
+        df_dataset = process_meteo_and_load_profiles(
+            config, 
+            df_consumption, 
+            df_meteo_dict
+        )
         
         # free up memory
         del df_consumption, df_meteo_dict
@@ -42,6 +51,7 @@ def process_all_datasets(config: dict):
         # free up memory
         del df_dataset
         gc.collect()
+    
     
 def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
@@ -126,7 +136,10 @@ def process_meteo_and_load_profiles(
     ###
     
     # create new df column format
-    new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 'building_id']
+    new_df_columns_base = [
+        'year', 'month', 'day', 'hour', 
+        'quarter_hour', 'building_id'
+    ]
     
     # fill a separate list 
     new_df_columns = new_df_columns_base.copy()
@@ -219,15 +232,21 @@ def process_meteo_and_load_profiles(
             # get iterated meteorological data
             meteo_dict = {}
             for meteo_name in config['building_electricity']['meteo_name_list']:
-                meteo_values = df_meteo[meteo_name][(i-config['building_electricity']['historic_window']):i].values
+                meteo_values = df_meteo[meteo_name][
+                    (i-config['building_electricity']['historic_window']):i
+                ].values
                 meteo_dict[meteo_name] = meteo_values
             
             # get iterated load profile data
-            load_profile = building_load[i:(i+config['building_electricity']['prediction_window'])].values
+            load_profile = building_load[
+                i:(i+config['building_electricity']['prediction_window'])
+            ].values
             
             # add features to values_array. Ensures same order as new_df_columns.
             for index_col, entry_name in enumerate(new_df_columns_base):
-                command = 'values_array[datapoint_counter, index_col] = {}'.format(entry_name)
+                command = 'values_array[datapoint_counter, index_col] = {}'.format(
+                    entry_name
+                )
                 exec(command)
                 
             # add meteorological data to entry
@@ -251,7 +270,7 @@ def process_meteo_and_load_profiles(
     df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
     
     # free up memory
-    del value_array
+    del values_array
     gc.collect()
     
     return df_dataset
@@ -312,13 +331,21 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     )
         
     # save results
-    saving_path = config['building_electricity']['path_to_data_train'] + 'training_data.csv'
+    saving_path = (
+        config['building_electricity']['path_to_data_train'] 
+        + 'training_data.csv'
+    )
     df_training.to_csv(saving_path, index=False)
     
-    saving_path = config['building_electricity']['path_to_data_val'] + 'validation_data.csv'
+    saving_path = (
+        config['building_electricity']['path_to_data_val'] 
+        + 'validation_data.csv'
+    )
     df_validation.to_csv(saving_path, index=False)
     
-    saving_path = config['building_electricity']['path_to_data_test'] + 'testing_data.csv'
+    saving_path = (
+        config['building_electricity']['path_to_data_test'] 
+        + 'testing_data.csv'
+    )
     df_testing.to_csv(saving_path, index=False)
         
-    exit(0)
