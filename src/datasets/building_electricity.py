@@ -3,27 +3,30 @@ import os
 import numpy as np
 import gc
 from tqdm import tqdm
+import math
 
 from load_config import config_BE
 
 def process_all_datasets(config: dict):
     """
-    Processes all Building Electricity datasets.
+    Processes all datasets for Building Electricity task.
     """
     
     # iterated over all subtasks
     for subtask in config['building_electricity']['subtask_list']:
         
-        # augment config with currently iterated subtask
+        # augment config with currently iterated subtask paths
         config = config_BE(config, subtask)
         
         # import all data
-        df_consumption, df_building_images, df_meteo_dict = import_all_data(config['building_electricity'])
+        df_consumption, df_building_images, df_meteo_dict = import_all_data(
+            config['building_electricity']
+        )
 
         # process building imagery
         process_building_imagery(config['building_electricity'], df_building_images)
         
-        # process meteo and load profiles
+        # process meteo data and load profiles
         process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
         
         # empty memory
@@ -34,7 +37,8 @@ def process_all_datasets(config: dict):
     
 def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
-    Imports consumption data
+    Imports electric consumption profiles profiles, building imagery pixel data,
+    and meteorological data.
     """
     
     # import all electric consumption profiles
@@ -61,13 +65,13 @@ def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
         # save imported dataframe to dataframe dictionary
         df_meteo_dict[filename] = df_meteo
         
-    
     return df_consumption, df_building_images, df_meteo_dict
     
 
 def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     """
-    
+    Simply changes the column name of aerial imagery histograms of buildings
+    by adding the pre-fix 'building_' to IDs and saves file with new column names.
     """
     
     # get list of columns
@@ -78,7 +82,6 @@ def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     
     # iterate over all column names
     for entry in columns_df_list:
-        
         # create new entry
         new_entry = 'building_{}'.format(entry)
         
@@ -106,9 +109,8 @@ def process_meteo_and_load_profiles(
     df_consumption: pd.DataFrame,
     df_meteo_dict: pd.DataFrame
 ):
-    
     """
-    
+    Main data processing.
     """
     
     # create new df column format
@@ -144,10 +146,13 @@ def process_meteo_and_load_profiles(
     # decleare empty values array
     values_array = np.zeros(
         (
-            len(building_id_list) * 364, 
+            len(building_id_list) * math.floor(
+                365 - config['building_electricity']['historic_window'] / 96 
+            ),
             (
                 len(new_df_columns_base) 
-                + config['building_electricity']['prediction_window'] * (len(config['building_electricity']['meteo_name_list']) + 1)
+                + config['building_electricity']['historic_window'] * len(config['building_electricity']['meteo_name_list'])
+                + config['building_electricity']['prediction_window']
             )
         )
     )
@@ -173,7 +178,7 @@ def process_meteo_and_load_profiles(
         # get corresponding meteorological data
         df_meteo = df_meteo_dict[key_meteo]
         
-        # drop local_time column
+        # drop local_time column 
         df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps

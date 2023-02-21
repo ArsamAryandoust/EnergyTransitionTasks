@@ -4,7 +4,7 @@ general:
     path_to_data_raw: '../data/raw/'
 
 building_electricity:
-    subtask_list: ['buildings_92', 'buildings_459']
+    subtask_list: ['buildings_92', 'buildings_451']
     prediction_window: 96
     historic_window: 96
     meteo_name_list: [
