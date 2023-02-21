@@ -328,7 +328,26 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     df_testing = df_testing.drop(df_validation.index)
      
     # calculate and analyze dataset properties
-    calc_properties(df_training, df_validation, df_testing)
+    n_train, n_val, n_test = len(df_training), len(df_validation), len(df_testing)
+    n_total = n_train + n_val + n_test
+    
+    print(
+        "Training data   :   {}/{} {:.0%}".format(
+              n_train, 
+              n_total, 
+              n_train/n_total
+        ),
+        "\nValidation data :   {}/{} {:.0%}".format(
+            n_val,
+            n_total,
+            n_val/n_total
+        ),
+        "\nTesting data    :   {}/{} {:.0%}".format(
+            n_test,
+            n_total,
+            n_test/n_total
+        )
+    )
     
     # save results in chunks
     save_in_chunks(
@@ -346,34 +365,7 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
         config['building_electricity']['path_to_data_test'] + 'testing_data', 
         df_testing
     )
-    
 
-def calc_properties(
-    df_train: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame
-):
-    """
-    Prints out the ratios of our data split.
-    """
-    n_train, n_val, n_test = len(df_train), len(df_val), len(df_test)
-    n_total = n_train + n_val + n_test
-    
-    print(
-        " Training data   :   {}/{} {:.0%}".format(
-            n_train, 
-            n_total, 
-            n_train/n_total
-        ),
-        "\nValidation data :   {}/{} {:.0%}".format(
-            n_val,
-            n_total,
-            n_val/n_total
-        ),
-        "\nTesting data    :   {}/{} {:.0%}".format(
-            n_test,
-            n_total,
-            n_test/n_total
-        )
-    )
     
 def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
     """
