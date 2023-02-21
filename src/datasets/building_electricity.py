@@ -110,6 +110,10 @@ def process_meteo_and_load_profiles(
     Main data processing.
     """
     
+    ###
+    # Create dataframe column
+    ###
+    
     # create new df column format
     new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 'building_id']
     
@@ -127,6 +131,9 @@ def process_meteo_and_load_profiles(
         entry_name = 'load_{}'.format(pred_time_step+1)
         new_df_columns.append(entry_name)
         
+    ###
+    # Create datasets
+    ###
         
     # drop the year entries
     df_consumption.drop(index=1, inplace=True)
