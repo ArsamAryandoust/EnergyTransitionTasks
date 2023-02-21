@@ -354,7 +354,7 @@ def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
     
     df = df.sample(frac=1, random_state=config['general']['seed'])
     for file_counter in range(1, 312321321312):
-        path_to_saving = saving_path '_{}.csv'.format(file_counter)
+        path_to_saving = saving_path + '_{}.csv'.format(file_counter)
         df.iloc[
             :config['building_electricity']['datapoints_per_file']
         ].to_csv(path_to_saving, index=False)
