@@ -40,7 +40,6 @@ if __name__ == "__main__":
     
     
     print("Successfully executed all instructions!")
-    exit(0) 
 
 
 

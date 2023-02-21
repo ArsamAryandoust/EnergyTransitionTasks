@@ -288,30 +288,34 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     temporal_ood = config['building_electricity']['ood_split_dict']['temporal_dict']
     spatial_ood = config['building_electricity']['ood_split_dict']['spatial_dict']
     
-    # create temporal ood split
+    # create spatial ood split
     df_testing = df_dataset.loc[
+        (df_dataset['building_id'].isin(spatial_ood['building_id_list']))
+    ]
+    
+    # remove split spatial ood data points
+    df_dataset = df_dataset.drop(df_testing.index)
+    
+    # create temporal ood split
+    df_temporal_ood = df_dataset.loc[
         (df_dataset['month'].isin(temporal_ood['month_list']))
         | (df_dataset['day'].isin(temporal_ood['day_list']))
         | (df_dataset['hour'].isin(temporal_ood['hour_list']))
         | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))
     ]
     
-    # remove the temporal ood split data points
-    df_dataset = df_dataset.drop(df_testing.index)
-    
-    # create spatial ood split
-    df_spatial_ood = df_dataset.loc[
-        (df_dataset['building_id'].isin(spatial_ood['building_id_list']))
-    ]
-    
-    # append to testing dataset
-    df_testing = pd.concat([df_testing, df_spatial_ood])
-    
     # remove the spatial ood split data points which is training dataset
-    df_training = df_dataset.drop(df_spatial_ood.index)
+    df_training = df_dataset.drop(df_temporal_ood.index)
     
     # free up memory
-    del df_spatial_ood, df_dataset
+    del df_dataset
+    gc.collect()
+    
+    # append to testing dataset
+    df_testing = pd.concat([df_testing, df_temporal_ood])
+    
+    # free up memory
+    del df_temporal_ood
     gc.collect()
     
     # do validation split
@@ -322,13 +326,10 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     
     # remove validation data split from testing dataset
     df_testing = df_testing.drop(df_validation.index)
-        
-    print(
-        "Training data   :    {:.0%} \n".format(len(df_training)/n_data_total),
-        "Validation data :    {:.0%} \n".format(len(df_validation)/n_data_total),
-        "Testing data    :    {:.0%} \n".format(len(df_testing)/n_data_total)
-    )
-        
+     
+    # calculate and analyze dataset properties
+    calc_properties(df_training, df_validation, df_testing)
+    
     # save results in chunks
     save_in_chunks(
         config,
@@ -347,9 +348,37 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     )
     
 
+def calc_properties(
+    df_train: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame
+):
+    """
+    Prints out the ratios of our data split.
+    """
+    n_train, n_val, n_test = len(df_train), len(df_val), len(df_test)
+    n_total = n_train + n_val + n_test
+    
+    print(
+        " Training data   :   {}/{} {:.0%}".format(
+            n_train, 
+            n_total, 
+            n_train/n_total
+        ),
+        "\nValidation data :   {}/{} {:.0%}".format(
+            n_val,
+            n_total,
+            n_val/n_total
+        ),
+        "\nTesting data    :   {}/{} {:.0%}".format(
+            n_test,
+            n_total,
+            n_test/n_total
+        )
+    )
+    
 def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
     """
-    S
+    Shuffles dataframe, then saves it in chunks with number of datapoints per 
+    file defined by config such that each file takes less than about 1 GB size.
     """
     
     df = df.sample(frac=1, random_state=config['general']['seed'])
