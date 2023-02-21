@@ -96,9 +96,9 @@ def config_BE(config: dict, subtask: str) -> dict:
     )
     
     # out of distribution test splitting rules in space
-    if subtask == 'building_92':
+    if subtask == 'buildings_92':
         n_buildings = 92
-    elif subtask == 'building_451':
+    elif subtask == 'buildings_451':
         n_buildings = 459 # ids go from 1-459, missing IDs hence 451 buildings
         
     random.seed(config['general']['seed'])
