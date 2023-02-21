@@ -1,7 +1,7 @@
 import os
 import yaml
 import random
-
+import math
 
 def get_config_from_yaml() -> dict:
     """
@@ -72,6 +72,53 @@ def config_BE(config: dict, subtask: str) -> dict:
         dictionary['path_to_data_subtask']
         + 'testing/'
     )
+    
+    # out of distribution test splitting rules in time
+    random.seed(config['general']['seed'])
+    month_list = random.sample(
+        range(1,13), 
+        math.floor(12 * dictionary['temporal_test_split'])
+    )
+    random.seed(config['general']['seed'])
+    day_list = random.sample(
+        range(1, 32),
+        math.floor(31 * dictionary['temporal_test_split'])        
+    )
+    random.seed(config['general']['seed'])
+    hour_list = random.sample(
+        range(24),
+        math.floor(24 * dictionary['temporal_test_split'])        
+    )
+    random.seed(config['general']['seed'])
+    quarter_hour_list = random.sample(
+        [0, 15, 30, 45],
+        math.floor(4 * dictionary['temporal_test_split'])       
+    )
+    
+    # out of distribution test splitting rules in space
+    if subtask == 'building_92':
+        n_buildings = 92
+    elif subtask == 'building_451:
+        n_buildings = 459 # ids go from 1-459, missing IDs hence 451 buildings
+        
+    random.seed(config['general']['seed'])
+    building_id_list = random.sample(
+        range(1, n_buildings+1), 
+        math.floor(n_buildings * dictionary['spatial_test_split'])
+    )
+    
+    # dictionary saving rules
+    dictionary['ood_split_dict'] = {
+        'temporal_dict': {
+            'month_list': month_list,
+            'day_list': day_list,
+            'hour_list': hour_list,
+            'quarter_hour_list': quarter_hour_list
+        },
+        'spatial_dict': {
+            'building_id_list': building_id_list
+        }
+    }
     
     # create directory structure for saving results
     for path in [

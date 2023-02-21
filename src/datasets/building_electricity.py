@@ -24,14 +24,24 @@ def process_all_datasets(config: dict):
 
         # process building imagery
         process_building_imagery(config['building_electricity'], df_building_images)
-        
+
+        # free up memory
+        del df_building_images
+        gc.collect()
+                
         # process meteo data and load profiles
         df_dataset = process_meteo_and_load_profiles(config, df_consumption, df_meteo_dict)
         
-        # empty memory
-        del df_consumption, df_building_images, df_meteo_dict
+        # free up memory
+        del df_consumption, df_meteo_dict
         gc.collect()
-    
+        
+        # Do trainining, validation and testing split
+        split_train_val_test(config, df_dataset)
+        
+        # free up memory
+        del df_dataset
+        gc.collect()
     
 def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
@@ -255,22 +265,52 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     # get total number of data points 
     n_data_total = len(df_dataset)
     
-    # test split
-    df_testing = df_dataset.sample(frac=config['building_electricity']['test_split'], random_state=config['general']['seed'])
+    # get the out-of-distribution splitting rules
+    temporal_ood = config['building_electricity']['ood_split_dict']['temporal_dict']
+    spatial_ood = config['building_electricity']['ood_split_dict']['spatial_dict']
     
-    # drop indices taken for testing from remaining data
+    # declare empty dataframes to fill
+    df_validation = pd.DataFrame()
+    df_training = pd.DataFrame()
+    
+    # create temporal ood split
+    df_testing = df_dataset.loc[
+        (df_dataset['month'].isin(temporal_ood['month_list']))
+        | (df_dataset['day'].isin(temporal_ood['day_list']))
+        | (df_dataset['hour'].isin(temporal_ood['hour_list']))
+        | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))
+    ]
+    
+    # remove the temporal ood split data points
     df_dataset = df_dataset.drop(df_testing.index)
     
-    # do training split
-    df_training = df_dataset.sample(frac=config['building_electricity']['train_val_split'], random_state=config['general']['seed'])
-    df_validation = df_dataset.drop(df_training.index)
+    # create spatial ood split
+    df_spatial_ood = df_dataset.loc[
+        (df_dataset['building_id'].isin(spatial_ood['building_id_list']))
+    ]
     
+    # append to testing dataset
+    df_testing = pd.concat([df_testing, df_spatial_ood])
+    
+    # remove the spatial ood split data points which is training dataset
+    df_training = df_dataset.drop(df_spatial_ood.index)
+    
+    # free up memory
+    del df_spatial_ood, df_dataset
+    gc.collect()
+    
+    # do validation split
+    df_validation = df_testing.sample(
+        frac=config['building_electricity']['val_test_split'], 
+        random_state=config['general']['seed']
+    )
+        
     print(
         "Training data   :    {:.0%} \n".format(len(df_training)/n_data_total),
         "Validation data :    {:.0%} \n".format(len(df_validation)/n_data_total),
         "Testing data    :    {:.0%} \n".format(len(df_testing)/n_data_total)
     )
-    
+        
     # save results
     saving_path = config['building_electricity']['path_to_data_train'] + 'training_data.csv'
     df_training.to_csv(saving_path, index=False)
@@ -280,5 +320,5 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     
     saving_path = config['building_electricity']['path_to_data_test'] + 'testing_data.csv'
     df_testing.to_csv(saving_path, index=False)
-    
+        
     exit(0)

@@ -11,9 +11,8 @@ building_electricity:
         'air_density', 'cloud_cover', 'precipitation', 'radiation_surface',
         'radiation_toa', 'snow_mass', 'snowfall', 'temperature', 'wind_speed'
     ]
-    test_buildings_split: 0.2
-    test_timestamp_split: 0.5
-    test_split: 0.5
+    temporal_test_split: 0.25
+    spatial_test_split: 0.2
     val_test_split: 0.2
 
 uber_movement: 
