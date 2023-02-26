@@ -208,7 +208,7 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     random.seed(config['general']['seed'])
     list_of_cities_test = random.sample(
-        dictionary['list_of_cities']['list_of_cities'], 
+        dictionary['list_of_cities'], 
         n_cities_test
     )
     
