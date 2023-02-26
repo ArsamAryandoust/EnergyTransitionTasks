@@ -212,14 +212,14 @@ def foster_coordinates_recursive(
     return map_movement_id_to_coordinates
     
     
-def degree_to_phi(degree_latlon):
+def degree_to_phi(degree_latlon: float):
     """ 
     transform degrees into radiants 
     """
     return degree_latlon / 180 * math.pi
 
 
-def cos_transform(degree_latlon):
+def cos_transform(degree_latlon: float):
     """ 
     Transform degrees into radiants and return cosine value. 
     """
@@ -227,7 +227,7 @@ def cos_transform(degree_latlon):
     return np.cos(phi_latlon)
 
 
-def sin_transform(degree_latlon):
+def sin_transform(degree_latlon: float):
     """
     Transform degrees into radiants and return sine value. 
     """
@@ -377,7 +377,7 @@ def split_train_val_test(config: dict):
                     random_state=config['general']['seed']
                 )
                 
-                # remove val points from test
+                # remove validation data from test
                 df_test = df_test.drop(df_val_append.index)
                 
                 # append to validation dataframe
@@ -500,7 +500,7 @@ def import_csvdata(config: dict, city: str):
     return df_csv_dict_list
     
     
-def process_csvdata(config, df_csv_dict, city):
+def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     """ 
     """
     
@@ -551,33 +551,32 @@ def process_csvdata(config, df_csv_dict, city):
     return df_augmented
     
 def save_chunk(
-    config,
-    df,
-    chunk_counter,
-    saving_path,
-    filename,
-    last_iteration=False 
-):
-
-    """ """
+    config: dict,
+    df: pd.DataFrame,
+    chunk_counter: int,
+    saving_path: str,
+    filename: str,
+    last_iteration=False: bool 
+) -> (pd.DataFrame, int):
+    """ 
+    Save a chunk of data and return remaining with chunk counter 
+    """
     
-    ### Save resulting data in chunks
     while (
         len(df.index) > config['uber_movement']['datapoints_per_file'] 
         or last_iteration
     ):
-        
         # increment chunk counter 
         chunk_counter += 1
         
-        # create path
+        # create path to saving
         path_to_saving = (
             saving_path
             + filename
             + '_{}.csv'.format(chunk_counter)
         )
         
-        # shuffle
+        # shuffle dataframe
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # save chunk
@@ -587,8 +586,7 @@ def save_chunk(
         )
         
         # delete saved chunk
-        if not last_iteration:
-            df = df[config['uber_movement']['datapoints_per_file']:]
+        df = df[config['uber_movement']['datapoints_per_file']:]
             
         # Must be set to exit loop on last iteration
         last_iteration = False
