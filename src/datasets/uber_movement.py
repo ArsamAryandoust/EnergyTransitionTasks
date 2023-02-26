@@ -12,7 +12,7 @@ def process_all_datasets(config: dict):
     print("Processing Uber Movement dataset.")
     
     # iterated over all subtasks
-    for subtask in config['building_electricity']['subtask_list']:
+    for subtask in config['uber_movement']['subtask_list']:
         # augment conigurations with additional information
         config = config_UM(config, subtask)
     
