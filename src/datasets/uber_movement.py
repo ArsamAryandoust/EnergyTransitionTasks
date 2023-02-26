@@ -59,7 +59,12 @@ def process_geographic_information(config: dict):
         df_geojson = import_geojson(config, city)
         
         # extract geojson information of city zones as latitude and longitude df
-        df_latitudes, df_longitudes = process_geojson(df_geojson)
+        (
+            df_latitudes, 
+            df_longitudes, 
+            df_centroid_lat, 
+            df_centroid_long
+        ) = process_geojson(df_geojson)
         
         ### Transform lat and long coordinates into unit sphere coordinate system
         
@@ -113,7 +118,9 @@ def import_geojson(config: dict, city: str) -> pd.DataFrame:
     return df_geojson
     
     
-def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+def process_geojson(df_geojson: pd.DataFrame) -> (
+    pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame
+):
     """ Maps Uber Movement city zone IDs to a flattened list of latitude and 
     longitude coordinates in the format of two dictionaries. Uses the recursive 
     function called foster_coordinates_recursive to flatten the differently nested 
@@ -148,6 +155,15 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
             coordinates
         )
         
+    # calculate centroids of city zone polygons
+    (
+        map_movement_id_to_centroid_lat,
+        map_movement_id_to_centroid_long
+    ) = calc_centroids(
+       map_movement_id_to_latitude_coordinates,
+        map_movement_id_to_longitude_coordinates
+    )
+    
     df_latitudes = pd.DataFrame.from_dict(
         map_movement_id_to_latitude_coordinates, 
         orient='index'
@@ -158,7 +174,137 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
         orient='index'
     ).transpose()
     
-    return df_latitudes, df_longitudes
+    df_centroid_lat = pd.DataFrame.from_dict(
+        map_movement_id_to_centroid_lat, 
+        orient='index'
+    ).transpose()
+    
+    df_centroid_long = pd.DataFrame.from_dict(
+        map_movement_id_to_centroid_long, 
+        orient='index'
+    ).transpose()
+    
+    return df_latitudes, df_longitudes, df_centroid_lat, df_centroid_long
+  
+  
+def calc_centroids(
+    map_movement_id_to_latitude_coordinates: dict,
+    map_movement_id_to_longitude_coordinates: dict
+) -> (dict, dict):
+
+    """ Calculates the centroid of passed city zone polygons. Should a city
+    zone consist of unregularities or multiple polygons, this is identified
+    by centroid coordinates that are not within the bound of minimum and 
+    maximum values of all coordinates of that city zone. In this case, the
+    centroids are replaced with the mean of lat and long coordinates.
+    """
+    
+    # create empty dictionary for mapping Uber Movement IDs to city zone areas
+    map_movement_id_to_cityzone_area = dict()
+
+    # iterate over all movement IDs and latitude coordinates
+    for movement_id, lat_coordinates in map_movement_id_to_latitude_coordinates.items():
+        
+        # get also the longitude coordinates
+        long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
+        
+        # calculate currently iterated city zone area
+        area_cityzone = 0
+        for i in range(len(lat_coordinates)-1):
+
+            area_cityzone = (
+                area_cityzone
+                + long_coordinates[i] * lat_coordinates[i+1]
+                - long_coordinates[i+1] * lat_coordinates[i]
+            )
+      
+        area_cityzone = (
+            area_cityzone
+            + long_coordinates[i+1] * lat_coordinates[0]
+            - long_coordinates[0] * lat_coordinates[i+1]
+        )
+        
+        area_cityzone *= 0.5
+        #area_cityzone = abs(area_cityzone)
+        
+        map_movement_id_to_cityzone_area[movement_id] = area_cityzone
+        
+    # create empty dictionaries for mapping Uber Movement IDs to city zone centroids
+    map_movement_id_to_centroid_lat = dict()
+    map_movement_id_to_centroid_long = dict()
+        
+    # iterate over all movement IDs and latitude coordinates
+    for movement_id, lat_coordinates in map_movement_id_to_latitude_coordinates.items():
+        
+        # get also the longitude coordinates
+        long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
+        
+        
+        # calculate currently iterated city zone area
+        centroid_lat = 0
+        centroid_long = 0
+        for i in range(len(lat_coordinates)-1):
+            
+            centroid_long += (
+                long_coordinates[i]
+                + long_coordinates[i+1]
+            ) * (
+                long_coordinates[i] * lat_coordinates[i+1]
+                - long_coordinates[i+1] * lat_coordinates[i]
+            )
+
+            centroid_lat += (
+                lat_coordinates[i]
+                + lat_coordinates[i+1]
+            ) * (
+                long_coordinates[i] * lat_coordinates[i+1]
+                - long_coordinates[i+1] * lat_coordinates[i]
+            )
+
+        centroid_long += (
+            long_coordinates[i+1]
+            + long_coordinates[0]
+        ) * (
+            long_coordinates[i+1] * lat_coordinates[0]
+            - long_coordinates[0] * lat_coordinates[i+1]
+        )
+        
+        centroid_lat += (
+                lat_coordinates[i+1]
+                + lat_coordinates[0]
+            ) * (
+                long_coordinates[i+1] * lat_coordinates[0]
+                - long_coordinates[0] * lat_coordinates[i+1]
+            )
+        
+
+        centroid_lat /= (
+            6 * map_movement_id_to_cityzone_area[movement_id]
+        )
+        centroid_long /= (
+            6 * map_movement_id_to_cityzone_area[movement_id]
+        )
+     
+        # Uber Movement city zones sometimes consist of multiple distinct polygons
+        if (
+            centroid_lat < min(lat_coordinates)
+            or centroid_lat > max(lat_coordinates)
+            or centroid_long < min(long_coordinates)
+            or centroid_long > max(long_coordinates)
+        ):
+            # in this case we calculate the mean instead of centroid
+            centroid_lat = np.mean(lat_coordinates)
+            centroid_long = np.mean(long_coordinates)            
+        
+        map_movement_id_to_centroid_lat[movement_id] = centroid_lat
+        map_movement_id_to_centroid_long[movement_id] = centroid_long
+        
+    map_movement_id_to_centroid_coordinates = (
+        map_movement_id_to_centroid_lat,
+        map_movement_id_to_centroid_long
+    )
+    
+    return map_movement_id_to_centroid_coordinates
   
   
 def foster_coordinates_recursive(
@@ -166,7 +312,7 @@ def foster_coordinates_recursive(
     map_movement_id_to_latitude_coordinates: dict,
     map_movement_id_to_longitude_coordinates: dict,
     coordinates: pd.Series
-) -> tuple:
+) -> (dict, dict):
 
     """ Flattens the coordinates of a passed city zone id (movement_id)
     and coordiates list recursively and saves their numeric values
@@ -381,19 +527,19 @@ def split_train_val_test(config: dict):
             else:
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
-                    frac=0.05, 
+                    frac=0.07, 
                     random_state=config['general']['seed']
                 )
                 
-                # remove validation data from test
-                df_test = df_test.drop(df_val_append.index)
-                
-                # append to validation dataframe
-                df_val = pd.concat([df_val, df_val_append])
-                
-                # free up memory     
-                del df_val_append   
-                gc.collect()
+            # remove validation data from test
+            df_test = df_test.drop(df_val_append.index)
+            
+            # append to validation dataframe
+            df_val = pd.concat([df_val, df_val_append])
+            
+            # free up memory     
+            del df_val_append   
+            gc.collect()
             
             print(len(df_train))
             print(len(df_val))

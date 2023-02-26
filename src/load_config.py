@@ -6,7 +6,7 @@ import random
 
 def get_config_from_yaml() -> dict:
     """
-    Get config from yaml file
+    Load config from yaml file.
     """
     
     with open("config.yml", "r") as configfile:
