@@ -42,21 +42,10 @@ if __name__ == "__main__":
 
 
 """
-import prep_uber_movement
 import prep_open_catalyst
 import prep_climart
 
 
-# process uber movement data
-if HYPER.PROCESS_UBERMOVEMENT:
-
-    
-    # create geographic data
-    _, _ = prep_uber_movement.process_geographic_information(HYPER_UBERMOVEMENT)
-    
-    # create training validation testing splits
-    _, _, _ = prep_uber_movement.train_val_test_split(HYPER_UBERMOVEMENT)
-    
     
 # process climart data
 if HYPER.PROCESS_CLIMART:

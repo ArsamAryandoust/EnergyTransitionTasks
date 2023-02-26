@@ -1,5 +1,6 @@
 import math
 import gc
+import random
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -340,7 +341,9 @@ def split_train_val_test(config: dict):
                 ]
                 
                 # set the remaining rows for training and validation
-                df_augmented_csvdata = df_augmented_csvdata.drop(df_test_city_zones.index)
+                df_augmented_csvdata = df_augmented_csvdata.drop(
+                    df_test_city_zones.index
+                )
                 
                 # append to test dataframe
                 df_test = pd.concat([df_test, df_test_city_zones])
@@ -357,7 +360,9 @@ def split_train_val_test(config: dict):
                 ]
                 
                 # set the remaining rows for training and validation
-                df_augmented_csvdata = df_augmented_csvdata.drop(df_test_hours_of_day.index)
+                df_augmented_csvdata = df_augmented_csvdata.drop(
+                    df_test_hours_of_day.index
+                )
                 
                 # append to test dataframe
                 df_test = pd.concat([df_test, df_test_hours_of_day])
@@ -484,7 +489,9 @@ def import_csvdata(config: dict, city: str):
     files_dict = config['city_files_mapping'][city]
     df_csv_dict_list = []
     for csv_file_dict in files_dict['csv_file_dict_list']:
-        path_to_csv = config['path_to_data_raw'] + city + '/' + csv_file_dict['filename']
+        path_to_csv = (
+            config['path_to_data_raw'] + city + '/' + csv_file_dict['filename']
+        )
         df_csv = pd.read_csv(path_to_csv)
         csv_df_dict = csv_file_dict.copy()
         csv_df_dict['df'] = df_csv
@@ -539,7 +546,7 @@ def process_csvdata(config, df_csv_dict, city):
     )
     
     # remove any rows with nan entry
-    df_augmented = df_augmented[df_augmented.isnull().sum(axis=1)<1]
+    df_augmented = df_augmented[df_augmented.isnull().sum(axis=1) < 1]
     
     return df_augmented
     
@@ -574,11 +581,14 @@ def save_chunk(
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # save chunk
-        df.iloc[:config['uber_movement']['datapoints_per_file']].to_csv(path_to_saving, index=False)
+        df.iloc[:config['uber_movement']['datapoints_per_file']].to_csv(
+            path_to_saving, 
+            index=False
+        )
         
         # delete saved chunk
         if not last_iteration:
-            df = df[config['uber_movement']['datapoints_per_file'] :]
+            df = df[config['uber_movement']['datapoints_per_file']:]
             
         # Must be set to exit loop on last iteration
         last_iteration = False
