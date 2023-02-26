@@ -372,13 +372,13 @@ def split_train_val_test(config: dict):
                 gc.collect()
                 
                 # split off validation data
-                df_val_append = df_testing.sample(
+                df_val_append = df_test.sample(
                     frac=config_uber['val_test_split'], 
                     random_state=config['general']['seed']
                 )
                 
                 # remove val points from test
-                df_testing = df_testing.drop(df_val_append.index)
+                df_test = df_test.drop(df_val_append.index)
                 
                 # append to validation dataframe
                 df_val = pd.concat([df_val, df_val_append])
