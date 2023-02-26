@@ -556,7 +556,7 @@ def save_chunk(
     chunk_counter: int,
     saving_path: str,
     filename: str,
-    last_iteration=False: bool 
+    last_iteration=False 
 ) -> (pd.DataFrame, int):
     """ 
     Save a chunk of data and return remaining with chunk counter 
