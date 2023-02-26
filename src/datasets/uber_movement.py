@@ -385,6 +385,10 @@ def split_train_val_test(config: dict):
             del df_val_append   
             gc.collect()
             
+            print(len(df_train))
+            print(len(df_val))
+            print(len(df_test))
+            
             ### Save resulting data in chunks
             df_train, train_chunk_counter = save_chunk(
                 config,
