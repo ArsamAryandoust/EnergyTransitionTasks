@@ -1,4 +1,5 @@
 import math
+import gc
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -570,14 +571,14 @@ def save_chunk(
         )
         
         # shuffle
-        df = df.sample(frac=1, random_state=HYPER.SEED)
+        df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # save chunk
-        df.iloc[:HYPER.CHUNK_SIZE_UBERMOVEMENT].to_csv(path_to_saving, index=False)
+        df.iloc[:config['uber_movement']['datapoints_per_file']].to_csv(path_to_saving, index=False)
         
         # delete saved chunk
         if not last_iteration:
-            df = df[HYPER.CHUNK_SIZE_UBERMOVEMENT:]
+            df = df[config['uber_movement']['datapoints_per_file'] :]
             
         # Must be set to exit loop on last iteration
         last_iteration = False
