@@ -20,7 +20,7 @@ building_electricity:
 
 uber_movement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
-    temporal_test_split: 0.15
+    temporal_test_split: 0.25
     spatial_test_split: 0.2
     val_test_split: 0.05
     subsample_frac: 1
