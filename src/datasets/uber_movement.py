@@ -48,6 +48,7 @@ def process_geographic_information(config: dict):
     """
     Processes and saves geographic features of cities and their zones.
     """
+    print('Processing geographic data.')
     # create progress bar
     pbar = tqdm(total=len(config['list_of_cities']))
     
@@ -240,8 +241,6 @@ def split_train_val_test(config: dict):
     """
     config_uber = config['uber_movement']
     
-    # create progress bar
-    pbar = tqdm(total=len(config_uber['list_of_cities']))
     
     # decleare empty dataframes for trainining validation and testing
     df_train = pd.DataFrame()
@@ -253,9 +252,7 @@ def split_train_val_test(config: dict):
     
     # iterate over all available cities
     for city in config_uber['list_of_cities']:
-        
-        # tell us whats going on
-        print('Processing data for', city)
+        print('Processing data for:', city)
         
         # check if city is in testing city list
         if city in (
@@ -267,6 +264,9 @@ def split_train_val_test(config: dict):
         
         # import all csv files for currently iterated city
         df_csv_dict_list = import_csvdata(config_uber, city)
+        
+        # create progress bar
+        pbar = tqdm(total=len(df_csv_dict_list))
         
         # iterate over all imported csv files for this city
         first_iteration = True
@@ -408,8 +408,8 @@ def split_train_val_test(config: dict):
                 'testing_data'
             )
             
-        # update progress bar
-        pbar.update(1)
+            # update progress bar
+            pbar.update(1)
 
     ### Tell us the ratios that result from our splitting rules
     n_train = (
