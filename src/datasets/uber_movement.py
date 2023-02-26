@@ -38,6 +38,7 @@ def save_city_id_mapping(config: str):
     
 def process_geographic_information(config: dict):
     """
+    Processes and saves geographic features of cities and their zones.
     """
     
     # iterate over all cities

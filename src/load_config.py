@@ -2,6 +2,7 @@ import os
 import yaml
 import random
 import math
+import random
 
 def get_config_from_yaml() -> dict:
     """
@@ -173,10 +174,10 @@ def config_UM(config: dict, subtask: str) -> dict:
         + 'testing/'
     )
     
-    
+    # create list of citites and save to configuration dictionary
     random.seed(config['general']['seed'])
     list_of_cities = os.listdir(dictionary['path_to_data_raw'])
-    list_of_cities.shuffle()
+    random.shuffle(list_of_cities)
     if subtask == 'cities_10':
         list_of_cities = list_of_cities[:10]
     elif subtask == 'cities_20':
