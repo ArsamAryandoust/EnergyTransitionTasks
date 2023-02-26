@@ -48,6 +48,8 @@ def process_geographic_information(config: dict):
     """
     Processes and saves geographic features of cities and their zones.
     """
+    # create progress bar
+    pbar = tqdm(total=len(config['list_of_cities']))
     
     # iterate over all cities
     for city in config['list_of_cities']:
@@ -91,13 +93,13 @@ def process_geographic_information(config: dict):
         
         
         ### Save into one csv file ###
-        
-        # concatenate all dataframes
         df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
         filename = city + '.csv'
         saving_path = (config['path_to_data_add'] + filename)
         df_geographic_info.to_csv(saving_path)
         
+        # update progress bar
+        pbar.update(1)
 
 def import_geojson(config: dict, city: str) -> pd.DataFrame:
     """ 
@@ -247,8 +249,8 @@ def split_train_val_test(config: dict):
     """ 
     Splits and saves datasets according to configuration rules.
     """
-    
     config_uber = config['uber_movement']
+    
     # create progress bar
     pbar = tqdm(total=len(config_uber['list_of_cities']))
     
@@ -396,12 +398,12 @@ def split_train_val_test(config: dict):
                 
             
             ### Save resulting data in chunks
-            df_train, train_chunk_counter = save_chunk(
+            df_test, test_chunk_counter = save_chunk(
                 config,
-                df_train,
-                train_chunk_counter,
-                config_uber['path_to_data_train'],
-                'training_data'    
+                df_test,
+                test_chunk_counter,
+                config_uber['path_to_data_test'],
+                'testing_data'
             )
             df_val, val_chunk_counter = save_chunk(
                 config,
@@ -410,12 +412,12 @@ def split_train_val_test(config: dict):
                 config_uber['path_to_data_val'],
                 'validation_data'
             )
-            df_test, test_chunk_counter = save_chunk(
+            df_train, train_chunk_counter = save_chunk(
                 config,
-                df_test,
-                test_chunk_counter,
-                config_uber['path_to_data_test'],
-                'testing_data'
+                df_train,
+                train_chunk_counter,
+                config_uber['path_to_data_train'],
+                'training_data'    
             )
             
         # update progress bar
