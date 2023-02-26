@@ -12,6 +12,8 @@ def process_all_datasets(config: dict):
     Processes all datasets for Building Electricity task.
     """
     
+    print("Processing Building Electricity dataset.")
+    
     # iterated over all subtasks
     for subtask in config['building_electricity']['subtask_list']:
         # augment config with currently iterated subtask paths

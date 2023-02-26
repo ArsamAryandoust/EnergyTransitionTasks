@@ -8,6 +8,9 @@ def process_all_datasets(config: dict):
     """
     Processes all datasets for Uber Movement prediction task.
     """
+    
+    print("Processing Uber Movement dataset.")
+    
     # iterated over all subtasks
     for subtask in config['building_electricity']['subtask_list']:
         # augment conigurations with additional information
@@ -19,6 +22,7 @@ def process_all_datasets(config: dict):
     
         # split training validation testing
         split_train_val_test(config)
+    
     
 def save_city_id_mapping(config: str):
     """
@@ -87,17 +91,8 @@ def process_geographic_information(config: dict):
         
         # concatenate all dataframes
         df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
-        
-        # create file name
         filename = city + '.csv'
-        
-        # create saving path
-        saving_path = (
-            HYPER.PATH_TO_DATA_UBERMOVEMENT_ADDITIONAL 
-            + filename
-        )
-        
-        # save dataframe
+        saving_path = (config['path_to_data_add'] + filename)
         df_geographic_info.to_csv(saving_path)
         
 

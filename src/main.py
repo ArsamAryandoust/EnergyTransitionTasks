@@ -17,11 +17,9 @@ if __name__ == "__main__":
     config = get_config_from_yaml()
         
     if args.building_electricity:
-        print("Processing Building Electricity dataset.")
         building_electricity.process_all_datasets(config)
         
     if args.uber_movement:
-        print("Processing Uber Movement dataset.")
         uber_movement.process_all_datasets(config)
         
     if args.climart:
