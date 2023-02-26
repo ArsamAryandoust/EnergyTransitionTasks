@@ -370,10 +370,18 @@ def split_train_val_test(config: dict):
                 gc.collect()
                 
             
-            if len(df_test) > config_uber['datapoints_per_file']: 
+            if len(df_test) > (1+config_uber['val_test_split']) * (
+                config_uber['datapoints_per_file']
+            ): 
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
                     frac=config_uber['val_test_split'], 
+                    random_state=config['general']['seed']
+                )
+            else:
+                # split off validation data from ood testing data
+                df_val_append = df_test.sample(
+                    frac=0.05, 
                     random_state=config['general']['seed']
                 )
                 
