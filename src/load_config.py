@@ -220,8 +220,7 @@ def config_UM(config: dict, subtask: str) -> dict:
             'hours_of_day': hours_of_day_list
         },
         'spatial_dict': {
-            'list_of_cities_test': list_of_cities_test,
-            'city_zone_share': dictionary['spatial_test_split']
+            'list_of_cities_test': list_of_cities_test
         }
     }
     
