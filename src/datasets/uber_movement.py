@@ -123,16 +123,13 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     df_geojson = df_geojson['features']
     
     map_json_entry_to_movement_id = dict()
-
     for json_id, json_entry in enumerate(df_geojson):
-        
         map_json_entry_to_movement_id[json_id] = int(
           json_entry['properties']['MOVEMENT_ID']
         )
     
     map_movement_id_to_latitude_coordinates = dict()
     map_movement_id_to_longitude_coordinates = dict()
-
     for k, v in map_json_entry_to_movement_id.items():
         map_movement_id_to_latitude_coordinates[v] = []
         map_movement_id_to_longitude_coordinates[v] = []
@@ -140,7 +137,6 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
 
     for json_id, movement_id in map_json_entry_to_movement_id.items():
         coordinates = df_geojson[json_id]['geometry']['coordinates']
-        
         (
             map_movement_id_to_latitude_coordinates, 
             map_movement_id_to_longitude_coordinates
@@ -178,22 +174,15 @@ def foster_coordinates_recursive(
     """
 
     dummy = 0
-
     for j in coordinates:
-
         if type(j) != list and dummy == 0:
-
             map_movement_id_to_longitude_coordinates[movement_id].append(j)
             dummy = 1
             continue
-
         elif type(j) != list and dummy == 1:
-
             map_movement_id_to_latitude_coordinates[movement_id].append(j)
             break
-
         else:
-
             dummy = 0
             coordinates = j
             (
@@ -373,22 +362,6 @@ def split_train_val_test(config: dict):
                 del df_test_hours_of_day
                 gc.collect()
                 
-                # split off validation data
-                df_val_append = df_test.sample(
-                    frac=config_uber['val_test_split'], 
-                    random_state=config['general']['seed']
-                )
-                
-                # remove validation data from test
-                df_test = df_test.drop(df_val_append.index)
-                
-                # append to validation dataframe
-                df_val = pd.concat([df_val, df_val_append])
-                
-                # free up memory     
-                del df_val_append   
-                gc.collect()
-                
                 # append remaining data to training dataset
                 df_train = pd.concat([df_train, df_augmented_csvdata])
                 
@@ -396,14 +369,29 @@ def split_train_val_test(config: dict):
                 del df_augmented_csvdata   
                 gc.collect()
                 
+            # split off validation data from ood testing data
+            df_val_append = df_test.sample(
+                frac=config_uber['val_test_split'], 
+                random_state=config['general']['seed']
+            )
+            
+            # remove validation data from test
+            df_test = df_test.drop(df_val_append.index)
+            
+            # append to validation dataframe
+            df_val = pd.concat([df_val, df_val_append])
+            
+            # free up memory     
+            del df_val_append   
+            gc.collect()
             
             ### Save resulting data in chunks
-            df_test, test_chunk_counter = save_chunk(
+            df_train, train_chunk_counter = save_chunk(
                 config,
-                df_test,
-                test_chunk_counter,
-                config_uber['path_to_data_test'],
-                'testing_data'
+                df_train,
+                train_chunk_counter,
+                config_uber['path_to_data_train'],
+                'training_data'    
             )
             df_val, val_chunk_counter = save_chunk(
                 config,
@@ -412,12 +400,12 @@ def split_train_val_test(config: dict):
                 config_uber['path_to_data_val'],
                 'validation_data'
             )
-            df_train, train_chunk_counter = save_chunk(
+            df_test, test_chunk_counter = save_chunk(
                 config,
-                df_train,
-                train_chunk_counter,
-                config_uber['path_to_data_train'],
-                'training_data'    
+                df_test,
+                test_chunk_counter,
+                config_uber['path_to_data_test'],
+                'testing_data'
             )
             
         # update progress bar
