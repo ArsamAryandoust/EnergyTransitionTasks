@@ -135,7 +135,7 @@ def config_BE(config: dict, subtask: str) -> dict:
     return config
     
     
-def config_UM(config: dict) -> dict:
+def config_UM(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing Uber Movement dataset.
     """
@@ -144,60 +144,93 @@ def config_UM(config: dict) -> dict:
     dictionary = config['uber_movement']    
     
     # add data paths
-    dictionary['path_to_data_raw_ubermovement'] = (
+    dictionary['path_to_data_raw'] = (
         config['general']['path_to_data_raw'] 
         + 'UberMovement/'
     )
-    dictionary['path_to_data_ubermovement'] = (
+    dictionary['path_to_data'] = (
         config['general']['path_to_data'] 
         + 'UberMovement/'
     )
-    dictionary['path_to_data_ubermovement_add'] = (
-        dictionary['path_to_data_ubermovement']
+    dictionary['path_to_data_subtask'] = (
+        dictionary['path_to_data']
+        + '{}/'.format(subtask)
+    )
+    dictionary['path_to_data_add'] = (
+        dictionary['path_to_data_subtask']
         + 'additional/'
     )
-    dictionary['path_to_data_ubermovement_train'] = (
-        dictionary['path_to_data_ubermovement']
+    dictionary['path_to_data_train'] = (
+        dictionary['path_to_data_subtask']
         + 'training/'
     )
-    dictionary['path_to_data_ubermovement_val'] = (
-        dictionary['path_to_data_ubermovement']
+    dictionary['path_to_data_val'] = (
+        dictionary['path_to_data_subtask']
         + 'validation/'
     )
-    dictionary['path_to_data_ubermovement_test'] = (
-        dictionary['path_to_data_ubermovement']
+    dictionary['path_to_data_test'] = (
+        dictionary['path_to_data_subtask']
         + 'testing/'
     )
     
+    
+    random.seed(config['general']['seed'])
+    list_of_cities = os.listdir(dictionary['path_to_data_raw'])
+    list_of_cities.shuffle()
+    if subtask == 'cities_10':
+        list_of_cities = list_of_cities[:10]
+    elif subtask == 'cities_20':
+        list_of_cities = list_of_cities[:20]
+    dictionary['list_of_cities'] = list_of_cities
+    
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    quarter_of_year = random.sample(range(1,5), 1)
+    year_list = random.sample(
+        range(2015,2021), 
+        math.floor(5 * dictionary['temporal_test_split'])
+    )
+    quarter_of_year_list = random.sample(
+        range(1,5), 
+        math.floor(4 * dictionary['temporal_test_split'])
+    )
     random.seed(config['general']['seed'])
-    hours_of_day = random.sample(range(24), 4)
+    hours_of_day_list = random.sample(
+        range(24), 
+        math.floor(24 * dictionary['temporal_test_split'])
+    )
+    
+    # out of distribution test splitting rules in space
+    n_cities_test = round(
+        dictionary['spatial_test_split']
+        * len(dictionary['list_of_cities'])
+    )
+    
+    random.seed(config['general']['seed'])
+    list_of_cities_test = random.sample(
+        dictionary['list_of_cities']['list_of_cities'], 
+        n_cities_test
+    )
     
     # dictionary saving rules
-    dictionary['test_split_dict_ubermovement'] = {
+    dictionary['test_split_dict'] = {
         'temporal_dict': {
-            'year': 2017,
-            'quarter_of_year': quarter_of_year,
-            'hours_of_day': hours_of_day
+            'year': year_list,
+            'quarter_of_year': quarter_of_year_list,
+            'hours_of_day': hours_of_day_list
         },
         'spatial_dict': {
-            'city_share': 0.1,
-            'city_zone_share': 0.1
+            'list_of_cities_test': list_of_cities_test,
+            'city_zone_share': dictionary['spatial_test_split']
         }
     }
     
-    # Do some processing
+    # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
     quarter_list = ['-1-', '-2-', '-3-', '-4-']
-    dictionary['ubermovement_list_of_cities'] = os.listdir(
-        dictionary['path_to_data_raw_ubermovement']
-    )
-    dictionary['ubermovement_city_files_mapping'] = {}
-    dictionary['ubermovement_city_id_mapping'] = {}
-    for city_id, city in enumerate(dictionary['ubermovement_list_of_cities']):
-        path_to_city = dictionary['path_to_data_raw_ubermovement'] + city + '/'
+    dictionary['city_files_mapping'] = {}
+    dictionary['city_id_mapping'] = {}
+    for city_id, city in enumerate(list_of_cities):
+        path_to_city = dictionary['path_to_data_raw'] + city + '/'
         file_list = os.listdir(path_to_city)
         csv_file_dict_list = []
         for filename in file_list:
@@ -242,16 +275,17 @@ def config_UM(config: dict) -> dict:
         }
         
         # save 
-        dictionary['ubermovement_city_files_mapping'][city] = file_dict
-        dictionary['ubermovement_city_id_mapping'][city] = city_id
+        dictionary['city_files_mapping'][city] = file_dict
+        dictionary['city_id_mapping'][city] = city_id
   
     # create directory structure for saving results
     for path in [
-        dictionary['path_to_data_raw_ubermovement'], 
-        dictionary['path_to_data_raw_ubermovement_add'],
-        dictionary['path_to_data_raw_ubermovement_train'],
-        dictionary['path_to_data_raw_ubermovement_val'],
-        dictionary['path_to_data_raw_ubermovement_test']
+        dictionary['path_to_data'],
+        dictionary['path_to_data_subtask'], 
+        dictionary['path_to_data_add'],
+        dictionary['path_to_data_train'],
+        dictionary['path_to_data_val'],
+        dictionary['path_to_data_test']
     ]:
         check_create_dir(path)
     

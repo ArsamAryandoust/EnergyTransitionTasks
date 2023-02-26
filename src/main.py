@@ -1,6 +1,6 @@
 import parse_args
 from load_config import get_config_from_yaml
-from datasets import building_electricity
+from datasets import building_electricity, uber_movement
 
 
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         
     if args.uber_movement:
         print("Processing Uber Movement dataset.")
-        config = load_config.config_UM(config)
+        uber_movement.process_all_datasets(config)
         
     if args.climart:
         print("Processing ClimArt dataset.")
@@ -52,11 +52,6 @@ import prep_climart
 # process uber movement data
 if HYPER.PROCESS_UBERMOVEMENT:
 
-    # tell us whats going on
-    print('Processing Uber Movement data')
-    
-    # create hyper parameters
-    HYPER_UBERMOVEMENT = hyper_ubermovement.HyperUberMovement()
     
     # create geographic data
     _, _ = prep_uber_movement.process_geographic_information(HYPER_UBERMOVEMENT)
