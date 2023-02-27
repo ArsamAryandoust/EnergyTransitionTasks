@@ -420,7 +420,7 @@ def split_train_val_test(config_uber: dict):
             
             if testing_city or testing_year or testing_quarter:
                 # append all data to test dataframe
-                df_test = pd.concat([df_test, df_augmented])
+                df_test = pd.concat([df_test, df_augmented], ignore_index=True)
                 
                 # free up memory     
                 del df_augmented   
@@ -439,7 +439,7 @@ def split_train_val_test(config_uber: dict):
                 )
                 
                 # append to test dataframe
-                df_test = pd.concat([df_test, df_test_city_zones])
+                df_test = pd.concat([df_test, df_test_city_zones], ignore_index=True)
                 
                 # free up memory
                 del df_test_city_zones
@@ -458,14 +458,14 @@ def split_train_val_test(config_uber: dict):
                 )
                 
                 # append to test dataframe
-                df_test = pd.concat([df_test, df_test_hours_of_day])
+                df_test = pd.concat([df_test, df_test_hours_of_day], ignore_index=True)
                 
                 # free up memory
                 del df_test_hours_of_day
                 gc.collect()
                 
                 # append remaining data to training dataset
-                df_train = pd.concat([df_train, df_augmented])
+                df_train = pd.concat([df_train, df_augmented], ignore_index=True)
                 
                 # free up memory     
                 del df_augmented   
@@ -490,7 +490,7 @@ def split_train_val_test(config_uber: dict):
                 df_test = df_test.drop(df_val_append.index)
                 
                 # append to validation dataframe
-                df_val = pd.concat([df_val, df_val_append])
+                df_val = pd.concat([df_val, df_val_append], ignore_index=True)
                 
                 # free up memory     
                 del df_val_append   
