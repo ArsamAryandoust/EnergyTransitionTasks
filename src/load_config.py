@@ -122,14 +122,12 @@ def config_BE(config: dict, subtask: str) -> dict:
     }
     
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data'],
-        dictionary['path_to_data_subtask'],
-        dictionary['path_to_data_add'],
-        dictionary['path_to_data_train'],
-        dictionary['path_to_data_val'],
-        dictionary['path_to_data_test']
-    ]:
+    if subtask == 'buildings_92' and os.path.isdir(dictionary['path_to_data']):
+        shutil.rmtree(dictionary['path_to_data'])
+    for path in [dictionary['path_to_data'],
+        dictionary['path_to_data_subtask'], dictionary['path_to_data_add'],
+        dictionary['path_to_data_train'], dictionary['path_to_data_val'],
+        dictionary['path_to_data_test']]:
         check_create_dir(path)
         
     config['building_electricity'] = dictionary
@@ -278,16 +276,38 @@ def config_UM(config: dict, subtask: str) -> dict:
         dictionary['city_files_mapping'][city] = file_dict
         dictionary['city_id_mapping'][city] = city_id
   
+    
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data'],
-        dictionary['path_to_data_subtask'], 
-        dictionary['path_to_data_add'],
-        dictionary['path_to_data_train'],
-        dictionary['path_to_data_val'],
-        dictionary['path_to_data_test']
-    ]:
-        check_create_dir(path)
+    if subtask == 'cities_10':
+        if os.path.isdir(dictionary['path_to_data']):
+            shutil.rmtree(dictionary['path_to_data'])
+        for path in [dictionary['path_to_data'],
+            dictionary['path_to_data_subtask'], dictionary['path_to_data_add'],
+            dictionary['path_to_data_train'], dictionary['path_to_data_val'],
+            dictionary['path_to_data_test']]:
+            check_create_dir(path)
+    elif subtask == 'cities_20':
+        # set full path to directory we want to copy
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
+        # copy directory into current subtask
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
+    elif subtask == 'cities_43':
+        # set full path to directory we want to copy
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
+        # copy directory into current subtask
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
+        
+        
+    # create dataframe from dictionary
+    df = pd.DataFrame.from_dict(
+        dictionary['city_id_mapping'], 
+        orient='index', 
+        columns=['city_id']
+    )
+    
+    # save file
+    saving_path = dictionary['path_to_data_add'] + 'city_to_id_mapping.csv'
+    df.to_csv(saving_path)
     
     config['uber_movement'] = dictionary
     return config

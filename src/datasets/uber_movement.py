@@ -22,9 +22,6 @@ def process_all_datasets(config: dict):
         # copy all files of previous subtask and shorten list_of_cities here
         copy_previous_subtask_results(config['uber_movement'], subtask)
         
-        # save city id mapping for subtask's city list
-        save_city_id_mapping(config['uber_movement'])
-        
         # process geographic information
         process_geographic_information(config['uber_movement'])
         
@@ -50,24 +47,7 @@ def copy_previous_subtask_results(config_uber: dict, subtask: str):
     shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
     
     
-def save_city_id_mapping(config: str):
-    """
-    Creates a dataframe from dictionary of city to ID mapping and saves it as
-    csv file under additional data path of subtask.
-    """
-    
-    # create dataframe from dictionary
-    df = pd.DataFrame.from_dict(
-        config['city_id_mapping'], 
-        orient='index', 
-        columns=['city_id']
-    )
-    
-    # save file
-    saving_path = config['path_to_data_add'] + 'city_to_id_mapping.csv'
-    df.to_csv(saving_path)
-    
-    
+
 def process_geographic_information(config: dict):
     """
     Processes and saves geographic features of cities and their zones.
@@ -411,7 +391,7 @@ def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
     
     if subtask == 'cities_10':
         # declare data point counters as zero
-        train_file_count, val_file_count, test_file_count = 0, 0, 0
+        train_file_count, val_file_count, test_file_count = 1, 1, 1
         
         # decleare empty dataframes for trainining validation and testing
         df_train = pd.DataFrame()
@@ -441,6 +421,7 @@ def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
         val_file_count, test_file_count)
     
     return return_values   
+        
         
 def split_train_val_test(config: dict, subtask: str):
     """ 
@@ -748,6 +729,7 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     
     return df_augmented
     
+    
 def save_chunk(
     config: dict,
     df: pd.DataFrame,
@@ -764,8 +746,6 @@ def save_chunk(
         len(df.index) > config['uber_movement']['datapoints_per_file'] 
         or last_iteration
     ):
-        # increment chunk counter 
-        chunk_counter += 1
         
         # create path to saving
         path_to_saving = (
@@ -788,6 +768,9 @@ def save_chunk(
             
         # Must be set to exit loop on last iteration
         last_iteration = False
+        
+        # increment chunk counter 
+        chunk_counter += 1
         
     return df, chunk_counter
     
