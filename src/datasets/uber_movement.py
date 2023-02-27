@@ -354,7 +354,7 @@ def split_train_val_test(config_uber: dict):
     
     # create new dataframes and chunk counters here
     (df_train, df_val, df_test, train_file_count, val_file_count, 
-        test_file_count) = load_df_and_file_counters(config_uber, subtask)
+        test_file_count) = load_df_and_file_counters(config_uber)
     
     
     # iterate over all available cities

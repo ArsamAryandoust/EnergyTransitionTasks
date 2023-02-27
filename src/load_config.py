@@ -182,7 +182,6 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     # out of distribution test splitting rules in space
     n_cities_test = round(config_uber['spatial_test_split'] * len(list_of_cities))
-    
     random.seed(config['general']['seed'])
     list_of_cities_test = random.sample(list_of_cities, n_cities_test)
     
