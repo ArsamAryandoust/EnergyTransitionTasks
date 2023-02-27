@@ -472,22 +472,27 @@ def split_train_val_test(config: dict, subtask: str):
                 gc.collect()
                 
       
-            # split off validation data from ood testing data
-            df_val_append = df_test.sample(
-                frac=config_uber['val_test_split'], 
-                random_state=config['general']['seed']
-            )
+            # this condition guarantees validation splits at good moments
+            if (1 - config_uber['val_test_split'] 
+                >= config_uber['datapoints_per_file'] / len(df_test)):
+                
+                # split off validation data from ood testing data
+                df_val_append = df_test.sample(
+                    frac=config_uber['val_test_split'], 
+                    random_state=config['general']['seed']
+                )
+                
+                # remove validation data from test
+                df_test = df_test.drop(df_val_append.index)
+                
+                # append to validation dataframe
+                df_val = pd.concat([df_val, df_val_append])
+                
+                # free up memory     
+                del df_val_append   
+                gc.collect()
             
-            # remove validation data from test
-            df_test = df_test.drop(df_val_append.index)
-            
-            # append to validation dataframe
-            df_val = pd.concat([df_val, df_val_append])
-            
-            # free up memory     
-            del df_val_append   
-            gc.collect()
-            
+            # show us how dataframes are gaining data
             print(len(df_train))
             print(len(df_val))
             print(len(df_test))
