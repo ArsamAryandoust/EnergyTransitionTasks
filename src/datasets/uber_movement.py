@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from load_config import config_UM
 
+
 def process_all_datasets(config: dict):
     """
     Processes all datasets for Uber Movement prediction task.
@@ -22,22 +23,22 @@ def process_all_datasets(config: dict):
         process_geographic_information(config['uber_movement'])
         
         # split training validation testing
-        split_train_val_test(config, subtask)
+        split_train_val_test(config['uber_movement'])
 
 
-def process_geographic_information(config: dict):
+def process_geographic_information(config_uber: dict):
     """
     Processes and saves geographic features of cities and their zones.
     """
     print('Processing geographic data.')
     # create progress bar
-    pbar = tqdm(total=len(config['list_of_cities']))
+    pbar = tqdm(total=len(config_uber['list_of_cities']))
     
     # iterate over all cities
-    for city in config['list_of_cities']:
+    for city in config_uber['list_of_cities']:
     
         # import geojson for iterated city
-        df_geojson = import_geojson(config, city)
+        df_geojson = import_geojson(config_uber, city)
         
         # extract geojson information of city zones as latitude and longitude df
         df_latitudes, df_longitudes = process_geojson(df_geojson)
@@ -75,21 +76,21 @@ def process_geographic_information(config: dict):
         ### Save into one csv file ###
         df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
         filename = city + '.csv'
-        saving_path = config['path_to_data_add'] + filename
+        saving_path = config_uber['path_to_data_add'] + filename
         df_geographic_info.to_csv(saving_path)
         
         # update progress bar
         pbar.update(1)
         
 
-def import_geojson(config: dict, city: str) -> pd.DataFrame:
+def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
     """ 
     Uses the city to file mapping of city to load the geo-json file and returns
     it as a dataframe.
     """
-    files_dict = config['city_files_mapping'][city]
+    files_dict = config_uber['city_files_mapping'][city]
     filename = files_dict['json']
-    path_to_json = config['path_to_data_raw'] + city + '/' + filename
+    path_to_json = config_uber['path_to_data_raw'] + city + '/' + filename
     df_geojson = pd.read_json(path_to_json)
     return df_geojson
 
@@ -346,11 +347,10 @@ def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
     return return_values   
         
         
-def split_train_val_test(config: dict, subtask: str):
+def split_train_val_test(config_uber: dict):
     """ 
     Splits and saves datasets according to configuration rules.
     """
-    config_uber = config['uber_movement']
     
     # create new dataframes and chunk counters here
     (df_train, df_val, df_test, train_file_count, val_file_count, 
@@ -395,7 +395,7 @@ def split_train_val_test(config: dict, subtask: str):
                 testing_quarter = False
             
             # augment csv
-            df_augmented = process_csvdata(config, df_csv_dict, city)
+            df_augmented = process_csvdata(config_uber, df_csv_dict, city)
             
             # free up memory     
             del df_csv_dict['df']
@@ -411,7 +411,7 @@ def split_train_val_test(config: dict, subtask: str):
                     n_city_zones * config_uber['spatial_test_split'])
                 
                 # randomly sample test city zones
-                random.seed(config['general']['seed'])
+                random.seed(config_uber['seed'])
                 test_city_zone_list = random.sample(range(n_city_zones), 
                     n_test_city_zones)
                 
@@ -473,8 +473,8 @@ def split_train_val_test(config: dict, subtask: str):
                 
       
             # this condition guarantees validation splits at good moments
-            if (1 - config_uber['val_test_split'] 
-                >= config_uber['datapoints_per_file'] / len(df_test)):
+            if (len(df_test) * (1 - config_uber['val_test_split'])
+                >= config_uber['datapoints_per_file']):
                 
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
@@ -498,12 +498,12 @@ def split_train_val_test(config: dict, subtask: str):
             print(len(df_test))
             
             ### Save resulting data in chunks
-            df_train, train_file_count = save_chunk(config, df_train,
+            df_train, train_file_count = save_chunk(config_uber, df_train,
                 train_file_count, config_uber['path_to_data_train'], 
                 'training_data')
-            df_val, val_file_count = save_chunk(config, df_val, val_file_count,
+            df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
                 config_uber['path_to_data_val'], 'validation_data')
-            df_test, test_file_count = save_chunk(config, df_test, 
+            df_test, test_file_count = save_chunk(config_uber, df_test, 
                 test_file_count, config_uber['path_to_data_test'], 'testing_data')
             
             # update progress bar
@@ -526,24 +526,24 @@ def split_train_val_test(config: dict, subtask: str):
         n_test/n_total))
     
     ### Save results of last iteration
-    df_train, train_file_count = save_chunk(config, df_train, train_file_count,
+    df_train, train_file_count = save_chunk(config_uber, df_train, train_file_count,
         config_uber['path_to_data_train'], 'training_data', last_iteration=True)
-    df_val, val_file_count = save_chunk(config, df_val, val_file_count,
+    df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
         config_uber['path_to_data_val'], 'validation_data', last_iteration=True)
-    df_test, test_file_count = save_chunk(config, df_test, test_file_count,
+    df_test, test_file_count = save_chunk(config_uber, df_test, test_file_count,
         config_uber['path_to_data_test'], 'testing_data', last_iteration=True)
     
     
-def import_csvdata(config: dict, city: str):
+def import_csvdata(config_uber: dict, city: str):
     """ 
     Imports the Uber Movement data for a passed city 
     """
     
-    files_dict = config['city_files_mapping'][city]
+    files_dict = config_uber['city_files_mapping'][city]
     df_csv_dict_list = []
     for csv_file_dict in files_dict['csv_file_dict_list']:
         path_to_csv = (
-            config['path_to_data_raw'] + city + '/' + csv_file_dict['filename'])
+            config_uber['path_to_data_raw'] + city + '/' + csv_file_dict['filename'])
         df_csv = pd.read_csv(path_to_csv)
         csv_df_dict = csv_file_dict.copy()
         csv_df_dict['df'] = df_csv
@@ -552,7 +552,7 @@ def import_csvdata(config: dict, city: str):
     return df_csv_dict_list
     
     
-def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
+def process_csvdata(config_uber: dict, df_csv_dict: pd.DataFrame, city: str):
     """ 
     """
     
@@ -561,14 +561,14 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     
     # subsample or shuffle data (for frac=1)    
     df_augmented = df_augmented.sample(
-        frac=config['uber_movement']['subsample_frac'],
-        random_state=config['general']['seed'])
+        frac=config_uber['subsample_frac'],
+        random_state=config_uber['seed'])
     
     # augment raw dataframe
     df_augmented.insert(
         0, 
         'city_id', 
-        config['uber_movement']['city_id_mapping'][city]
+        config_uber['city_id_mapping'][city]
     )
     df_augmented.insert(
         3, 
@@ -596,27 +596,27 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     return df_augmented
     
     
-def save_chunk(config: dict, df: pd.DataFrame, chunk_counter: int, 
+def save_chunk(config_uber: dict, df: pd.DataFrame, chunk_counter: int, 
     saving_path: str, filename: str, last_iteration=False) -> (pd.DataFrame, int):
     """ 
     Save a chunk of data and return remaining with chunk counter 
     """
     
-    while (len(df.index) > config['uber_movement']['datapoints_per_file'] 
+    while (len(df.index) > config_uber['datapoints_per_file'] 
         or last_iteration):
         
         # create path to saving
         path_to_saving = saving_path + filename + '_{}.csv'.format(chunk_counter)
         
         # shuffle dataframe
-        df = df.sample(frac=1, random_state=config['general']['seed'])
+        df = df.sample(frac=1, random_state=config_uber['seed'])
         
         # save chunk
-        df.iloc[:config['uber_movement']['datapoints_per_file']].to_csv(
-            path_to_saving, index=False)
+        df.iloc[:config_uber['datapoints_per_file']].to_csv(path_to_saving, 
+            index=False)
         
         # delete saved chunk
-        df = df[config['uber_movement']['datapoints_per_file']:]
+        df = df[config_uber['datapoints_per_file']:]
             
         # Must be set to exit loop on last iteration
         last_iteration = False

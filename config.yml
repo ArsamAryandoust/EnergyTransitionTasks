@@ -33,9 +33,9 @@ climart:
     subsample_climart: 0.2
     t_step_size_h: 205
     share_hours_sample: 0.2
-    
-    
+
+
 open_catalst:
     chunk_size_opencatalyst: 150_000
     subsample_opencatalyst: 0.2
-    
+

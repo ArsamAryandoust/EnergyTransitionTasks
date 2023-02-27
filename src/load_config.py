@@ -146,34 +146,20 @@ def config_UM(config: dict, subtask: str) -> dict:
     dictionary = config['uber_movement']    
     
     # add data paths
-    dictionary['path_to_data_raw'] = (
-        config['general']['path_to_data_raw'] 
-        + 'UberMovement/'
-    )
-    dictionary['path_to_data'] = (
-        config['general']['path_to_data'] 
-        + 'UberMovement/'
-    )
-    dictionary['path_to_data_subtask'] = (
-        dictionary['path_to_data']
-        + '{}/'.format(subtask)
-    )
-    dictionary['path_to_data_add'] = (
-        dictionary['path_to_data_subtask']
-        + 'additional/'
-    )
-    dictionary['path_to_data_train'] = (
-        dictionary['path_to_data_subtask']
-        + 'training/'
-    )
-    dictionary['path_to_data_val'] = (
-        dictionary['path_to_data_subtask']
-        + 'validation/'
-    )
-    dictionary['path_to_data_test'] = (
-        dictionary['path_to_data_subtask']
-        + 'testing/'
-    )
+    dictionary['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
+        + 'UberMovement/')
+    dictionary['path_to_data'] = (config['general']['path_to_data'] 
+        + 'UberMovement/')
+    dictionary['path_to_data_subtask'] = (dictionary['path_to_data']
+        + '{}/'.format(subtask))
+    dictionary['path_to_data_add'] = (dictionary['path_to_data_subtask']
+        + 'additional/')
+    dictionary['path_to_data_train'] = (dictionary['path_to_data_subtask']
+        + 'training/')
+    dictionary['path_to_data_val'] = (dictionary['path_to_data_subtask']
+        + 'validation/')
+    dictionary['path_to_data_test'] = (dictionary['path_to_data_subtask']
+        + 'testing/')
     
     # create list of citites and save to configuration dictionary
     random.seed(config['general']['seed'])
@@ -186,43 +172,28 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    year_list = random.sample(
-        range(2015,2021), 
-        math.floor(5 * dictionary['temporal_test_split'])
-    )
-    quarter_of_year_list = random.sample(
-        range(1,5), 
-        math.floor(4 * dictionary['temporal_test_split'])
-    )
+    year_list = random.sample(range(2015,2021), 
+        math.floor(5 * dictionary['temporal_test_split']))
+    quarter_of_year_list = random.sample(range(1,5), 
+        math.floor(4 * dictionary['temporal_test_split']))
     random.seed(config['general']['seed'])
-    hours_of_day_list = random.sample(
-        range(24), 
-        math.floor(24 * dictionary['temporal_test_split'])
-    )
+    hours_of_day_list = random.sample(range(24), 
+        math.floor(24 * dictionary['temporal_test_split']))
     
     # out of distribution test splitting rules in space
-    n_cities_test = round(
-        dictionary['spatial_test_split']
-        * len(list_of_cities)
-    )
+    n_cities_test = round(dictionary['spatial_test_split'] * len(list_of_cities))
     
     random.seed(config['general']['seed'])
-    list_of_cities_test = random.sample(
-        list_of_cities, 
-        n_cities_test
-    )
+    list_of_cities_test = random.sample(list_of_cities, n_cities_test)
     
     # dictionary saving rules
     dictionary['test_split_dict'] = {
         'temporal_dict': {
             'year': year_list,
             'quarter_of_year': quarter_of_year_list,
-            'hours_of_day': hours_of_day_list
-        },
+            'hours_of_day': hours_of_day_list},
         'spatial_dict': {
-            'list_of_cities_test': list_of_cities_test
-        }
-    }
+            'list_of_cities_test': list_of_cities_test}}
     
     # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
@@ -236,8 +207,6 @@ def config_UM(config: dict, subtask: str) -> dict:
         for filename in file_list:
             if filename.endswith('.json'):
                 json = filename
-                break
-                
             else:
                 # declare new empty directory to be filled with desired values
                 csv_file_dict = {}
@@ -306,18 +275,18 @@ def config_UM(config: dict, subtask: str) -> dict:
         shutil.copytree(path_to_copy_directory, dictionary['path_to_data_subtask'])
         
     # create dataframe from dictionary
-    df = pd.DataFrame.from_dict(
-        dictionary['city_id_mapping'], 
-        orient='index', 
-        columns=['city_id']
-    )
+    df = pd.DataFrame.from_dict(dictionary['city_id_mapping'], orient='index', 
+        columns=['city_id'])
     
     # save file
     saving_path = dictionary['path_to_data_add'] + 'city_to_id_mapping.csv'
     df.to_csv(saving_path)
     
+    dictionary['subtask'] = subtask
+    dictionary['seed'] = config['general']['seed']
     config['uber_movement'] = dictionary
     return config
+    
    
    
    
@@ -333,26 +302,7 @@ def config_UM(config: dict, subtask: str) -> dict:
    
    
    
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+
     
 
 def config_CA(config: dict) -> dict:
