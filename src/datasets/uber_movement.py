@@ -37,6 +37,7 @@ def copy_previous_subtask_results(config_uber: dict, subtask: str):
     """    
     
     if subtask == 'citites_10':
+        copy_directory = None
         return
     elif subtask == 'cities_20':
         copy_directory = 'cities_10/'
