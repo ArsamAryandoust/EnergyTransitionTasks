@@ -20,10 +20,10 @@ def process_all_datasets(config: dict):
         config_uber = config_UM(config, subtask)
         
         # process geographic information
-        process_geographic_information(config['uber_movement'])
+        process_geographic_information(config_uber)
         
         # split training validation testing
-        split_train_val_test(config['uber_movement'])
+        split_train_val_test(config_uber)
 
 
 def process_geographic_information(config_uber: dict):
@@ -479,7 +479,7 @@ def split_train_val_test(config_uber: dict):
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
                     frac=config_uber['val_test_split'], 
-                    random_state=config['general']['seed']
+                    random_state=config_uber['seed']
                 )
                 
                 # remove validation data from test
@@ -491,20 +491,24 @@ def split_train_val_test(config_uber: dict):
                 # free up memory     
                 del df_val_append   
                 gc.collect()
+                
+                # show us how dataframes are gaining data
+                print(len(df_train))
+                print(len(df_val))
+                print(len(df_test))
+                
+                # save testing and validation data chunks
+                df_test, test_file_count = save_chunk(config_uber, df_test, 
+                    test_file_count, config_uber['path_to_data_test'], 
+                    'testing_data')
+                df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
+                    config_uber['path_to_data_val'], 'validation_data')
             
-            # show us how dataframes are gaining data
-            print(len(df_train))
-            print(len(df_val))
-            print(len(df_test))
             
-            ### Save resulting data in chunks
+            ### Save training data chunks
             df_train, train_file_count = save_chunk(config_uber, df_train,
                 train_file_count, config_uber['path_to_data_train'], 
                 'training_data')
-            df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
-                config_uber['path_to_data_val'], 'validation_data')
-            df_test, test_file_count = save_chunk(config_uber, df_test, 
-                test_file_count, config_uber['path_to_data_test'], 'testing_data')
             
             # update progress bar
             pbar.update(1)
