@@ -1,6 +1,7 @@
 import math
 import gc
 import random
+import shutil
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -11,26 +12,48 @@ def process_all_datasets(config: dict):
     """
     Processes all datasets for Uber Movement prediction task.
     """
-    
     print("Processing Uber Movement dataset.")
     
     # iterated over all subtasks
     for subtask in config['uber_movement']['subtask_list']:
         # augment conigurations with additional information
         config = config_UM(config, subtask)
-    
-        # process geographic data
+        
+        # copy all files of previous subtask and shorten list_of_cities here
+        copy_previous_subtask_results(config['uber_movement'], subtask)
+        
+        # save city id mapping for subtask's city list
         save_city_id_mapping(config['uber_movement'])
+        
+        # process geographic information
         process_geographic_information(config['uber_movement'])
         
-        exit(0)
         # split training validation testing
-        split_train_val_test(config)
+        split_train_val_test(config, subtask)
+
+
+def copy_previous_subtask_results(config_uber: dict, subtask: str):
+    """
+    """    
+    
+    if subtask == 'citites_10':
+        return
+    elif subtask == 'cities_20':
+        copy_directory = 'cities_10/'
+    elif subtask == 'cities_43':
+        copy_directory = 'cities_20/'
+    
+    # set full path to directory we want to copy
+    path_to_copy_directory = config_uber['path_to_data'] + copy_directory
+    
+    # copy directory into current subtask
+    shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
     
     
 def save_city_id_mapping(config: str):
     """
-    Creates a dataframe from dictionary of city to ID mapping and saves it.
+    Creates a dataframe from dictionary of city to ID mapping and saves it as
+    csv file under additional data path of subtask.
     """
     
     # create dataframe from dictionary
@@ -116,9 +139,7 @@ def import_geojson(config: dict, city: str) -> pd.DataFrame:
     return df_geojson
 
 
-def process_geojson(df_geojson: pd.DataFrame) -> (
-    pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame
-):
+def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     """ Maps Uber Movement city zone IDs to a flattened list of latitude and 
     longitude coordinates in the format of two dictionaries. Uses the recursive 
     function called foster_coordinates_recursive to flatten the differently nested 
@@ -381,20 +402,56 @@ def transform_col_names(col_list: list, name_base: str) -> list:
     return new_col_list
     
 
-def split_train_val_test(config: dict):
+def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
+    pd.DataFrame, pd.DataFrame, int, int, int):
+    """
+    Loads the last file that was saved from previous subtask as dataframe and
+    sets the file counters accordingly.
+    """
+    
+    if subtask == 'cities_10':
+        # declare data point counters as zero
+        train_file_count, val_file_count, test_file_count = 0, 0, 0
+        
+        # decleare empty dataframes for trainining validation and testing
+        df_train = pd.DataFrame()
+        df_val = pd.DataFrame()
+        df_test = pd.DataFrame()
+    else:
+        # declare data point counters
+        train_file_count = len(os.listdir(config_uber['path_to_data_train']))
+        val_file_count = len(os.listdir(config_uber['path_to_data_val']))
+        test_file_count = len(os.listdir(config_uber['path_to_data_test']))
+        
+        # load last datframes
+        loading_path = (config_uber['path_to_data_train'] + 
+            'training_{}.csv'.format(train_file_count))
+        df_train = pd.read_csv(loading_path)
+        loading_path = (config_uber['path_to_data_val'] + 
+            'validation_{}.csv'.format(val_file_count))
+        df_val = pd.read_csv(loading_path)
+        loading_path = (config_uber['path_to_data_test'] + 
+            'testing_{}.csv'.format(test_file_count))
+        df_test = pd.read_csv(loading_path)
+
+        
+        
+    # set return values
+    return_values = (df_train, df_val, df_test, train_file_count, 
+        val_file_count, test_file_count)
+    
+    return return_values   
+        
+def split_train_val_test(config: dict, subtask: str):
     """ 
     Splits and saves datasets according to configuration rules.
     """
     config_uber = config['uber_movement']
     
+    # create new dataframes and chunk counters here
+    (df_train, df_val, df_test, train_file_count, val_file_count, 
+        test_file_count) = load_df_and_file_counters(config_uber, subtask)
     
-    # decleare empty dataframes for trainining validation and testing
-    df_train = pd.DataFrame()
-    df_val = pd.DataFrame()
-    df_test = pd.DataFrame()
-    
-    # declare data point counters
-    train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
     # iterate over all available cities
     for city in config_uber['list_of_cities']:
@@ -537,24 +594,24 @@ def split_train_val_test(config: dict):
             print(len(df_test))
             
             ### Save resulting data in chunks
-            df_train, train_chunk_counter = save_chunk(
+            df_train, train_file_count = save_chunk(
                 config,
                 df_train,
-                train_chunk_counter,
+                train_file_count,
                 config_uber['path_to_data_train'],
                 'training_data'    
             )
-            df_val, val_chunk_counter = save_chunk(
+            df_val, val_file_count = save_chunk(
                 config,
                 df_val,
-                val_chunk_counter,
+                val_file_count,
                 config_uber['path_to_data_val'],
                 'validation_data'
             )
-            df_test, test_chunk_counter = save_chunk(
+            df_test, test_file_count = save_chunk(
                 config,
                 df_test,
-                test_chunk_counter,
+                test_file_count,
                 config_uber['path_to_data_test'],
                 'testing_data'
             )
@@ -564,15 +621,15 @@ def split_train_val_test(config: dict):
 
     ### Tell us the ratios that result from our splitting rules
     n_train = (
-        train_chunk_counter * config_uber['datapoints_per_file'] 
+        train_file_count * config_uber['datapoints_per_file'] 
         + len(df_train.index)
     )
     n_val = (
-        val_chunk_counter * config_uber['datapoints_per_file'] 
+        val_file_count * config_uber['datapoints_per_file'] 
         + len(df_val.index)
     )
     n_test = (
-        test_chunk_counter * config_uber['datapoints_per_file'] 
+        test_file_count * config_uber['datapoints_per_file'] 
         + len(df_test.index)
     )
     n_total = n_train + n_val + n_test
@@ -596,26 +653,26 @@ def split_train_val_test(config: dict):
     )
     
     ### Save results of last iteration
-    df_train, train_chunk_counter = save_chunk(
+    df_train, train_file_count = save_chunk(
         config,
         df_train,
-        train_chunk_counter,
+        train_file_count,
         config_uber['path_to_data_train'],
         'training_data',
         last_iteration=True  
     )
-    df_val, val_chunk_counter = save_chunk(
+    df_val, val_file_count = save_chunk(
         config,
         df_val,
-        val_chunk_counter,
+        val_file_count,
         config_uber['path_to_data_val'],
         'validation_data',
         last_iteration=True  
     )
-    df_test, test_chunk_counter = save_chunk(
+    df_test, test_file_count = save_chunk(
         config,
         df_test,
-        test_chunk_counter,
+        test_file_count,
         config_uber['path_to_data_test'],
         'testing_data',
         last_iteration=True  
