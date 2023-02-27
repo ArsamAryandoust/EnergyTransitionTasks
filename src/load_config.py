@@ -3,6 +3,7 @@ import yaml
 import random
 import math
 import random
+import shutil
 
 def get_config_from_yaml() -> dict:
     """
@@ -289,14 +290,15 @@ def config_UM(config: dict, subtask: str) -> dict:
     elif subtask == 'cities_20':
         # set full path to directory we want to copy
         path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
+        dictionary['list_of_cities'] = list_of_cities[10:20]
         # copy directory into current subtask
         shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
     elif subtask == 'cities_43':
         # set full path to directory we want to copy
         path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
+        dictionary['list_of_cities'] = list_of_cities[20:]
         # copy directory into current subtask
         shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
-        
         
     # create dataframe from dictionary
     df = pd.DataFrame.from_dict(
@@ -311,8 +313,43 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     config['uber_movement'] = dictionary
     return config
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
     
-    
+
 def config_CA(config: dict) -> dict:
     """
     Augments configuration file for processing ClimArt dataset.

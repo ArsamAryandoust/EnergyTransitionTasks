@@ -1,7 +1,6 @@
 import math
 import gc
 import random
-import shutil
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -19,34 +18,12 @@ def process_all_datasets(config: dict):
         # augment conigurations with additional information
         config = config_UM(config, subtask)
         
-        # copy all files of previous subtask and shorten list_of_cities here
-        copy_previous_subtask_results(config['uber_movement'], subtask)
-        
         # process geographic information
         process_geographic_information(config['uber_movement'])
         
         # split training validation testing
         split_train_val_test(config, subtask)
 
-
-def copy_previous_subtask_results(config_uber: dict, subtask: str):
-    """
-    """    
-    
-    if subtask == 'cities_10':
-        return
-    elif subtask == 'cities_20':
-        copy_directory = 'cities_10/'
-    elif subtask == 'cities_43':
-        copy_directory = 'cities_20/'
-    
-    # set full path to directory we want to copy
-    path_to_copy_directory = config_uber['path_to_data'] + copy_directory
-    
-    # copy directory into current subtask
-    shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
-    
-    
 
 def process_geographic_information(config: dict):
     """
