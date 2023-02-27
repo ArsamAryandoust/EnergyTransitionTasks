@@ -22,7 +22,8 @@ def process_all_datasets(config: dict):
         # process geographic data
         save_city_id_mapping(config['uber_movement'])
         process_geographic_information(config['uber_movement'])
-    
+        
+        exit(1)
         # split training validation testing
         split_train_val_test(config)
     
@@ -59,12 +60,7 @@ def process_geographic_information(config: dict):
         df_geojson = import_geojson(config, city)
         
         # extract geojson information of city zones as latitude and longitude df
-        (
-            df_latitudes, 
-            df_longitudes, 
-            df_centroid_lat, 
-            df_centroid_long
-        ) = process_geojson(df_geojson)
+        df_latitudes, df_longitudes = process_geojson(df_geojson)
         
         ### Transform lat and long coordinates into unit sphere coordinate system
         
@@ -113,11 +109,12 @@ def import_geojson(config: dict, city: str) -> pd.DataFrame:
     it as a dataframe.
     """
     files_dict = config['city_files_mapping'][city]
-    path_to_json = config['path_to_data_raw'] + city + '/' + files_dict['json']
+    filename = files_dict['json']
+    path_to_json = config['path_to_data_raw'] + city + '/' + filename
     df_geojson = pd.read_json(path_to_json)
     return df_geojson
-    
-    
+
+
 def process_geojson(df_geojson: pd.DataFrame) -> (
     pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame
 ):
@@ -130,19 +127,21 @@ def process_geojson(df_geojson: pd.DataFrame) -> (
     df_geojson.pop('type')
     df_geojson = df_geojson['features']
     
+    # create a mapping of json entries to uber movement city zone ids
     map_json_entry_to_movement_id = dict()
     for json_id, json_entry in enumerate(df_geojson):
         map_json_entry_to_movement_id[json_id] = int(
           json_entry['properties']['MOVEMENT_ID']
         )
     
+    # create a mappings of movement ids to empty list for lat and long coordinates
     map_movement_id_to_latitude_coordinates = dict()
     map_movement_id_to_longitude_coordinates = dict()
     for k, v in map_json_entry_to_movement_id.items():
         map_movement_id_to_latitude_coordinates[v] = []
         map_movement_id_to_longitude_coordinates[v] = []
 
-
+    # iterate over all movement IDs and json IDs to get coordinates and flatten
     for json_id, movement_id in map_json_entry_to_movement_id.items():
         coordinates = df_geojson[json_id]['geometry']['coordinates']
         (
@@ -164,6 +163,16 @@ def process_geojson(df_geojson: pd.DataFrame) -> (
         map_movement_id_to_longitude_coordinates
     )
     
+    # add centroid coordinates to beginning of dictionary lists
+    for k, v in map_json_entry_to_movement_id.items():
+        map_movement_id_to_latitude_coordinates[v].insert(
+            0, map_movement_id_to_centroid_lat[v]
+        )
+        map_movement_id_to_longitude_coordinates[v].insert(
+            0, map_movement_id_to_centroid_long[v]
+        )
+    
+    # create dataframes for lats and longs of each city zone
     df_latitudes = pd.DataFrame.from_dict(
         map_movement_id_to_latitude_coordinates, 
         orient='index'
@@ -174,19 +183,53 @@ def process_geojson(df_geojson: pd.DataFrame) -> (
         orient='index'
     ).transpose()
     
-    df_centroid_lat = pd.DataFrame.from_dict(
-        map_movement_id_to_centroid_lat, 
-        orient='index'
-    ).transpose()
-    
-    df_centroid_long = pd.DataFrame.from_dict(
-        map_movement_id_to_centroid_long, 
-        orient='index'
-    ).transpose()
-    
-    return df_latitudes, df_longitudes, df_centroid_lat, df_centroid_long
+    return df_latitudes, df_longitudes
   
   
+  
+def foster_coordinates_recursive(
+    movement_id: int,
+    map_movement_id_to_latitude_coordinates: dict,
+    map_movement_id_to_longitude_coordinates: dict,
+    coordinates: pd.Series
+) -> (dict, dict):
+
+    """ Flattens the coordinates of a passed city zone id (movement_id)
+    and coordiates list recursively and saves their numeric values
+    in the dictionaries that map movement ids to a list of latitude and 
+    longitude coordinates.
+    """
+
+    dummy = 0
+    for j in coordinates:
+        if type(j) != list and dummy == 0:
+            map_movement_id_to_longitude_coordinates[movement_id].append(j)
+            dummy = 1
+            continue
+        elif type(j) != list and dummy == 1:
+            map_movement_id_to_latitude_coordinates[movement_id].append(j)
+            break
+        else:
+            dummy = 0
+            coordinates = j
+            (
+                map_movement_id_to_latitude_coordinates,
+                map_movement_id_to_longitude_coordinates
+            ) = foster_coordinates_recursive(
+                movement_id,
+                map_movement_id_to_latitude_coordinates,
+                map_movement_id_to_longitude_coordinates,
+                coordinates
+            )
+
+    map_movement_id_to_coordinates = (
+        map_movement_id_to_latitude_coordinates,
+        map_movement_id_to_longitude_coordinates
+    )
+
+    return map_movement_id_to_coordinates
+
+
 def calc_centroids(
     map_movement_id_to_latitude_coordinates: dict,
     map_movement_id_to_longitude_coordinates: dict
@@ -306,48 +349,7 @@ def calc_centroids(
     
     return map_movement_id_to_centroid_coordinates
   
-  
-def foster_coordinates_recursive(
-    movement_id: int,
-    map_movement_id_to_latitude_coordinates: dict,
-    map_movement_id_to_longitude_coordinates: dict,
-    coordinates: pd.Series
-) -> (dict, dict):
 
-    """ Flattens the coordinates of a passed city zone id (movement_id)
-    and coordiates list recursively and saves their numeric values
-    in the dictionaries that map movement ids to a list of latitude and 
-    longitude coordinates.
-    """
-
-    dummy = 0
-    for j in coordinates:
-        if type(j) != list and dummy == 0:
-            map_movement_id_to_longitude_coordinates[movement_id].append(j)
-            dummy = 1
-            continue
-        elif type(j) != list and dummy == 1:
-            map_movement_id_to_latitude_coordinates[movement_id].append(j)
-            break
-        else:
-            dummy = 0
-            coordinates = j
-            (
-                map_movement_id_to_latitude_coordinates,
-                map_movement_id_to_longitude_coordinates
-            ) = foster_coordinates_recursive(
-                movement_id,
-                map_movement_id_to_latitude_coordinates,
-                map_movement_id_to_longitude_coordinates,
-                coordinates
-            )
-
-    map_movement_id_to_coordinates = (
-        map_movement_id_to_latitude_coordinates,
-        map_movement_id_to_longitude_coordinates
-    )
-
-    return map_movement_id_to_coordinates
     
     
 def degree_to_phi(degree_latlon: float):
@@ -515,22 +517,13 @@ def split_train_val_test(config: dict):
                 del df_augmented_csvdata   
                 gc.collect()
                 
+      
+            # split off validation data from ood testing data
+            df_val_append = df_test.sample(
+                frac=config_uber['val_test_split'], 
+                random_state=config['general']['seed']
+            )
             
-            if len(df_test) > (1+config_uber['val_test_split']) * (
-                config_uber['datapoints_per_file']
-            ): 
-                # split off validation data from ood testing data
-                df_val_append = df_test.sample(
-                    frac=config_uber['val_test_split'], 
-                    random_state=config['general']['seed']
-                )
-            else:
-                # split off validation data from ood testing data
-                df_val_append = df_test.sample(
-                    frac=0.07, 
-                    random_state=config['general']['seed']
-                )
-                
             # remove validation data from test
             df_test = df_test.drop(df_val_append.index)
             
