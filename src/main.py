@@ -24,10 +24,8 @@ if __name__ == "__main__":
         uber_movement.process_all_datasets(config)
     if args.climart:
         print("Processing ClimArt dataset.")
-        config = load_config.config_CA(config)
     if args.open_catalyst:
         print("Processing Open Catalyst dataset.")
-        config = load_config.config_OC(config)
     if args.shuffle_UM:
         print("Shuffling processed Uber Movement data.")
     if args.shuffle_CA:

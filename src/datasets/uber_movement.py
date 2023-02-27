@@ -589,9 +589,7 @@ def save_chunk(config_uber: dict, df: pd.DataFrame, chunk_counter: int,
     Save a chunk of data and return remaining with chunk counter 
     """
     
-    while (len(df.index) > config_uber['datapoints_per_file'] 
-        or last_iteration):
-        
+    while (len(df) > config_uber['datapoints_per_file'] or last_iteration):
         # create path to saving
         path_to_saving = saving_path + filename + '_{}.csv'.format(chunk_counter)
         
