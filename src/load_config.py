@@ -1,21 +1,10 @@
 import os
-import yaml
 import random
 import math
 import random
 import shutil
 
 import pandas as pd
-
-def get_config_from_yaml() -> dict:
-    """
-    Load config from yaml file.
-    """
-    
-    with open("config.yml", "r") as configfile:
-        config = yaml.safe_load(configfile)
-
-    return config
 
 
 def check_create_dir(path: str):

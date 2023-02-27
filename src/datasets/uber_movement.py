@@ -472,15 +472,19 @@ def split_train_val_test(config_uber: dict):
                 gc.collect()
                 
       
+            # show us how dataframes are gaining data
+            print(len(df_train))
+            print(len(df_val))
+            print(len(df_test))
+      
             # this condition guarantees validation splits at good moments
             if (len(df_test) * (1 - config_uber['val_test_split'])
-                >= config_uber['datapoints_per_file']):
+                > config_uber['datapoints_per_file']):
                 
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
                     frac=config_uber['val_test_split'], 
-                    random_state=config_uber['seed']
-                )
+                    random_state=config_uber['seed'])
                 
                 # remove validation data from test
                 df_test = df_test.drop(df_val_append.index)
@@ -492,26 +496,22 @@ def split_train_val_test(config_uber: dict):
                 del df_val_append   
                 gc.collect()
                 
-                # show us how dataframes are gaining data
-                print(len(df_train))
-                print(len(df_val))
-                print(len(df_test))
-                
                 # save testing and validation data chunks
                 df_test, test_file_count = save_chunk(config_uber, df_test, 
                     test_file_count, config_uber['path_to_data_test'], 
                     'testing_data')
-                df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
-                    config_uber['path_to_data_val'], 'validation_data')
+                df_val, val_file_count = save_chunk(config_uber, df_val,
+                    val_file_count, config_uber['path_to_data_val'], 
+                    'validation_data')
             
-            
-            ### Save training data chunks
+            # save training data chunks
             df_train, train_file_count = save_chunk(config_uber, df_train,
                 train_file_count, config_uber['path_to_data_train'], 
                 'training_data')
             
             # update progress bar
             pbar.update(1)
+            
 
     ### Tell us the ratios that result from our splitting rules
     n_train = (train_file_count * config_uber['datapoints_per_file'] 
@@ -564,31 +564,14 @@ def process_csvdata(config_uber: dict, df_csv_dict: pd.DataFrame, city: str):
     df_augmented = df_csv_dict['df']
     
     # subsample or shuffle data (for frac=1)    
-    df_augmented = df_augmented.sample(
-        frac=config_uber['subsample_frac'],
+    df_augmented = df_augmented.sample(frac=config_uber['subsample_frac'],
         random_state=config_uber['seed'])
     
     # augment raw dataframe
-    df_augmented.insert(
-        0, 
-        'city_id', 
-        config_uber['city_id_mapping'][city]
-    )
-    df_augmented.insert(
-        3, 
-        'year', 
-        df_csv_dict['year']
-    )
-    df_augmented.insert(
-        4, 
-        'quarter_of_year', 
-        df_csv_dict['quarter_of_year']
-    )
-    df_augmented.insert(
-        5, 
-        'daytype', 
-        df_csv_dict['daytype']
-    )
+    df_augmented.insert(0, 'city_id', config_uber['city_id_mapping'][city])
+    df_augmented.insert(3, 'year', df_csv_dict['year'])
+    df_augmented.insert(4, 'quarter_of_year', df_csv_dict['quarter_of_year'])
+    df_augmented.insert(5, 'daytype', df_csv_dict['daytype'])
     
     # rename some columns with more clear names
     df_augmented.rename(columns={'hod':'hour_of_day', 'sourceid':'source_id', 

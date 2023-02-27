@@ -1,7 +1,7 @@
-import parse_args
-from load_config import get_config_from_yaml
-from datasets import building_electricity, uber_movement
+import yaml
 
+import parse_args
+from datasets import building_electricity, uber_movement
 
 
 if __name__ == "__main__":
@@ -10,29 +10,26 @@ if __name__ == "__main__":
     and then executes program accordingly.
     """
     
-    # get the command line arguments
+    # parse the command line arguments
     args = parse_args.parse_arguments()
     
-    # get config from yaml file
-    config = get_config_from_yaml()
-        
+    # load config from yaml file
+    with open("config.yml", "r") as configfile:
+        config = yaml.safe_load(configfile)
+    
+    # do the processing according to command line arguments that were passed
     if args.building_electricity:
         building_electricity.process_all_datasets(config)
-        
     if args.uber_movement:
         uber_movement.process_all_datasets(config)
-        
     if args.climart:
         print("Processing ClimArt dataset.")
         config = load_config.config_CA(config)
-        
     if args.open_catalyst:
         print("Processing Open Catalyst dataset.")
         config = load_config.config_OC(config)
-    
     if args.shuffle_UM:
         print("Shuffling processed Uber Movement data.")
-        
     if args.shuffle_CA:
         print("Shuffling processed ClimArt data.")
     
