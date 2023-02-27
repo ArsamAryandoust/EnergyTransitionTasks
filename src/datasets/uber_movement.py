@@ -23,7 +23,7 @@ def process_all_datasets(config: dict):
         save_city_id_mapping(config['uber_movement'])
         process_geographic_information(config['uber_movement'])
         
-        exit(1)
+        exit(0)
         # split training validation testing
         split_train_val_test(config)
     
@@ -102,6 +102,7 @@ def process_geographic_information(config: dict):
         
         # update progress bar
         pbar.update(1)
+        
 
 def import_geojson(config: dict, city: str) -> pd.DataFrame:
     """ 
@@ -184,7 +185,6 @@ def process_geojson(df_geojson: pd.DataFrame) -> (
     ).transpose()
     
     return df_latitudes, df_longitudes
-  
   
   
 def foster_coordinates_recursive(
@@ -349,8 +349,6 @@ def calc_centroids(
     
     return map_movement_id_to_centroid_coordinates
   
-
-    
     
 def degree_to_phi(degree_latlon: float):
     """ 
