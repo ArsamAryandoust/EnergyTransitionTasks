@@ -5,6 +5,8 @@ import math
 import random
 import shutil
 
+import pandas as pd
+
 def get_config_from_yaml() -> dict:
     """
     Load config from yaml file.
@@ -287,12 +289,14 @@ def config_UM(config: dict, subtask: str) -> dict:
             dictionary['path_to_data_train'], dictionary['path_to_data_val'],
             dictionary['path_to_data_test']]:
             check_create_dir(path)
+            
     elif subtask == 'cities_20':
         # set full path to directory we want to copy
         path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
         dictionary['list_of_cities'] = list_of_cities[10:20]
         # copy directory into current subtask
         shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
+        
     elif subtask == 'cities_43':
         # set full path to directory we want to copy
         path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
