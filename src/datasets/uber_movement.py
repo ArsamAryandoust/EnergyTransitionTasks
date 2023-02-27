@@ -43,7 +43,6 @@ def process_geographic_information(config: dict):
         df_latitudes, df_longitudes = process_geojson(df_geojson)
         
         ### Transform lat and long coordinates into unit sphere coordinate system
-        
         # calculate values you need for 
         df_sin_lon = df_longitudes.applymap(sin_transform)
         df_sin_lat = df_latitudes.applymap(sin_transform)
@@ -57,7 +56,6 @@ def process_geographic_information(config: dict):
         
         
         ### Transform column names ###
-        
         # transform x_cord columns
         col_list = df_x_cord.columns.to_list()
         new_col_list = transform_col_names(col_list, 'x_cord')
@@ -77,7 +75,7 @@ def process_geographic_information(config: dict):
         ### Save into one csv file ###
         df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
         filename = city + '.csv'
-        saving_path = (config['path_to_data_add'] + filename)
+        saving_path = config['path_to_data_add'] + filename
         df_geographic_info.to_csv(saving_path)
         
         # update progress bar
@@ -110,8 +108,7 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     map_json_entry_to_movement_id = dict()
     for json_id, json_entry in enumerate(df_geojson):
         map_json_entry_to_movement_id[json_id] = int(
-          json_entry['properties']['MOVEMENT_ID']
-        )
+          json_entry['properties']['MOVEMENT_ID'])
     
     # create a mappings of movement ids to empty list for lat and long coordinates
     map_movement_id_to_latitude_coordinates = dict()
@@ -123,54 +120,38 @@ def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     # iterate over all movement IDs and json IDs to get coordinates and flatten
     for json_id, movement_id in map_json_entry_to_movement_id.items():
         coordinates = df_geojson[json_id]['geometry']['coordinates']
-        (
-            map_movement_id_to_latitude_coordinates, 
+        (map_movement_id_to_latitude_coordinates, 
             map_movement_id_to_longitude_coordinates
-        ) = foster_coordinates_recursive(
-            movement_id,
+        ) = foster_coordinates_recursive(movement_id, 
             map_movement_id_to_latitude_coordinates,
-            map_movement_id_to_longitude_coordinates,
-            coordinates
-        )
+            map_movement_id_to_longitude_coordinates, coordinates)
         
     # calculate centroids of city zone polygons
-    (
-        map_movement_id_to_centroid_lat,
-        map_movement_id_to_centroid_long
-    ) = calc_centroids(
-       map_movement_id_to_latitude_coordinates,
-        map_movement_id_to_longitude_coordinates
-    )
+    (map_movement_id_to_centroid_lat, map_movement_id_to_centroid_long
+    ) = calc_centroids(map_movement_id_to_latitude_coordinates,
+        map_movement_id_to_longitude_coordinates)
     
     # add centroid coordinates to beginning of dictionary lists
     for k, v in map_json_entry_to_movement_id.items():
-        map_movement_id_to_latitude_coordinates[v].insert(
-            0, map_movement_id_to_centroid_lat[v]
-        )
-        map_movement_id_to_longitude_coordinates[v].insert(
-            0, map_movement_id_to_centroid_long[v]
-        )
+        map_movement_id_to_latitude_coordinates[v].insert(0, 
+            map_movement_id_to_centroid_lat[v])
+        map_movement_id_to_longitude_coordinates[v].insert(0, 
+            map_movement_id_to_centroid_long[v])
     
     # create dataframes for lats and longs of each city zone
     df_latitudes = pd.DataFrame.from_dict(
-        map_movement_id_to_latitude_coordinates, 
-        orient='index'
-    ).transpose()
+        map_movement_id_to_latitude_coordinates, orient='index').transpose()
     
     df_longitudes = pd.DataFrame.from_dict(
-        map_movement_id_to_longitude_coordinates, 
-        orient='index'
-    ).transpose()
+        map_movement_id_to_longitude_coordinates, orient='index').transpose()
     
     return df_latitudes, df_longitudes
   
   
-def foster_coordinates_recursive(
-    movement_id: int,
+def foster_coordinates_recursive(movement_id: int,
     map_movement_id_to_latitude_coordinates: dict,
     map_movement_id_to_longitude_coordinates: dict,
-    coordinates: pd.Series
-) -> (dict, dict):
+    coordinates: pd.Series) -> (dict, dict):
 
     """ Flattens the coordinates of a passed city zone id (movement_id)
     and coordiates list recursively and saves their numeric values
@@ -190,28 +171,21 @@ def foster_coordinates_recursive(
         else:
             dummy = 0
             coordinates = j
-            (
-                map_movement_id_to_latitude_coordinates,
+            (map_movement_id_to_latitude_coordinates,
                 map_movement_id_to_longitude_coordinates
-            ) = foster_coordinates_recursive(
-                movement_id,
+            ) = foster_coordinates_recursive(movement_id,
                 map_movement_id_to_latitude_coordinates,
-                map_movement_id_to_longitude_coordinates,
-                coordinates
-            )
+                map_movement_id_to_longitude_coordinates, coordinates)
 
     map_movement_id_to_coordinates = (
         map_movement_id_to_latitude_coordinates,
-        map_movement_id_to_longitude_coordinates
-    )
+        map_movement_id_to_longitude_coordinates)
 
     return map_movement_id_to_coordinates
 
 
-def calc_centroids(
-    map_movement_id_to_latitude_coordinates: dict,
-    map_movement_id_to_longitude_coordinates: dict
-) -> (dict, dict):
+def calc_centroids(map_movement_id_to_latitude_coordinates: dict,
+    map_movement_id_to_longitude_coordinates: dict) -> (dict, dict):
 
     """ Calculates the centroid of passed city zone polygons. Should a city
     zone consist of unregularities or multiple polygons, this is identified
@@ -224,7 +198,8 @@ def calc_centroids(
     map_movement_id_to_cityzone_area = dict()
 
     # iterate over all movement IDs and latitude coordinates
-    for movement_id, lat_coordinates in map_movement_id_to_latitude_coordinates.items():
+    for movement_id, lat_coordinates in (
+        map_movement_id_to_latitude_coordinates.items()):
         
         # get also the longitude coordinates
         long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
@@ -233,21 +208,15 @@ def calc_centroids(
         area_cityzone = 0
         for i in range(len(lat_coordinates)-1):
 
-            area_cityzone = (
-                area_cityzone
+            area_cityzone = (area_cityzone
                 + long_coordinates[i] * lat_coordinates[i+1]
-                - long_coordinates[i+1] * lat_coordinates[i]
-            )
+                - long_coordinates[i+1] * lat_coordinates[i])
       
-        area_cityzone = (
-            area_cityzone
+        area_cityzone = (area_cityzone
             + long_coordinates[i+1] * lat_coordinates[0]
-            - long_coordinates[0] * lat_coordinates[i+1]
-        )
+            - long_coordinates[0] * lat_coordinates[i+1])
         
         area_cityzone *= 0.5
-        #area_cityzone = abs(area_cityzone)
-        
         map_movement_id_to_cityzone_area[movement_id] = area_cityzone
         
     # create empty dictionaries for mapping Uber Movement IDs to city zone centroids
@@ -255,64 +224,43 @@ def calc_centroids(
     map_movement_id_to_centroid_long = dict()
         
     # iterate over all movement IDs and latitude coordinates
-    for movement_id, lat_coordinates in map_movement_id_to_latitude_coordinates.items():
+    for movement_id, lat_coordinates in (
+        map_movement_id_to_latitude_coordinates.items()):
         
         # get also the longitude coordinates
         long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
-        
         
         # calculate currently iterated city zone area
         centroid_lat = 0
         centroid_long = 0
         for i in range(len(lat_coordinates)-1):
             
-            centroid_long += (
-                long_coordinates[i]
-                + long_coordinates[i+1]
-            ) * (
+            centroid_long += (long_coordinates[i]+ long_coordinates[i+1]) * (
                 long_coordinates[i] * lat_coordinates[i+1]
-                - long_coordinates[i+1] * lat_coordinates[i]
-            )
+                - long_coordinates[i+1] * lat_coordinates[i])
 
-            centroid_lat += (
-                lat_coordinates[i]
-                + lat_coordinates[i+1]
-            ) * (
+            centroid_lat += (lat_coordinates[i] + lat_coordinates[i+1]) * (
                 long_coordinates[i] * lat_coordinates[i+1]
-                - long_coordinates[i+1] * lat_coordinates[i]
-            )
+                - long_coordinates[i+1] * lat_coordinates[i])
 
-        centroid_long += (
-            long_coordinates[i+1]
-            + long_coordinates[0]
-        ) * (
+        centroid_long += (long_coordinates[i+1] + long_coordinates[0]) * (
             long_coordinates[i+1] * lat_coordinates[0]
-            - long_coordinates[0] * lat_coordinates[i+1]
-        )
+            - long_coordinates[0] * lat_coordinates[i+1])
         
-        centroid_lat += (
-                lat_coordinates[i+1]
-                + lat_coordinates[0]
-            ) * (
+        centroid_lat += (lat_coordinates[i+1] + lat_coordinates[0]) * (
                 long_coordinates[i+1] * lat_coordinates[0]
-                - long_coordinates[0] * lat_coordinates[i+1]
-            )
+                - long_coordinates[0] * lat_coordinates[i+1])
         
 
-        centroid_lat /= (
-            6 * map_movement_id_to_cityzone_area[movement_id]
-        )
-        centroid_long /= (
-            6 * map_movement_id_to_cityzone_area[movement_id]
-        )
+        centroid_lat /= 6 * map_movement_id_to_cityzone_area[movement_id]
+        centroid_long /=  6 * map_movement_id_to_cityzone_area[movement_id]
      
         # Uber Movement city zones sometimes consist of multiple distinct polygons
-        if (
-            centroid_lat < min(lat_coordinates)
+        if (centroid_lat < min(lat_coordinates)
             or centroid_lat > max(lat_coordinates)
             or centroid_long < min(long_coordinates)
-            or centroid_long > max(long_coordinates)
-        ):
+            or centroid_long > max(long_coordinates)):
+            
             # in this case we calculate the mean instead of centroid
             centroid_lat = np.mean(lat_coordinates)
             centroid_long = np.mean(long_coordinates)            
@@ -320,10 +268,8 @@ def calc_centroids(
         map_movement_id_to_centroid_lat[movement_id] = centroid_lat
         map_movement_id_to_centroid_long[movement_id] = centroid_long
         
-    map_movement_id_to_centroid_coordinates = (
-        map_movement_id_to_centroid_lat,
-        map_movement_id_to_centroid_long
-    )
+    map_movement_id_to_centroid_coordinates = (map_movement_id_to_centroid_lat,
+        map_movement_id_to_centroid_long)
     
     return map_movement_id_to_centroid_coordinates
   
@@ -394,8 +340,8 @@ def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
         
         
     # set return values
-    return_values = (df_train, df_val, df_test, train_file_count, 
-        val_file_count, test_file_count)
+    return_values = (df_train, df_val, df_test, train_file_count, val_file_count, 
+        test_file_count)
     
     return return_values   
         
@@ -449,7 +395,7 @@ def split_train_val_test(config: dict, subtask: str):
                 testing_quarter = False
             
             # augment csv
-            df_augmented_csvdata = process_csvdata(config, df_csv_dict, city)
+            df_augmented = process_csvdata(config, df_csv_dict, city)
             
             # free up memory     
             del df_csv_dict['df']
@@ -457,43 +403,38 @@ def split_train_val_test(config: dict, subtask: str):
             
             # get the subset of city zones for test splits once per city
             if first_iteration:
-                n_city_zones = max(
-                    df_augmented_csvdata['source_id'].max(),
-                    df_augmented_csvdata['destination_id'].max()
-                )
+                n_city_zones = max(df_augmented['source_id'].max(),
+                    df_augmented['destination_id'].max())
                 
                 # get number of test city zones you want to split
                 n_test_city_zones = round(
-                    n_city_zones * config_uber['spatial_test_split']
-                )
+                    n_city_zones * config_uber['spatial_test_split'])
                 
                 # randomly sample test city zones
                 random.seed(config['general']['seed'])
-                test_city_zone_list = random.sample(
-                    range(n_city_zones), 
-                    n_test_city_zones
-                )
+                test_city_zone_list = random.sample(range(n_city_zones), 
+                    n_test_city_zones)
                 
                 # set false so as to not enter branch anymore
                 first_iteration= False
             
             if testing_city or testing_year or testing_quarter:
                 # append all data to test dataframe
-                df_test = pd.concat([df_test, df_augmented_csvdata])
+                df_test = pd.concat([df_test, df_augmented])
                 
                 # free up memory     
-                del df_augmented_csvdata   
+                del df_augmented   
                 gc.collect()
                 
             else:
                 # extract rows from dataframe with matching city zones
-                df_test_city_zones = df_augmented_csvdata.loc[
-                    (df_augmented_csvdata['destination_id'].isin(test_city_zone_list)) 
-                    | (df_augmented_csvdata['source_id'].isin(test_city_zone_list))
+                df_test_city_zones = df_augmented.loc[
+                    (df_augmented['destination_id'].isin(test_city_zone_list)) 
+                    | (df_augmented['source_id'].isin(test_city_zone_list))
                 ]
                 
                 # set the remaining rows for training and validation
-                df_augmented_csvdata = df_augmented_csvdata.drop(
+                df_augmented = df_augmented.drop(
                     df_test_city_zones.index
                 )
                 
@@ -505,14 +446,14 @@ def split_train_val_test(config: dict, subtask: str):
                 gc.collect()
                 
                 # extract the rows from dataframe with matching hours of day for test
-                df_test_hours_of_day = df_augmented_csvdata.loc[
-                    df_augmented_csvdata['hour_of_day'].isin(
+                df_test_hours_of_day = df_augmented.loc[
+                    df_augmented['hour_of_day'].isin(
                         config_uber['test_split_dict']['temporal_dict']['hours_of_day']
                     )
                 ]
                 
                 # set the remaining rows for training and validation
-                df_augmented_csvdata = df_augmented_csvdata.drop(
+                df_augmented = df_augmented.drop(
                     df_test_hours_of_day.index
                 )
                 
@@ -524,10 +465,10 @@ def split_train_val_test(config: dict, subtask: str):
                 gc.collect()
                 
                 # append remaining data to training dataset
-                df_train = pd.concat([df_train, df_augmented_csvdata])
+                df_train = pd.concat([df_train, df_augmented])
                 
                 # free up memory     
-                del df_augmented_csvdata   
+                del df_augmented   
                 gc.collect()
                 
       
@@ -552,89 +493,40 @@ def split_train_val_test(config: dict, subtask: str):
             print(len(df_test))
             
             ### Save resulting data in chunks
-            df_train, train_file_count = save_chunk(
-                config,
-                df_train,
-                train_file_count,
-                config_uber['path_to_data_train'],
-                'training_data'    
-            )
-            df_val, val_file_count = save_chunk(
-                config,
-                df_val,
-                val_file_count,
-                config_uber['path_to_data_val'],
-                'validation_data'
-            )
-            df_test, test_file_count = save_chunk(
-                config,
-                df_test,
-                test_file_count,
-                config_uber['path_to_data_test'],
-                'testing_data'
-            )
+            df_train, train_file_count = save_chunk(config, df_train,
+                train_file_count, config_uber['path_to_data_train'], 
+                'training_data')
+            df_val, val_file_count = save_chunk(config, df_val, val_file_count,
+                config_uber['path_to_data_val'], 'validation_data')
+            df_test, test_file_count = save_chunk(config, df_test, 
+                test_file_count, config_uber['path_to_data_test'], 'testing_data')
             
             # update progress bar
             pbar.update(1)
 
     ### Tell us the ratios that result from our splitting rules
-    n_train = (
-        train_file_count * config_uber['datapoints_per_file'] 
-        + len(df_train.index)
-    )
-    n_val = (
-        val_file_count * config_uber['datapoints_per_file'] 
-        + len(df_val.index)
-    )
-    n_test = (
-        test_file_count * config_uber['datapoints_per_file'] 
-        + len(df_test.index)
-    )
+    n_train = (train_file_count * config_uber['datapoints_per_file'] 
+        + len(df_train.index))
+    n_val = (val_file_count * config_uber['datapoints_per_file'] 
+        + len(df_val.index))
+    n_test = (test_file_count * config_uber['datapoints_per_file'] 
+        + len(df_test.index))
     n_total = n_train + n_val + n_test
     
-    print(
-        "Training data   :   {}/{} {:.0%}".format(
-              n_train, 
-              n_total, 
-              n_train/n_total
-        ),
-        "\nValidation data :   {}/{} {:.0%}".format(
-            n_val,
-            n_total,
-            n_val/n_total
-        ),
-        "\nTesting data    :   {}/{} {:.0%}".format(
-            n_test,
-            n_total,
-            n_test/n_total
-        )
-    )
+    print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+        n_train/n_total),
+        "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+        n_val/n_total),
+        "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+        n_test/n_total))
     
     ### Save results of last iteration
-    df_train, train_file_count = save_chunk(
-        config,
-        df_train,
-        train_file_count,
-        config_uber['path_to_data_train'],
-        'training_data',
-        last_iteration=True  
-    )
-    df_val, val_file_count = save_chunk(
-        config,
-        df_val,
-        val_file_count,
-        config_uber['path_to_data_val'],
-        'validation_data',
-        last_iteration=True  
-    )
-    df_test, test_file_count = save_chunk(
-        config,
-        df_test,
-        test_file_count,
-        config_uber['path_to_data_test'],
-        'testing_data',
-        last_iteration=True  
-    )
+    df_train, train_file_count = save_chunk(config, df_train, train_file_count,
+        config_uber['path_to_data_train'], 'training_data', last_iteration=True)
+    df_val, val_file_count = save_chunk(config, df_val, val_file_count,
+        config_uber['path_to_data_val'], 'validation_data', last_iteration=True)
+    df_test, test_file_count = save_chunk(config, df_test, test_file_count,
+        config_uber['path_to_data_test'], 'testing_data', last_iteration=True)
     
     
 def import_csvdata(config: dict, city: str):
@@ -646,8 +538,7 @@ def import_csvdata(config: dict, city: str):
     df_csv_dict_list = []
     for csv_file_dict in files_dict['csv_file_dict_list']:
         path_to_csv = (
-            config['path_to_data_raw'] + city + '/' + csv_file_dict['filename']
-        )
+            config['path_to_data_raw'] + city + '/' + csv_file_dict['filename'])
         df_csv = pd.read_csv(path_to_csv)
         csv_df_dict = csv_file_dict.copy()
         csv_df_dict['df'] = df_csv
@@ -666,8 +557,7 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     # subsample or shuffle data (for frac=1)    
     df_augmented = df_augmented.sample(
         frac=config['uber_movement']['subsample_frac'],
-        random_state=config['general']['seed']
-    )
+        random_state=config['general']['seed'])
     
     # augment raw dataframe
     df_augmented.insert(
@@ -692,14 +582,8 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     )
     
     # rename some columns with more clear names
-    df_augmented.rename(
-        columns={
-            'hod':'hour_of_day', 
-            'sourceid':'source_id', 
-            'dstid':'destination_id'
-        }, 
-        inplace=True
-    )
+    df_augmented.rename(columns={'hod':'hour_of_day', 'sourceid':'source_id', 
+            'dstid':'destination_id'}, inplace=True)
     
     # remove any rows with nan entry
     df_augmented = df_augmented[df_augmented.isnull().sum(axis=1) < 1]
@@ -707,38 +591,24 @@ def process_csvdata(config: dict, df_csv_dict: pd.DataFrame, city: str):
     return df_augmented
     
     
-def save_chunk(
-    config: dict,
-    df: pd.DataFrame,
-    chunk_counter: int,
-    saving_path: str,
-    filename: str,
-    last_iteration=False 
-) -> (pd.DataFrame, int):
+def save_chunk(config: dict, df: pd.DataFrame, chunk_counter: int, 
+    saving_path: str, filename: str, last_iteration=False) -> (pd.DataFrame, int):
     """ 
     Save a chunk of data and return remaining with chunk counter 
     """
     
-    while (
-        len(df.index) > config['uber_movement']['datapoints_per_file'] 
-        or last_iteration
-    ):
+    while (len(df.index) > config['uber_movement']['datapoints_per_file'] 
+        or last_iteration):
         
         # create path to saving
-        path_to_saving = (
-            saving_path
-            + filename
-            + '_{}.csv'.format(chunk_counter)
-        )
+        path_to_saving = saving_path + filename + '_{}.csv'.format(chunk_counter)
         
         # shuffle dataframe
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # save chunk
         df.iloc[:config['uber_movement']['datapoints_per_file']].to_csv(
-            path_to_saving, 
-            index=False
-        )
+            path_to_saving, index=False)
         
         # delete saved chunk
         df = df[config['uber_movement']['datapoints_per_file']:]

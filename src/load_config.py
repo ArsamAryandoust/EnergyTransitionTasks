@@ -183,7 +183,6 @@ def config_UM(config: dict, subtask: str) -> dict:
         list_of_cities = list_of_cities[:10]
     elif subtask == 'cities_20':
         list_of_cities = list_of_cities[:20]
-    dictionary['list_of_cities'] = list_of_cities
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
@@ -204,12 +203,12 @@ def config_UM(config: dict, subtask: str) -> dict:
     # out of distribution test splitting rules in space
     n_cities_test = round(
         dictionary['spatial_test_split']
-        * len(dictionary['list_of_cities'])
+        * len(list_of_cities)
     )
     
     random.seed(config['general']['seed'])
     list_of_cities_test = random.sample(
-        dictionary['list_of_cities'], 
+        list_of_cities, 
         n_cities_test
     )
     
@@ -282,6 +281,7 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     # create directory structure for saving results
     if subtask == 'cities_10':
+        dictionary['list_of_cities'] = list_of_cities[:10]
         if os.path.isdir(dictionary['path_to_data']):
             shutil.rmtree(dictionary['path_to_data'])
         for path in [dictionary['path_to_data'],
@@ -290,17 +290,18 @@ def config_UM(config: dict, subtask: str) -> dict:
             dictionary['path_to_data_test']]:
             check_create_dir(path)
             
+        
     elif subtask == 'cities_20':
+        dictionary['list_of_cities'] = list_of_cities[10:20]
         # set full path to directory we want to copy
         path_to_copy_directory = dictionary['path_to_data'] + 'cities_10/'
-        dictionary['list_of_cities'] = list_of_cities[10:20]
         # copy directory into current subtask
         shutil.copytree(path_to_copy_directory, dictionary['path_to_data_subtask'])
         
     elif subtask == 'cities_43':
+        dictionary['list_of_cities'] = list_of_cities[20:]
         # set full path to directory we want to copy
         path_to_copy_directory = dictionary['path_to_data'] + 'cities_20/'
-        dictionary['list_of_cities'] = list_of_cities[20:]
         # copy directory into current subtask
         shutil.copytree(path_to_copy_directory, dictionary['path_to_data_subtask'])
         
