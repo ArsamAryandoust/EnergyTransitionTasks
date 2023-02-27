@@ -143,27 +143,27 @@ def config_UM(config: dict, subtask: str) -> dict:
     """
     
     # get base config
-    dictionary = config['uber_movement']    
+    config_uber = config['uber_movement']    
     
     # add data paths
-    dictionary['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
+    config_uber['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
         + 'UberMovement/')
-    dictionary['path_to_data'] = (config['general']['path_to_data'] 
+    config_uber['path_to_data'] = (config['general']['path_to_data'] 
         + 'UberMovement/')
-    dictionary['path_to_data_subtask'] = (dictionary['path_to_data']
+    config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
         + '{}/'.format(subtask))
-    dictionary['path_to_data_add'] = (dictionary['path_to_data_subtask']
+    config_uber['path_to_data_add'] = (config_uber['path_to_data_subtask']
         + 'additional/')
-    dictionary['path_to_data_train'] = (dictionary['path_to_data_subtask']
+    config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
         + 'training/')
-    dictionary['path_to_data_val'] = (dictionary['path_to_data_subtask']
+    config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
         + 'validation/')
-    dictionary['path_to_data_test'] = (dictionary['path_to_data_subtask']
+    config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
         + 'testing/')
     
     # create list of citites and save to configuration dictionary
     random.seed(config['general']['seed'])
-    list_of_cities = os.listdir(dictionary['path_to_data_raw'])
+    list_of_cities = os.listdir(config_uber['path_to_data_raw'])
     random.shuffle(list_of_cities)
     if subtask == 'cities_10':
         list_of_cities = list_of_cities[:10]
@@ -173,21 +173,21 @@ def config_UM(config: dict, subtask: str) -> dict:
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
     year_list = random.sample(range(2015,2021), 
-        math.floor(5 * dictionary['temporal_test_split']))
+        math.floor(5 * config_uber['temporal_test_split']))
     quarter_of_year_list = random.sample(range(1,5), 
-        math.floor(4 * dictionary['temporal_test_split']))
+        math.floor(4 * config_uber['temporal_test_split']))
     random.seed(config['general']['seed'])
     hours_of_day_list = random.sample(range(24), 
-        math.floor(24 * dictionary['temporal_test_split']))
+        math.floor(24 * config_uber['temporal_test_split']))
     
     # out of distribution test splitting rules in space
-    n_cities_test = round(dictionary['spatial_test_split'] * len(list_of_cities))
+    n_cities_test = round(config_uber['spatial_test_split'] * len(list_of_cities))
     
     random.seed(config['general']['seed'])
     list_of_cities_test = random.sample(list_of_cities, n_cities_test)
     
     # dictionary saving rules
-    dictionary['test_split_dict'] = {
+    config_uber['test_split_dict'] = {
         'temporal_dict': {
             'year': year_list,
             'quarter_of_year': quarter_of_year_list,
@@ -198,10 +198,10 @@ def config_UM(config: dict, subtask: str) -> dict:
     # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
     quarter_list = ['-1-', '-2-', '-3-', '-4-']
-    dictionary['city_files_mapping'] = {}
-    dictionary['city_id_mapping'] = {}
+    config_uber['city_files_mapping'] = {}
+    config_uber['city_id_mapping'] = {}
     for city_id, city in enumerate(list_of_cities):
-        path_to_city = dictionary['path_to_data_raw'] + city + '/'
+        path_to_city = config_uber['path_to_data_raw'] + city + '/'
         file_list = os.listdir(path_to_city)
         csv_file_dict_list = []
         for filename in file_list:
@@ -244,48 +244,47 @@ def config_UM(config: dict, subtask: str) -> dict:
         }
         
         # save 
-        dictionary['city_files_mapping'][city] = file_dict
-        dictionary['city_id_mapping'][city] = city_id
+        config_uber['city_files_mapping'][city] = file_dict
+        config_uber['city_id_mapping'][city] = city_id
   
     
     # create directory structure for saving results
     if subtask == 'cities_10':
-        dictionary['list_of_cities'] = list_of_cities[:10]
-        if os.path.isdir(dictionary['path_to_data']):
-            shutil.rmtree(dictionary['path_to_data'])
-        for path in [dictionary['path_to_data'],
-            dictionary['path_to_data_subtask'], dictionary['path_to_data_add'],
-            dictionary['path_to_data_train'], dictionary['path_to_data_val'],
-            dictionary['path_to_data_test']]:
+        config_uber['list_of_cities'] = list_of_cities[:10]
+        if os.path.isdir(config_uber['path_to_data']):
+            shutil.rmtree(config_uber['path_to_data'])
+        for path in [config_uber['path_to_data'],
+            config_uber['path_to_data_subtask'], config_uber['path_to_data_add'],
+            config_uber['path_to_data_train'], config_uber['path_to_data_val'],
+            config_uber['path_to_data_test']]:
             check_create_dir(path)
             
         
     elif subtask == 'cities_20':
-        dictionary['list_of_cities'] = list_of_cities[10:20]
+        config_uber['list_of_cities'] = list_of_cities[10:20]
         # set full path to directory we want to copy
-        path_to_copy_directory = dictionary['path_to_data'] + 'cities_10/'
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
         # copy directory into current subtask
-        shutil.copytree(path_to_copy_directory, dictionary['path_to_data_subtask'])
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
         
     elif subtask == 'cities_43':
-        dictionary['list_of_cities'] = list_of_cities[20:]
+        config_uber['list_of_cities'] = list_of_cities[20:]
         # set full path to directory we want to copy
-        path_to_copy_directory = dictionary['path_to_data'] + 'cities_20/'
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
         # copy directory into current subtask
-        shutil.copytree(path_to_copy_directory, dictionary['path_to_data_subtask'])
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
         
     # create dataframe from dictionary
-    df = pd.DataFrame.from_dict(dictionary['city_id_mapping'], orient='index', 
+    df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], orient='index', 
         columns=['city_id'])
     
     # save file
-    saving_path = dictionary['path_to_data_add'] + 'city_to_id_mapping.csv'
+    saving_path = config_uber['path_to_data_add'] + 'city_to_id_mapping.csv'
     df.to_csv(saving_path)
     
-    dictionary['subtask'] = subtask
-    dictionary['seed'] = config['general']['seed']
-    config['uber_movement'] = dictionary
-    return config
+    config_uber['subtask'] = subtask
+    config_uber['seed'] = config['general']['seed']
+    return config_uber
     
    
    

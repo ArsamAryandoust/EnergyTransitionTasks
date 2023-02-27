@@ -17,7 +17,7 @@ def process_all_datasets(config: dict):
     # iterated over all subtasks
     for subtask in config['uber_movement']['subtask_list']:
         # augment conigurations with additional information
-        config = config_UM(config, subtask)
+        config_uber = config_UM(config, subtask)
         
         # process geographic information
         process_geographic_information(config['uber_movement'])
@@ -306,14 +306,14 @@ def transform_col_names(col_list: list, name_base: str) -> list:
     return new_col_list
     
 
-def load_df_and_file_counters(config_uber: dict, subtask: str) -> (pd.DataFrame,
-    pd.DataFrame, pd.DataFrame, int, int, int):
+def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame, 
+    pd.DataFrame, int, int, int):
     """
     Loads the last file that was saved from previous subtask as dataframe and
     sets the file counters accordingly.
     """
     
-    if subtask == 'cities_10':
+    if config_uber['subtask'] == 'cities_10':
         # declare data point counters as zero
         train_file_count, val_file_count, test_file_count = 1, 1, 1
         
