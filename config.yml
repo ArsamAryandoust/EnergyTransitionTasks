@@ -23,7 +23,7 @@ uber_movement:
     temporal_test_split: 0.22
     spatial_test_split: 0.2
     val_test_split: 0.18
-    subsample_frac: 0.1
+    subsample_frac: 1
     datapoints_per_file: 20_000_000
 
 
