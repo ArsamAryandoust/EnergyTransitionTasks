@@ -22,7 +22,7 @@ uber_movement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
     temporal_test_split: 0.25
     spatial_test_split: 0.2
-    val_test_split: 0.2
+    val_test_split: 0.18
     subsample_frac: 0.1
     datapoints_per_file: 20_000_000
 
