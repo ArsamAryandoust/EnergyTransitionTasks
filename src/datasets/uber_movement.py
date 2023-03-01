@@ -99,8 +99,8 @@ def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
 def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
     """ Maps Uber Movement city zone IDs to a flattened list of latitude and 
     longitude coordinates in the format of two dictionaries. Uses the recursive 
-    function called foster_coordinates_recursive to flatten the differently nested 
-    data.
+    function called foster_coordinates_recursive to flatten the differently 
+    nested data.
     """
     
     df_geojson.pop('type')
