@@ -97,8 +97,8 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
         build_id_map_dict[building_id_old] = building_id_new
     
     # do the renaming
-    df_consumption.rename(build_id_map_dict)
-    df_building_images.rename(build_id_map_dict)
+    df_consumption.rename(build_id_map_dict, inplace=True)
+    df_building_images.rename(build_id_map_dict, inplace=True)
     
     return df_consumption, df_building_images
     
