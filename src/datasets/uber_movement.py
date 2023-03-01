@@ -660,8 +660,9 @@ def save_chunk(config_uber: dict, df: pd.DataFrame, chunk_counter: int,
         df = df.sample(frac=1, random_state=config_uber['seed'])
         
         # save chunk
-        df.iloc[:config_uber['datapoints_per_file']].to_csv(path_to_saving, 
-            index=False)
+        if len(df) > 0:
+            df.iloc[:config_uber['datapoints_per_file']].to_csv(path_to_saving, 
+                index=False)
         
         # delete saved chunk
         df = df[config_uber['datapoints_per_file']:]
