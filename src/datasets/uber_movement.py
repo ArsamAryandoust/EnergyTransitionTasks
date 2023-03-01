@@ -19,21 +19,23 @@ def process_all_datasets(config: dict):
     for subtask in config['uber_movement']['subtask_list']:
         # augment conigurations with additional information
         config_uber = config_UM(config, subtask)
-        
         # process geographic information
-        process_geographic_information(config_uber)
-        
+        city_zone_shift_dict = process_geographic_information(config_uber)
         # split training validation testing
-        split_train_val_test(config_uber)
+        split_train_val_test(config_uber, city_zone_shift_dict)
 
 
-def process_geographic_information(config_uber: dict):
+def process_geographic_information(config_uber: dict) -> dict:
     """
     Processes and saves geographic features of cities and their zones.
     """
     print('Processing geographic data.')
     # create progress bar
     pbar = tqdm(total=len(config_uber['list_of_cities']))
+    
+    # create empty dict to record city zone shifting factor for making every
+    # city zone start from ID number 1.
+    city_zone_shift_dict = {}
     
     # iterate over all cities
     for city in config_uber['list_of_cities']:
@@ -44,6 +46,15 @@ def process_geographic_information(config_uber: dict):
         # extract geojson information of city zones as latitude and longitude df
         df_latitudes, df_longitudes = process_geojson(df_geojson)
         
+        # do the shifting here
+        shift_factor_add = 1 - min(df_latitudes.columns)
+        city_zone_shift_dict[city] = shift_factor_add
+        if shift_factor_add != 0:
+            lat_col = [x+shift_factor_add for x in df_latitudes.columns.to_list()]
+            long_col = [x+shift_factor_add for x in df_longitudes.columns.to_list()]
+            df_latitudes.columns = lat_col
+            df_longitudes.columns = long_col
+            
         ### Transform lat and long coordinates into unit sphere coordinate system
         # calculate values you need for 
         df_sin_lon = df_longitudes.applymap(sin_transform)
@@ -55,7 +66,6 @@ def process_geographic_information(config_uber: dict):
         df_x_cord = df_cos_lat.mul(df_cos_lon)
         df_y_cord = df_cos_lat.mul(df_sin_lon)
         df_z_cord = df_sin_lat
-        
         
         ### Transform column names ###
         # transform x_cord columns
@@ -73,7 +83,6 @@ def process_geographic_information(config_uber: dict):
         new_col_list = transform_col_names(col_list, 'z_cord')
         df_z_cord.columns = new_col_list
         
-        
         ### Save into one csv file ###
         df_geographic_info = pd.concat([df_x_cord, df_y_cord, df_z_cord], axis=1)
         filename = city + '.csv'
@@ -83,6 +92,7 @@ def process_geographic_information(config_uber: dict):
         # update progress bar
         pbar.update(1)
         
+    return city_zone_shift_dict
 
 def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
     """ 
@@ -348,7 +358,7 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
     return return_values   
         
         
-def split_train_val_test(config_uber: dict):
+def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
     """ 
     Splits and saves datasets according to configuration rules.
     """
@@ -362,6 +372,8 @@ def split_train_val_test(config_uber: dict):
     for city in config_uber['list_of_cities']:
         print('Processing data for:', city)
         
+        # get city zone shifting factor for current city
+        shift_factor_add = city_zone_shift_dict[city]
         # check if city is in testing city list
         if city in (
             config_uber['test_split_dict']['spatial_dict']['list_of_cities_test']
@@ -371,7 +383,7 @@ def split_train_val_test(config_uber: dict):
             testing_city = False
         
         # import all csv files for currently iterated city
-        df_csv_dict_list = import_csvdata(config_uber, city)
+        df_csv_dict_list = import_csvdata(config_uber, city, shift_factor_add)
         
         # create progress bar
         pbar = tqdm(total=len(df_csv_dict_list))
@@ -539,17 +551,31 @@ def split_train_val_test(config_uber: dict):
         config_uber['path_to_data_test'], 'testing_data', last_iteration=True)
     
     
-def import_csvdata(config_uber: dict, city: str):
+def import_csvdata(config_uber: dict, city: str, shift_factor_add: int):
     """ 
     Imports the Uber Movement data for a passed city 
     """
-    
+    # get the files dictionary and create an empty list to fill dataframes of csv
     files_dict = config_uber['city_files_mapping'][city]
     df_csv_dict_list = []
+    
+    # iterate over all csv files of current city
     for csv_file_dict in files_dict['csv_file_dict_list']:
-        path_to_csv = (
-            config_uber['path_to_data_raw'] + city + '/' + csv_file_dict['filename'])
+        
+        # set the path to currently iterated csv ile of city
+        path_to_csv = (config_uber['path_to_data_raw'] + city + '/' 
+            + csv_file_dict['filename'])
+            
+        # import csv data as pandas dataframe
         df_csv = pd.read_csv(path_to_csv)
+        
+        # shift city zone IDs in case the shift factor is not zero. Note that 
+        # during the the processing lat and long data, this has been done too.
+        if shift_factor_add != 0:
+            df_csv['sourceid'] += 1
+            df_csv['dstid'] += 1
+            
+        # create a copy of csv dataframe dict and append new csv dataframe as df
         csv_df_dict = csv_file_dict.copy()
         csv_df_dict['df'] = df_csv
         df_csv_dict_list.append(csv_df_dict)
