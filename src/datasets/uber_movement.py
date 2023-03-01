@@ -101,6 +101,7 @@ def process_geographic_information(config_uber: dict) -> dict:
             # get size of column
             len_col = len(df_z_cord[col].dropna())
             
+            # update minimum and maximum if relevant
             if len_col < min_polygon_edges:
                 min_polygon_edges = len_col
             if len_col > max_polygon_edges:
@@ -345,14 +346,15 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
     sets the file counters accordingly.
     """
     
+    # decleare empty dataframes for trainining validation and testing
+    df_train = pd.DataFrame()
+    df_val = pd.DataFrame()
+    df_test = pd.DataFrame()
+    
     if config_uber['subtask'] == 'cities_10':
         # declare data point counters as zero
         train_file_count, val_file_count, test_file_count = 1, 1, 1
         
-        # decleare empty dataframes for trainining validation and testing
-        df_train = pd.DataFrame()
-        df_val = pd.DataFrame()
-        df_test = pd.DataFrame()
     else:
         # declare data point counters
         train_file_count = len(os.listdir(config_uber['path_to_data_train']))
@@ -360,15 +362,18 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
         test_file_count = len(os.listdir(config_uber['path_to_data_test']))
         
         # load last datframes
-        loading_path = (config_uber['path_to_data_train'] + 
-            'training_data_{}.csv'.format(train_file_count))
-        df_train = pd.read_csv(loading_path)
-        loading_path = (config_uber['path_to_data_val'] + 
-            'validation_data_{}.csv'.format(val_file_count))
-        df_val = pd.read_csv(loading_path)
-        loading_path = (config_uber['path_to_data_test'] + 
-            'testing_data_{}.csv'.format(test_file_count))
-        df_test = pd.read_csv(loading_path)
+        if train_file_count > 0:
+            loading_path = (config_uber['path_to_data_train'] + 
+                'training_data_{}.csv'.format(train_file_count))
+            df_train = pd.read_csv(loading_path)
+        if val_file_count > 0:
+            loading_path = (config_uber['path_to_data_val'] + 
+                'validation_data_{}.csv'.format(val_file_count))
+            df_val = pd.read_csv(loading_path)
+        if test_file_count > 0:
+            loading_path = (config_uber['path_to_data_test'] + 
+                'testing_data_{}.csv'.format(test_file_count))
+            df_test = pd.read_csv(loading_path)
 
         
         
