@@ -362,15 +362,23 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
         test_file_count = len(os.listdir(config_uber['path_to_data_test']))
         
         # load last datframes
-        if train_file_count > 0:
+        if train_file_count == 0:
+            train_file_count = 1
+        else:
             loading_path = (config_uber['path_to_data_train'] + 
                 'training_data_{}.csv'.format(train_file_count))
             df_train = pd.read_csv(loading_path)
-        if val_file_count > 0:
+            
+        if val_file_count == 0:
+            val_file_count = 1
+        else:
             loading_path = (config_uber['path_to_data_val'] + 
                 'validation_data_{}.csv'.format(val_file_count))
             df_val = pd.read_csv(loading_path)
-        if test_file_count > 0:
+            
+        if test_file_count == 0:
+            test_file_count = 1
+        else:
             loading_path = (config_uber['path_to_data_test'] + 
                 'testing_data_{}.csv'.format(test_file_count))
             df_test = pd.read_csv(loading_path)
