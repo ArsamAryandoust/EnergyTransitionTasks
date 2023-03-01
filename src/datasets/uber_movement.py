@@ -50,6 +50,8 @@ def process_geographic_information(config_uber: dict) -> dict:
         shift_factor_add = 1 - min(df_latitudes.columns)
         city_zone_shift_dict[city] = shift_factor_add
         if shift_factor_add != 0:
+            print("\n Shifting factor {} is used for geographic data {}".format(
+                shift_factor_add, city))
             lat_col = [x+shift_factor_add for x in df_latitudes.columns.to_list()]
             long_col = [x+shift_factor_add for x in df_longitudes.columns.to_list()]
             df_latitudes.columns = lat_col
@@ -572,6 +574,8 @@ def import_csvdata(config_uber: dict, city: str, shift_factor_add: int):
         # shift city zone IDs in case the shift factor is not zero. Note that 
         # during the the processing lat and long data, this has been done too.
         if shift_factor_add != 0:
+            print("\nShifting factor {} is used for csv data of {}".format(
+                shift_factor_add, city))
             df_csv['sourceid'] += 1
             df_csv['dstid'] += 1
             
