@@ -20,28 +20,24 @@ def process_all_datasets(config: dict):
         config = config_BE(config, subtask)
         
         # import all data
-        (
-            df_consumption, 
-            df_building_images, 
-            df_meteo_dict
-        ) = import_all_data(config['building_electricity'])
+        df_consumption, df_building_images, df_meteo_dict = import_all_data(
+            config['building_electricity'])
+        
+        # change building IDs here
+        df_consumption, df_building_images = adjust_building_ids(
+            df_consumption, df_building_images)
 
         # process building imagery
-        process_building_imagery(
-            config['building_electricity'], 
-            df_building_images
-        )
+        process_building_imagery(config['building_electricity'], 
+            df_building_images)
 
         # free up memory
         del df_building_images
         gc.collect()
                 
         # process meteo data and load profiles
-        df_dataset = process_meteo_and_load_profiles(
-            config, 
-            df_consumption, 
-            df_meteo_dict
-        )
+        df_dataset = process_meteo_and_load_profiles(config, df_consumption, 
+            df_meteo_dict)
         
         # free up memory
         del df_consumption, df_meteo_dict
@@ -87,6 +83,26 @@ def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     return df_consumption, df_building_images, df_meteo_dict
     
 
+def adjust_building_ids(df_consumption: pd.DataFrame, 
+    df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+    """
+    """
+    
+    # create a list of all available building IDs
+    building_id_list = list(df_consumption.columns.values[1:])
+    
+    # create empty dict for mapping old to new building IDs from zero to length
+    build_id_map_dict = {}
+    for building_id_new, building_id_old in enumerate(building_id_list):
+        build_id_map_dict[building_id_old] = building_id_new
+    
+    # do the renaming
+    df_consumption.rename(build_id_map_dict)
+    df_building_images.rename(build_id_map_dict)
+    
+    return df_consumption, df_building_images
+    
+
 def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     """
     Simply changes the column name of aerial imagery histograms of buildings
@@ -114,20 +130,15 @@ def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     df_building_images_new.columns = new_columns_list
     
     # create saving path for building imagery
-    saving_path = (
-        config['path_to_data_add']
-        + 'building_images_pixel_histograms_rgb.csv'
-    )
+    saving_path = (config['path_to_data_add']
+        + 'building_images_pixel_histograms_rgb.csv')
     
     # save df_building_images_new
     df_building_images_new.to_csv(saving_path, index=False)
 
     
-def process_meteo_and_load_profiles(
-    config: dict, 
-    df_consumption: pd.DataFrame,
-    df_meteo_dict: pd.DataFrame
-) -> pd.DataFrame:
+def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
+    df_meteo_dict: pd.DataFrame) -> pd.DataFrame:
     """
     Main data processing. Takes electric load profiles and meteorological data
     and combines these into a single dataset dataframe.
@@ -170,25 +181,17 @@ def process_meteo_and_load_profiles(
     # create a list of all building IDs
     building_id_list = list(df_consumption.columns.values[1:])
     
-    
     # decleare empty values array. Filling matrix pre-allocates memory and decreases
     # computational time significantly.
     values_array = np.zeros(
-        (
-            len(building_id_list) * (
-                len(time_stamps)
-                - config['building_electricity']['historic_window']
-                - config['building_electricity']['prediction_window']
-            ),
-            (
-                len(new_df_columns_base) 
-                + config['building_electricity']['historic_window'] * (
-                    len(config['building_electricity']['meteo_name_list'])
-                )
-                + config['building_electricity']['prediction_window']
-            )
-        )
-    )
+        (len(building_id_list) * (
+            len(time_stamps)
+            - config['building_electricity']['historic_window']
+            - config['building_electricity']['prediction_window']),
+            (len(new_df_columns_base) 
+            + config['building_electricity']['historic_window'] * (
+                len(config['building_electricity']['meteo_name_list']))
+            + config['building_electricity']['prediction_window'])))
     
     # create progress bar
     pbar = tqdm(total=len(building_id_list))
@@ -217,10 +220,9 @@ def process_meteo_and_load_profiles(
         df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps
-        for i in range(
-            config['building_electricity']['historic_window'], 
-            len(time_stamps) - config['building_electricity']['prediction_window']
-        ):
+        for i in range(config['building_electricity']['historic_window'], 
+            len(time_stamps) 
+            - config['building_electricity']['prediction_window']):
             # get time stamp
             time = time_stamps[i]
             
@@ -246,9 +248,8 @@ def process_meteo_and_load_profiles(
             
             # add features to values_array. Ensures same order as new_df_columns.
             for index_col, entry_name in enumerate(new_df_columns_base):
-                command = 'values_array[datapoint_counter, index_col] = {}'.format(
-                    entry_name
-                )
+                command = 'values_array[datapoint_counter,index_col]={}'.format(
+                    entry_name)
                 exec(command)
                 
             # add meteorological data to entry
@@ -292,8 +293,7 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     
     # create spatial ood split
     df_testing = df_dataset.loc[
-        (df_dataset['building_id'].isin(spatial_ood['building_id_list']))
-    ]
+        (df_dataset['building_id'].isin(spatial_ood['building_id_list']))]
     
     # remove split spatial ood data points
     df_dataset = df_dataset.drop(df_testing.index)
@@ -303,8 +303,7 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
         (df_dataset['month'].isin(temporal_ood['month_list']))
         | (df_dataset['day'].isin(temporal_ood['day_list']))
         | (df_dataset['hour'].isin(temporal_ood['hour_list']))
-        | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))
-    ]
+        | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))]
     
     # remove the spatial ood split data points which is training dataset
     df_training = df_dataset.drop(df_temporal_ood.index)
@@ -323,8 +322,7 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     # do validation split
     df_validation = df_testing.sample(
         frac=config['building_electricity']['val_test_split'], 
-        random_state=config['general']['seed']
-    )
+        random_state=config['general']['seed'])
     
     # remove validation data split from testing dataset
     df_testing = df_testing.drop(df_validation.index)
@@ -352,21 +350,15 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     )
     
     # save results in chunks
-    save_in_chunks(
-        config,
+    save_in_chunks(config,
         config['building_electricity']['path_to_data_train'] + 'training_data', 
-        df_training
-    )
-    save_in_chunks(
-        config,
+        df_training)
+    save_in_chunks(config,
         config['building_electricity']['path_to_data_val'] + 'validation_data', 
-        df_validation
-    )
-    save_in_chunks(
-        config,
+        df_validation)
+    save_in_chunks(config,
         config['building_electricity']['path_to_data_test'] + 'testing_data', 
-        df_testing
-    )
+        df_testing)
 
     
 def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
