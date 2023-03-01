@@ -13,7 +13,7 @@ def process_all_datasets(config: dict):
     """
     Processes all datasets for Uber Movement prediction task.
     """
-    print("Processing Uber Movement dataset.")
+    print("\nProcessing Uber Movement dataset.")
     
     # iterated over all subtasks
     for subtask in config['uber_movement']['subtask_list']:
@@ -29,13 +29,17 @@ def process_geographic_information(config_uber: dict) -> dict:
     """
     Processes and saves geographic features of cities and their zones.
     """
-    print('Processing geographic data.')
+    print('\nProcessing geographic data.')
     # create progress bar
     pbar = tqdm(total=len(config_uber['list_of_cities']))
     
     # create empty dict to record city zone shifting factor for making every
     # city zone start from ID number 1.
     city_zone_shift_dict = {}
+    
+    # declare minimum and maxmimum number of edges of ciy zone coordinates we want
+    # to calculate
+    min_polygon_edges, max_polygon_edges = 1e3, 0
     
     # iterate over all cities
     for city in config_uber['list_of_cities']:
@@ -91,9 +95,24 @@ def process_geographic_information(config_uber: dict) -> dict:
         saving_path = config_uber['path_to_data_add'] + filename
         df_geographic_info.to_csv(saving_path)
         
+        ### Calculate minimum and maximum of city zone polygon edges ###
+        # iterate over all columns of dataframe
+        for col in df_z_cord.columns:
+            # get size of column
+            len_col = len(df_z_cord[col].dropna())
+            
+            if len_col < min_polygon_edges:
+                min_polygon_edges = len_col
+            if len_col > max_polygon_edges:
+                max_polygon_edges = len_col
+        
         # update progress bar
         pbar.update(1)
         
+    # print out miminimum and maximum of city zone polygon edges here
+    print("\nMinimum of city zone polygon edges: {}".format(min_polygon_edges))
+    print("\nMaximum of city zone polygon edges: {}".format(max_polygon_edges))
+    
     return city_zone_shift_dict
 
 def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
@@ -372,7 +391,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
     
     # iterate over all available cities
     for city in config_uber['list_of_cities']:
-        print('Processing data for:', city)
+        print('\nProcessing data for:', city)
         
         # get city zone shifting factor for current city
         shift_factor_add = city_zone_shift_dict[city]
