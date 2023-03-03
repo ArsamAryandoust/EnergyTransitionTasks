@@ -56,6 +56,7 @@ def split_train_val_test(config_climart: dict):
     
     # iterate over all available years
     for year in list_of_years:
+        print('\n', year)
         # import inputs and outputs
         inputs, outputs = import_h5_data(config_climart, year)
         
