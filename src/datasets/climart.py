@@ -46,7 +46,7 @@ def split_train_val_test(config_climart: dict):
     
     # corrections for testing
     list_of_years.remove('1995') # inputs
-    #list_of_years.remove('1851') # outputs pristine
+    list_of_years.remove('1851') # outputs pristine
     #list_of_years = [e for e in list_of_years if e not in approved_years]
     
     # create progress bar
