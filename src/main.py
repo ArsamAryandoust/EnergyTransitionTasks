@@ -1,7 +1,7 @@
 import yaml
 
 import parse_args
-from datasets import building_electricity, uber_movement
+from datasets import building_electricity, uber_movement, climart
 
 
 if __name__ == "__main__":
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     if args.uber_movement:
         uber_movement.process_all_datasets(config)
     if args.climart:
-        print("Processing ClimArt dataset.")
+        climart.process_all_datasets(config)
     if args.open_catalyst:
         print("Processing Open Catalyst dataset.")
     if args.shuffle_UM:

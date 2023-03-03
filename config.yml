@@ -27,11 +27,12 @@ uber_movement:
 
 
 climart:
-    chunk_size_climart: 35_000
-    train_val_split_climart: 0.8
-    subsample_climart: 0.2
-    t_step_size_h: 205
-    share_hours_sample: 0.2
+    subtask_list: ['pristine', 'clear_sky']
+    temporal_test_split: 0.2
+    spatial_test_split: 0.2
+    val_test_split: 0.2
+    subsample_frac: 0.2
+    datapoints_per_file: 35_000
 
 
 open_catalst:

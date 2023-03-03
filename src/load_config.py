@@ -274,158 +274,92 @@ def config_UM(config: dict, subtask: str) -> dict:
     config_uber['seed'] = config['general']['seed']
     return config_uber
     
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
 
-    
-
-def config_CA(config: dict) -> dict:
+def config_CA(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing ClimArt dataset.
     """
     
     # get base config
-    dictionary = config['climart']
+    config_climart = config['climart'] 
     
     # add data paths
-    dictionary['path_to_data_raw_climart'] = (
-        config['general']['path_to_data_raw'] 
-        + 'ClimART/'
-    )
-    dictionary['path_to_raw_climart_statistics'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'statistics/'
-    )
-    dictionary['path_to_raw_climart_inputs'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'inputs/'
-    )
-    dictionary['path_to_raw_climart_outputs_clear_sky'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'outputs_clear_sky/'
-    )
-    dictionary['path_to_raw_climart_outputs_pristine'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'outputs_pristine/'
-    )
-    dictionary['path_to_data_climart'] = (
-        config['general']['path_to_data'] 
-        + 'ClimART/'
-    )
-    dictionary['path_to_data_climart_clearsky'] = (
-        dictionary['path_to_data_climart']
-        + 'clear_sky/'
-    )
-    dictionary['path_to_data_climart_pristine'] = (
-        dictionary['path_to_data_climart']
-        + 'pristine/'
-    )
-    dictionary['path_to_data_climart_clearsky_train'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'training/'
-    )
-    dictionary['path_to_data_climart_pristine_train'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'training/'
-    )
-    dictionary['path_to_data_climart_clearsky_val'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'validation/'
-    )
-    dictionary['path_to_data_climart_pristine_val'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'validation/'
-    )
-    dictionary['path_to_data_climart_clearsky_test'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'testing/'
-    )
-    dictionary['path_to_data_climart_pristine_test'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'testing/'
-    )
-    
+    config_climart['path_to_data_raw'] = (
+        config['general']['path_to_data_raw'] + 'ClimART/')
+    config_climart['path_to_data_raw_inputs'] = (
+        config_climart['path_to_data_raw'] + 'inputs/')
+    config_climart['path_to_data_raw_outputs_subtask'] = (
+        config_climart['path_to_data_raw'] + 'outputs_{}/'.format(subtask))
+    config_climart['path_to_data'] = (
+        config['general']['path_to_data'] + 'ClimART/')
+    config_climart['path_to_data_subtask'] = (
+        config_climart['path_to_data_climart']+ '{}/'.format(subtask))
+    config_climart['path_to_data_subtask_train'] = (
+        config_climart['path_to_data_subtask'] + 'training/')
+    config_climart['path_to_data_subtask_val'] = (
+        config_climart['path_to_data_subtask'] + 'validation/')
+    config_climart['path_to_data_subtask_test'] = (
+        config_climart['path_to_data_subtask'] + 'testing/')
     
     # out of distribution test splitting rules in time
+    year_list_test = [1850, 1851, 1852, 1991, 2097, 2098, 2099]
     t_step_size_h = 205
-    n_t_steps_per_year = math.ceil(365 * 24 / t_step_size_h)
-    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, t_step_size_h))
+    n_t_steps_per_year = round(365 * 24 / t_step_size_h)
+    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, 
+        t_step_size_h))
     share_hours_sampling = 0.2
-    n_hours_subsample = math.ceil(n_t_steps_per_year * share_hours_sampling)
-    random.seed(HyperParameter.SEED)
-    hours_of_year = random.sample(
-        hours_of_year_list, 
-        n_hours_subsample
-    )
+    n_hours_subsample = round(
+        n_t_steps_per_year * config_climart['temporal_test_split'])
+    random.seed(config['general']['seed'])
+    hours_of_year_test = random.sample(hours_of_year_list, n_hours_subsample)
     
     # out of distribution test splitting rules in space
     n_lat, n_lon = 64, 128
     n_coordinates = n_lat * n_lon
     first_coordinates_index_list = list(range(n_coordinates))
-    share_coordinates_sampling = 0.2
-    n_cord_subsample = math.ceil(share_coordinates_sampling * n_coordinates)
-    random.seed(HyperParameter.SEED)
-    coordinates_index_list = random.sample(
-        first_coordinates_index_list,
-        n_cord_subsample
-    )
+    n_cord_subsample = round(
+        config_climart['spatial_test_split'] * n_coordinates)
+    random.seed(config['general']['seed'])
+    coordinates_index_list = random.sample(first_coordinates_index_list,
+        n_cord_subsample)
     
     coordinate_list = []
     for step in range(n_t_steps_per_year):
-        
         coordinate_list_step = []
         for entry in coordinates_index_list:
             new_entry = entry + step * n_coordinates
             coordinate_list_step.append(new_entry)
             
         coordinate_list += coordinate_list_step
-        
+       
     # dictionary saving rules
-    dictionary['test_plit_dict_climart'] = {
+    config_climart['test_split_dict'] = {
         'temporal_dict': {
-            'year': 2014,
-            'hours_of_year': hours_of_year
+            'year': year_list_test,
+            'hours_of_year': hours_of_year_test
         },
         'spatial_dict': {
             'coordinates': coordinate_list
         }
     }
     
-    # save a list with names of meta file names
-    dictionary['climart_meta_filenames_dict'] = {
-        'meta':'META_INFO.json',
-        'stats':'statistics.npz'
-    }
-    
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data_climart'], 
-        dictionary['path_to_data_climart_clearsky'],
-        dictionary['path_to_data_climart_pristine'],
-        dictionary['path_to_data_climart_clearsky_train'],
-        dictionary['path_to_data_climart_pristine_train'],
-        dictionary['path_to_data_climart_clearsky_val'],
-        dictionary['path_to_data_climart_pristine_val'],
-        dictionary['path_to_data_climart_clearsky_test'],
-        dictionary['path_to_data_climart_pristine_test']
-    ]:
+    if subtask == 'pristine':
+        if os.path.isdir(config_uber['path_to_data']):
+            shutil.rmtree(config_uber['path_to_data'])
+    for path in [config_climart['path_to_data'], 
+        config_climart['path_to_data_subtask'],
+        config_climart['path_to_data_subtask_train'],
+        config_climart['path_to_data_subtask_val'],
+        config_climart['path_to_data_subtask_test']]:
         check_create_dir(path)
     
-    config['climart'] = dictionary
-    return config
+    config_climart['subtask'] = subtask
+    config_climart['seed'] = config['general']['seed']
+    return config_climart
+    
+    
+    
     
     
 def config_OC(config: dict) -> dict:
