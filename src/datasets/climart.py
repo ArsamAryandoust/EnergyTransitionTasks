@@ -44,6 +44,9 @@ def split_train_val_test(config_climart: dict):
     # declare data point counters
     train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
+    # create progress bar
+    pbar = tqdm(total=len(list_of_years))
+    
     # iterate over all available years
     for year in list_of_years:
         # tell us which year we are processing
@@ -136,7 +139,6 @@ def split_train_val_test(config_climart: dict):
         del df_val_append
         gc.collect()
             
-            
         ### Save resulting data in chunks
         df_train, train_chunk_counter = save_chunk(config_climart, df_train, 
             train_chunk_counter, config_climart['path_to_data_subtask_train'], 
@@ -147,8 +149,10 @@ def split_train_val_test(config_climart: dict):
         df_test, test_chunk_counter = save_chunk(config_climart, df_test,
             test_chunk_counter, config_climart['path_to_data_subtask_test'],
             'testing')
+            
+        # update progbar
+        pbar.update(1)
         
-    
     ### Tell us the rations that result from our splitting rules
     n_train = (train_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_train_clear_sky.index)
     n_val = (val_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_val_clear_sky.index)
@@ -158,8 +162,7 @@ def split_train_val_test(config_climart: dict):
     print(
         "Training data   :    {:.0%} \n".format(n_train/n_total),
         "Validation data :    {:.0%} \n".format(n_val/n_total),
-        "Testing data    :    {:.0%} \n".format(n_test/n_total)
-    )
+        "Testing data    :    {:.0%} \n".format(n_test/n_total))
     
     ### Save results of last iteration
     df_train, train_chunk_counter = save_chunk(config_climart, df_train, 
