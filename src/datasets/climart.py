@@ -44,13 +44,18 @@ def split_train_val_test(config_climart: dict):
     # declare data point counters
     train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
+    # corrections for testing
+    list_of_years.remove('1995')
+    approved_years =  ['2008', '1983', '1850', '2005', '1991', '1979', '2098',
+        '2013', '2004', '2001', '1996', '1982', '2006', '2099', '1987', '2000',
+        '2010', '1988', '1984', '2007']
+    list_of_years = [e for e in list_of_years if e not in approved_years]
+    
     # create progress bar
     pbar = tqdm(total=len(list_of_years))
     
     # iterate over all available years
     for year in list_of_years:
-        # tell us which year we are processing
-        print('Processing data for year {}'.format(year))
         # import inputs and outputs
         inputs, outputs = import_h5_data(config_climart, year)
         
