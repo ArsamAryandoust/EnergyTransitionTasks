@@ -362,6 +362,28 @@ def config_CA(config: dict, subtask: str) -> dict:
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 def config_OC(config: dict) -> dict:
     """
     Augments configuration file for processing Open Catalyst dataset.

@@ -123,18 +123,18 @@ def split_train_val_test(config_climart: dict):
             del df
             gc.collect()
             
-            # create training and validation datasets
-            df_val_append = df_test.sample(
-                frac=config_climart['val_test_split'],
-                random_state=config_climart['seed'])
-            df_test.drop(df_val_append.index, inplace=True)
-            
-            # append validation dataset
-            df_val = pd.concat([df_val, df_val_append])
-            
-            # free up memory     
-            del df_val_append
-            gc.collect()
+        # create training and validation datasets
+        df_val_append = df_test.sample(
+            frac=config_climart['val_test_split'],
+            random_state=config_climart['seed'])
+        df_test.drop(df_val_append.index, inplace=True)
+        
+        # append validation dataset
+        df_val = pd.concat([df_val, df_val_append])
+        
+        # free up memory     
+        del df_val_append
+        gc.collect()
             
             
         ### Save resulting data in chunks
