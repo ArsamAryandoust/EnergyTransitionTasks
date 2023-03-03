@@ -133,7 +133,7 @@ def split_train_val_test(config_climart: dict):
             df_val = pd.concat([df_val, df_val_append])
             
             # free up memory     
-            del df_val
+            del df_val_append
             gc.collect()
             
             
