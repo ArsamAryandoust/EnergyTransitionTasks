@@ -360,8 +360,6 @@ def config_CA(config: dict, subtask: str) -> dict:
         config_climart['path_to_data_subtask_test']]:
         check_create_dir(path)
     
-    if subtask == pristine
-    
     config_climart['subtask'] = subtask
     config_climart['seed'] = config['general']['seed']
     return config_climart
