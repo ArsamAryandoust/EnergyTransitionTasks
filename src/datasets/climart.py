@@ -134,29 +134,35 @@ def split_train_val_test(config_climart: dict):
             del df
             gc.collect()
             
-        # create training and validation datasets
-        df_val_append = df_test.sample(
-            frac=config_climart['val_test_split'],
-            random_state=config_climart['seed'])
-        df_test.drop(df_val_append.index, inplace=True)
-        
-        # append validation dataset
-        df_val = pd.concat([df_val, df_val_append])
-        
-        # free up memory     
-        del df_val_append
-        gc.collect()
+        # this condition guarantees validation splits at good moments
+        if (len(df_test) * (1 - config_climart['val_test_split'])
+            > config_climart['datapoints_per_file']):
             
-        ### Save resulting data in chunks
+            # create training and validation datasets
+            df_val_append = df_test.sample(
+                frac=config_climart['val_test_split'],
+                random_state=config_climart['seed'])
+            df_test.drop(df_val_append.index, inplace=True)
+            
+            # append validation dataset
+            df_val = pd.concat([df_val, df_val_append])
+            
+            # free up memory     
+            del df_val_append
+            gc.collect()
+            
+            # save resulting data in chunks
+            df_val, val_chunk_counter = save_chunk(config_climart, df_val, 
+                val_chunk_counter, config_climart['path_to_data_subtask_val'], 
+                'validation')
+            df_test, test_chunk_counter = save_chunk(config_climart, df_test,
+                test_chunk_counter, config_climart['path_to_data_subtask_test'],
+                'testing')
+            
+        # save resulting data in chunks
         df_train, train_chunk_counter = save_chunk(config_climart, df_train, 
             train_chunk_counter, config_climart['path_to_data_subtask_train'], 
             'training')
-        df_val, val_chunk_counter = save_chunk(config_climart, df_val, 
-            val_chunk_counter, config_climart['path_to_data_subtask_val'], 
-            'validation')
-        df_test, test_chunk_counter = save_chunk(config_climart, df_test,
-            test_chunk_counter, config_climart['path_to_data_subtask_test'],
-            'testing')
             
         # update progbar
         pbar.update(1)
