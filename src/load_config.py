@@ -293,7 +293,7 @@ def config_CA(config: dict, subtask: str) -> dict:
     config_climart['path_to_data'] = (
         config['general']['path_to_data'] + 'ClimART/')
     config_climart['path_to_data_subtask'] = (
-        config_climart['path_to_data_climart']+ '{}/'.format(subtask))
+        config_climart['path_to_data']+ '{}/'.format(subtask))
     config_climart['path_to_data_subtask_train'] = (
         config_climart['path_to_data_subtask'] + 'training/')
     config_climart['path_to_data_subtask_val'] = (
