@@ -405,7 +405,7 @@ def augment_and_merge(year: str,df_inputs: pd.DataFrame,
     cols.insert(4,'z_cord')
     
     # set the new column orders
-    df = df[cols_clear_sky]
+    df = df[cols]
     
     return df
     
