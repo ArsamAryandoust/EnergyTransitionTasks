@@ -281,7 +281,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
         data = np.array(outputs[key])
         
         # create column names
-        if subtask == 'pristine':
+        if config_climart['subtask'] == 'pristine':
             var_dict = feature_by_var['outputs_pristine']
         else:
             var_dict = feature_by_var['outputs_clear_sky']
