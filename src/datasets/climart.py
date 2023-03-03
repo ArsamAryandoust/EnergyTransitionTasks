@@ -162,9 +162,12 @@ def split_train_val_test(config_climart: dict):
         pbar.update(1)
         
     ### Tell us the rations that result from our splitting rules
-    n_train = (train_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_train_clear_sky.index)
-    n_val = (val_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_val_clear_sky.index)
-    n_test = (test_chunk_counter_clearsky * HYPER.CHUNK_SIZE_CLIMART) + len(df_test_clear_sky.index)
+    n_train = (train_chunk_counter * config_climart['datapoints_per_file']
+        ) + len(df_train)
+    n_val = (val_chunk_counter * config_climart['datapoints_per_file']
+        ) + len(df_val)
+    n_test = (test_chunk_counter * config_climart['datapoints_per_file']
+        ) + len(df_test)
     n_total = n_train + n_val + n_test
     
     print(
