@@ -345,8 +345,8 @@ def config_CA(config: dict, subtask: str) -> dict:
     
     # create directory structure for saving results
     if subtask == 'pristine':
-        if os.path.isdir(config_uber['path_to_data']):
-            shutil.rmtree(config_uber['path_to_data'])
+        if os.path.isdir(config_climart['path_to_data']):
+            shutil.rmtree(config_climart['path_to_data'])
     for path in [config_climart['path_to_data'], 
         config_climart['path_to_data_subtask'],
         config_climart['path_to_data_subtask_train'],
