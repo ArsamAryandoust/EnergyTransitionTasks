@@ -422,6 +422,9 @@ def augment_and_merge(year: str, df_inputs: pd.DataFrame,
     # set the new column orders
     df = df[cols]
     
+    # important to reset indices here to avoid multiple row losses when dropping 
+    # by index later
+    df.reset_index(inplace=True)
     return df
     
     
