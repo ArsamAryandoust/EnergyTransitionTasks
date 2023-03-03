@@ -17,7 +17,6 @@ def process_all_datasets(config: dict):
     print("Processing ClimArt dataset.")
     
     for subtask in config['climart']['subtask_list']:
-            
         # augment conigurations with additional information
         config_climart = config_CA(config, subtask)
         # do all data processing
@@ -70,8 +69,7 @@ def split_train_val_test(config_climart: dict):
         gc.collect()
     
         # augment and merge data
-        df = augment_and_merge(year, df_inputs, 
-            df_outputs)   
+        df = augment_and_merge(year, df_inputs, df_outputs)   
         
         # free up memory
         del df_inputs, df_outputs 
@@ -239,7 +237,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True)
+    df_inputs = pd.concat([df_inputs, data], axis=1)
     
     ### Do for layers ###
     # create column names
@@ -260,7 +258,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True) 
+    df_inputs = pd.concat([df_inputs, data], axis=1) 
     
     ### Do for levels ###
     # retrieve data and tranform into numpy arrays
@@ -277,7 +275,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True)
+    df_inputs = pd.concat([df_inputs, data], axis=1)
     
     # free up memory
     del inputs
@@ -308,7 +306,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
         data = pd.DataFrame(data, columns=col_names_list_outputs)
         
         # append to input dataframes
-        df_outputs = pd.concat([df_outputs, data], axis=1, ignore_index=True)
+        df_outputs = pd.concat([df_outputs, data], axis=1)
     
     return df_inputs, df_outputs
     
@@ -387,13 +385,13 @@ def reshape(data, col_names_list: list):
     return data, expanded_col_names_list
     
     
-def augment_and_merge(year: str,df_inputs: pd.DataFrame, 
+def augment_and_merge(year: str, df_inputs: pd.DataFrame, 
     df_outputs: pd.DataFrame) -> pd.DataFrame:
     """
     """
     
     # concatenate dataframes
-    df = pd.concat([df_inputs, df_outputs], axis=1, ignore_index=True)
+    df = pd.concat([df_inputs, df_outputs], axis=1)
     
     # calculate for each data point the hour of year
     n_lat, n_lon, n_hours_per_step = 64, 128, 205
