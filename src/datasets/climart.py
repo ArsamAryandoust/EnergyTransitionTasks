@@ -199,7 +199,7 @@ def import_h5_data(config_climart: dict, year: str):
     
     
     
-def process_raw_data(config_climart, feature_by_var: dict, inputs, outputs):
+def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     """
     """
     
@@ -274,11 +274,11 @@ def process_raw_data(config_climart, feature_by_var: dict, inputs, outputs):
     # define empty dataframes
     df_outputs = pd.DataFrame()
     
-    # iterate over both outputs simultaneously
-    for key, value in outputs:
+    # iterate over outputs
+    for key in outputs:
         
         # retrieve data and tranform into numpy arrays
-        data = np.array(value)
+        data = np.array(outputs[key])
         
         # create column names
         if subtask == 'pristine':
