@@ -32,7 +32,8 @@ climart:
     spatial_test_split: 0.2
     val_test_split: 0.2
     subsample_frac: 0.2
-    datapoints_per_file: 35_000
+    datapoints_per_file_pristine: 70_000
+    datapoints_per_file_clearsky: 35_000
 
 
 open_catalst:
