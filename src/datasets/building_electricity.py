@@ -314,7 +314,7 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     gc.collect()
     
     # append to testing dataset
-    df_testing = pd.concat([df_testing, df_temporal_ood])
+    df_testing = pd.concat([df_testing, df_temporal_ood], ignore_index=True)
     
     # free up memory
     del df_temporal_ood

@@ -17,6 +17,9 @@ def process_all_datasets(config: dict):
     print("Processing ClimArt dataset.")
     
     for subtask in config['climart']['subtask_list']:
+        if subtask == 'pristine':
+            continue
+            
         # augment conigurations with additional information
         config_climart = config_CA(config, subtask)
         # do all data processing
@@ -46,11 +49,9 @@ def split_train_val_test(config_climart: dict):
     
     # corrections for testing
     list_of_years.remove('1995') # inputs
-    list_of_years.remove('1851') # outputs pristine
-    approved_years =  ['2008', '1983', '1850', '2005', '1991', '1979', '2098',
-        '2013', '2004', '2001', '1996', '1982', '2006', '2099', '1987', '2000',
-        '2010', '1988', '1984', '2007', '1981', '1998', '2009', '1986', '2003',
-        '1990', '1997', '2014']
+    #list_of_years.remove('1851') # outputs pristine
+    
+
     list_of_years = [e for e in list_of_years if e not in approved_years]
     
     # create progress bar
@@ -87,7 +88,7 @@ def split_train_val_test(config_climart: dict):
         # check if this is a testing year data
         if config_climart['test_split_dict']['temporal_dict']['year']==int(year):
             # append entire datasets to test dataframes
-            df_test = pd.concat([df_test, df])
+            df_test = pd.concat([df_test, df], ignore_index=True)
             # free up memory
             del df 
             gc.collect()
@@ -101,7 +102,7 @@ def split_train_val_test(config_climart: dict):
             ]
             
             # append extracted rows to test dataframes
-            df_test = pd.concat([df_test, df_test_coordiantes])
+            df_test = pd.concat([df_test, df_test_coordiantes], ignore_index=True)
             
             # drop
             df.drop(df_test_coordiantes.index, inplace=True)
@@ -118,7 +119,7 @@ def split_train_val_test(config_climart: dict):
             ]
             
             # append extracted rows to test dataframes
-            df_test = pd.concat([df_test, df_test_hours_of_year])
+            df_test = pd.concat([df_test, df_test_hours_of_year], ignore_index=True)
         
             # drop
             df = df.drop(df_test_hours_of_year.index)
@@ -128,7 +129,7 @@ def split_train_val_test(config_climart: dict):
             gc.collect()
             
             # append training dataset
-            df_train= pd.concat([df_train, df])
+            df_train= pd.concat([df_train, df], ignore_index=True)
             
             # free up memory     
             del df
@@ -145,7 +146,7 @@ def split_train_val_test(config_climart: dict):
             df_test.drop(df_val_append.index, inplace=True)
             
             # append validation dataset
-            df_val = pd.concat([df_val, df_val_append])
+            df_val = pd.concat([df_val, df_val_append], ignore_index=True)
             
             # free up memory     
             del df_val_append
@@ -242,7 +243,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1)
+    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True)
     
     ### Do for layers ###
     # create column names
@@ -263,7 +264,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1) 
+    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True) 
     
     ### Do for levels ###
     # retrieve data and tranform into numpy arrays
@@ -280,7 +281,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     data = pd.DataFrame(data, columns=col_names_list)
     
     # append to input dataframes
-    df_inputs = pd.concat([df_inputs, data], axis=1)
+    df_inputs = pd.concat([df_inputs, data], axis=1, ignore_index=True)
     
     # free up memory
     del inputs
@@ -311,7 +312,7 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
         data = pd.DataFrame(data, columns=col_names_list_outputs)
         
         # append to input dataframes
-        df_outputs = pd.concat([df_outputs, data], axis=1)
+        df_outputs = pd.concat([df_outputs, data], axis=1, ignore_index=True)
     
     return df_inputs, df_outputs
     
@@ -396,7 +397,7 @@ def augment_and_merge(year: str,df_inputs: pd.DataFrame,
     """
     
     # concatenate dataframes
-    df = pd.concat([df_inputs, df_outputs], axis=1)
+    df = pd.concat([df_inputs, df_outputs], axis=1, ignore_index=True)
     
     # calculate for each data point the hour of year
     n_lat, n_lon, n_hours_per_step = 64, 128, 205
