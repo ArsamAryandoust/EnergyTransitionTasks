@@ -45,10 +45,12 @@ def split_train_val_test(config_climart: dict):
     train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
     # corrections for testing
-    list_of_years.remove('1995')
+    list_of_years.remove('1995') # inputs
+    list_of_years.remove('1851') # outputs pristine
     approved_years =  ['2008', '1983', '1850', '2005', '1991', '1979', '2098',
         '2013', '2004', '2001', '1996', '1982', '2006', '2099', '1987', '2000',
-        '2010', '1988', '1984', '2007']
+        '2010', '1988', '1984', '2007', '1981', '1998', '2009', '1986', '2003',
+        '1990', '1997', '2014']
     list_of_years = [e for e in list_of_years if e not in approved_years]
     
     # create progress bar
