@@ -189,7 +189,7 @@ def import_h5_data(config_climart: dict, year: str):
     """
     """
     # create paths to files
-    path_to_inputs = (config_climart['path_to_data_raw'] + year + '.h5')
+    path_to_inputs = config_climart['path_to_data_raw_inputs'] + year + '.h5'
     path_to_outputs = (config_climart['path_to_data_raw_outputs_subtask'] + year 
         + '.h5')
     # load data
