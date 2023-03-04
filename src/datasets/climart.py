@@ -45,10 +45,10 @@ def split_train_val_test(config_climart: dict):
     train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
     # corrections for testing
-    list_of_years.remove('1995') # inputs
-    list_of_years.remove('1851') # outputs pristine
-    #list_of_years = [e for e in list_of_years if e not in approved_years]
-    
+    #list_of_years.remove('1995') # inputs
+    #list_of_years.remove('1851') # outputs pristine
+    list_of_years = ['1995', '1851']
+        
     # create progress bar
     pbar = tqdm(total=len(list_of_years))
     
@@ -162,19 +162,23 @@ def split_train_val_test(config_climart: dict):
         # update progbar
         pbar.update(1)
         
-    ### Tell us the rations that result from our splitting rules
-    n_train = (train_chunk_counter * config_climart['datapoints_per_file']
-        ) + len(df_train)
-    n_val = (val_chunk_counter * config_climart['datapoints_per_file']
-        ) + len(df_val)
-    n_test = (test_chunk_counter * config_climart['datapoints_per_file']
-        ) + len(df_test)
+        
+    ### Tell us the ratios that result from our splitting rules
+    n_train = (train_chunk_counter * config_uber['datapoints_per_file'] 
+        + len(df_train))
+    n_val = (val_chunk_counter * config_uber['datapoints_per_file'] 
+        + len(df_val))
+    n_test = (test_chunk_counter * config_uber['datapoints_per_file'] 
+        + len(df_test))
     n_total = n_train + n_val + n_test
     
-    print(
-        "Training data   :    {:.0%} \n".format(n_train/n_total),
-        "Validation data :    {:.0%} \n".format(n_val/n_total),
-        "Testing data    :    {:.0%} \n".format(n_test/n_total))
+    print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+        n_train/n_total),
+        "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+        n_val/n_total),
+        "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+        n_test/n_total))
+        
     
     ### Save results of last iteration
     df_train, train_chunk_counter = save_chunk(config_climart, df_train, 

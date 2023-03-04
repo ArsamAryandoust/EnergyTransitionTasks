@@ -518,12 +518,6 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 del df_augmented   
                 gc.collect()
                 
-            """
-            # show us how dataframes are gaining data
-            print(len(df_train))
-            print(len(df_val))
-            print(len(df_test))
-            """
             # this condition guarantees validation splits at good moments
             if (len(df_test) * (1 - config_uber['val_test_split'])
                 > config_uber['datapoints_per_file']):
@@ -559,14 +553,14 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
             # update progress bar
             pbar.update(1)
             
-
+            
     ### Tell us the ratios that result from our splitting rules
     n_train = (train_file_count * config_uber['datapoints_per_file'] 
-        + len(df_train.index))
+        + len(df_train))
     n_val = (val_file_count * config_uber['datapoints_per_file'] 
-        + len(df_val.index))
+        + len(df_val))
     n_test = (test_file_count * config_uber['datapoints_per_file'] 
-        + len(df_test.index))
+        + len(df_test))
     n_total = n_train + n_val + n_test
     
     print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
