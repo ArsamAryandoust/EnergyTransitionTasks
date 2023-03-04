@@ -24,7 +24,8 @@ def process_all_datasets(config: dict):
         
         
 def split_train_val_test(config_climart: dict):
-    """ 
+    """
+    Main function doing all the data processing for ClimART.
     """
     
     # list all data available in one of the raw data foulders.
@@ -192,7 +193,11 @@ def split_train_val_test(config_climart: dict):
     
     
 def import_meta_json(config_climart: dict) -> dict:
-    """ 
+    """
+    Loads the meta data from a json file. The dictionary it returns and we 
+    consecutively use contains information about features and labels, and their
+    starting and ending indices in the multidimensional array distinguished by 
+    'globals', 'levels' and 'layers' values.
     """
     # create path to json file
     path_to_meta_json = config_climart['path_to_data_raw'] + 'META_INFO.json'
