@@ -48,10 +48,9 @@ def split_train_val_test(config_climart: dict):
     # declare data point counters
     train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
     
-    # corrections for testing
-    #list_of_years.remove('1995') # inputs
-    #list_of_years.remove('1851') # outputs pristine
-    list_of_years = ['1851']
+    # Files for these files are corrupted
+    list_of_years.remove('1995') # inputs
+    list_of_years.remove('1851') # outputs pristine
         
     # create progress bar
     pbar = tqdm(total=len(list_of_years))
