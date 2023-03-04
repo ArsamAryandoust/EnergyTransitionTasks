@@ -321,10 +321,13 @@ def process_raw_data(config_climart: dict, feature_by_var: dict,
     
 def create_input_col_name_list(var_dict: dict) -> list:
     """
+    Takes a variables dict and iterates over it. Each entry of the dictionary 
+    contains a variable range dictionary with starting and ending indices. 
+    For the entire range of the variable, a column entry is created to be
+    appended to a column name list for use in a pandas dataframe.
     """
     # declare empty column names list
     col_names_list = []
-    
     # iterate over variable name dict
     for var_name in var_dict:
         # get dict with start and end range of current variable
@@ -346,16 +349,17 @@ def create_input_col_name_list(var_dict: dict) -> list:
     
 def create_output_col_name_list(var_name: str, var_dict: dict) -> list:
     """
+    Takes a variable name string and appends one entry to a column name list for
+    the entire range from start to end of that variable with a previx being the
+    variable name. Returns a list of column names for being used in an output 
+    dataframe.
     """
     # get variable range dictionary
     var_range_dict = var_dict[var_name]
-    
     # declare empty column names list
     col_names_list = []
-    
     # get range size
     range_size = var_range_dict['end'] - var_range_dict['start']
-    
     # append column name to list if range size is only 1
     for feature_iter in range(range_size):
         col_name = var_name + '_{}'.format(feature_iter)
@@ -366,6 +370,9 @@ def create_output_col_name_list(var_name: str, var_dict: dict) -> list:
     
 def reshape(data, col_names_list: list):
     """
+    Reshapes multidimensional data array into a tabular format or matrix and 
+    expands the passed col_names_list accordingly. Returns the reshaped data
+    array and expanded column name list.
     """
     # get number of data points
     n_data = len(data)
