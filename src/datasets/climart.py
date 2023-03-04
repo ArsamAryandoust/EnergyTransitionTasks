@@ -210,6 +210,8 @@ def import_meta_json(config_climart: dict) -> dict:
     
 def import_h5_data(config_climart: dict, year: str):
     """
+    Imports inputs and sub-task outputs from .h5 files. Note that inputs of the
+    respective subtask are extracted later only.
     """
     # create paths to files
     path_to_inputs = config_climart['path_to_data_raw_inputs'] + year + '.h5'
@@ -221,9 +223,10 @@ def import_h5_data(config_climart: dict, year: str):
     return inputs, outputs
     
     
-    
-def process_raw_data(config_climart, feature_by_var, inputs, outputs):
+def process_raw_data(config_climart: dict, feature_by_var: dict, 
+    inputs, outputs) -> (pd.DataFrame, pd.DataFrame):
     """
+    Inputs and outputs are turned into reshaped dataframes.
     """
     
     ###
@@ -299,10 +302,8 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
     
     # iterate over outputs
     for key in outputs:
-        
         # retrieve data and tranform into numpy arrays
         data = np.array(outputs[key])
-        
         # create column names
         if config_climart['subtask'] == 'pristine':
             var_dict = feature_by_var['outputs_pristine']
@@ -312,7 +313,6 @@ def process_raw_data(config_climart, feature_by_var, inputs, outputs):
         
         # transform into dataframe
         data = pd.DataFrame(data, columns=col_names_list_outputs)
-        
         # append to input dataframes
         df_outputs = pd.concat([df_outputs, data], axis=1)
     

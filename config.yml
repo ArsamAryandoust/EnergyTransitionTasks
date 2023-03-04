@@ -29,9 +29,9 @@ uber_movement:
 climart:
     subtask_list: ['pristine', 'clear_sky']
     temporal_test_split: 0.2
-    spatial_test_split: 0.3
+    spatial_test_split: 0.35
     val_test_split: 0.2
-    subsample_frac: 0.05
+    subsample_frac: 1
     datapoints_per_file_pristine: 80_000
     datapoints_per_file_clearsky: 35_000
 
