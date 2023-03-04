@@ -17,6 +17,10 @@ def process_all_datasets(config: dict):
     print("Processing ClimArt dataset.")
     
     for subtask in config['climart']['subtask_list']:
+        
+        if subtask == 'pristine':
+            continue
+            
         # augment conigurations with additional information
         config_climart = config_CA(config, subtask)
         # do all data processing
