@@ -1,31 +1,44 @@
 general:
     seed: 3
     path_to_data: '../data/'
-    path_to_data_raw: '../data/raw'
+    path_to_data_raw: '../data/raw/'
+
 
 building_electricity:
+    subtask_list: ['buildings_92', 'buildings_451']
     prediction_window: 96
     historic_window: 96
-    meteo_name_list: [
-        'air_density', 'cloud_cover', 'precipitation', 'radiation_surface',
-        'radiation_toa', 'snow_mass', 'snowfall', 'temperature', 'wind_speed'
-    ]
-    test_split: 0.5
-    train_val_split: 0.8
+    meteo_name_list: ['air_density', 'cloud_cover', 'precipitation', 
+    'radiation_surface','radiation_toa', 'snow_mass', 'snowfall', 'temperature',
+    'wind_speed']
+    temporal_test_split: 0.15
+    spatial_test_split: 0.2
+    val_test_split: 0.2
+    datapoints_per_file: 150_000
 
-uber_movement: 
-    chunk_size_ubermovement: 20_000_000
-    train_val_split_ubermovement: 0.8
-    subsample_ubermovement: 1
+
+uber_movement:
+    subtask_list: ['cities_10', 'cities_20', 'cities_43']
+    temporal_test_split: 0.22
+    spatial_test_split: 0.2
+    val_test_split: 0.18
+    subsample_frac: 1
+    datapoints_per_file: 20_000_000
+
 
 climart:
-    chunk_size_climart: 35_000
-    train_val_split_climart: 0.8
-    subsample_climart: 0.2
-    t_step_size_h: 205
-    share_hours_sample: 0.2
-    
+    subtask_list: ['pristine', 'clear_sky']
+    temporal_test_split: 0.2
+    spatial_test_split: 0.35
+    val_test_split: 0.2
+    subsample_frac: 1
+    datapoints_per_file_pristine: 80_000
+    datapoints_per_file_clearsky: 35_000
+
+
 open_catalst:
     chunk_size_opencatalyst: 150_000
     subsample_opencatalyst: 0.2
-    
+
+
+

@@ -1,2 +1,2 @@
-#docker build DockerNotebook -t main_notebook
-docker build Docker -t ubuntu
+#docker build -f DockerNotebook/Dockerfile -t main_notebook .
+docker build -f Docker/Dockerfile -t ubuntu .

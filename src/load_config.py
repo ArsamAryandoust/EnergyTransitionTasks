@@ -1,17 +1,10 @@
 import os
-import yaml
 import random
+import math
+import random
+import shutil
 
-
-def get_config_from_yaml() -> dict:
-    """
-    Get config from yaml file
-    """
-    
-    with open("config.yml", "r") as configfile:
-        config = yaml.safe_load(configfile)
-
-    return config
+import pandas as pd
 
 
 def check_create_dir(path: str):
@@ -23,7 +16,7 @@ def check_create_dir(path: str):
         os.mkdir(path)
         
 
-def config_BE(config: dict) -> dict:
+def config_BE(config: dict, subtask: str) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
@@ -32,127 +25,176 @@ def config_BE(config: dict) -> dict:
     dictionary = config['building_electricity']
     
     # add data paths
-    dictionary['path_to_raw_building_electricity'] = (
+    dictionary['path_to_raw'] = (
         config['general']['path_to_data_raw'] 
-        + 'BuildingElectricity/profiles_400/'
+        + 'BuildingElectricity/{}/'.format(subtask)
     )
     dictionary['path_to_raw_building_year_profiles_file'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'building-year profiles/feature_scaled/2014 building-year profiles.csv'
     )
     dictionary['path_to_raw_meteo_data_folder'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'meteo data/'
     )
     dictionary['path_to_raw_aerial_imagery_file'] = (
-        dictionary['path_to_raw_building_electricity']
+        dictionary['path_to_raw']
         + 'building imagery/histogram/rgb/pixel_values.csv'
     )
-    dictionary['path_to_data_building_electricity'] = (
+    dictionary['path_to_data'] = (
         config['general']['path_to_data']
         + 'BuildingElectricity/'
     )
-    dictionary['path_to_data_building_electricity_add'] = (
-        dictionary['path_to_data_building_electricity']
+    dictionary['path_to_data_subtask'] = (
+        dictionary['path_to_data']
+        + '{}/'.format(subtask)
+    )
+    dictionary['path_to_data_add'] = (
+        dictionary['path_to_data_subtask']
         + 'additional/'
     )
-    dictionary['path_to_data_building_electricity_train'] = (
-        dictionary['path_to_data_building_electricity']
+    dictionary['path_to_data_train'] = (
+        dictionary['path_to_data_subtask']
         + 'training/'
     )
-    dictionary['path_to_data_building_electricity_val'] = (
-        dictionary['path_to_data_building_electricity']
+    dictionary['path_to_data_val'] = (
+        dictionary['path_to_data_subtask']
         + 'validation/'
     )
-    dictionary['path_to_data_building_electricity_test'] = (
-        dictionary['path_to_data_building_electricity']
+    dictionary['path_to_data_test'] = (
+        dictionary['path_to_data_subtask']
         + 'testing/'
     )
     
+    # out of distribution test splitting rules in time
+    random.seed(config['general']['seed'])
+    month_list = random.sample(
+        range(1,13), 
+        math.floor(12 * dictionary['temporal_test_split'])
+    )
+    random.seed(config['general']['seed'])
+    day_list = random.sample(
+        range(1, 32),
+        math.floor(31 * dictionary['temporal_test_split'])        
+    )
+    random.seed(config['general']['seed'])
+    hour_list = random.sample(
+        range(24),
+        math.floor(24 * dictionary['temporal_test_split'])        
+    )
+    random.seed(config['general']['seed'])
+    quarter_hour_list = random.sample(
+        [0, 15, 30, 45],
+        math.floor(4 * dictionary['temporal_test_split'])       
+    )
+    
+    # out of distribution test splitting rules in space
+    if subtask == 'buildings_92':
+        n_buildings = 92
+    elif subtask == 'buildings_451':
+        n_buildings = 459 # ids go from 1-459, missing IDs hence 451 buildings
+        
+    random.seed(config['general']['seed'])
+    building_id_list = random.sample(
+        range(1, n_buildings+1), 
+        math.floor(n_buildings * dictionary['spatial_test_split'])
+    )
+    
+    # dictionary saving rules
+    dictionary['ood_split_dict'] = {
+        'temporal_dict': {
+            'month_list': month_list,
+            'day_list': day_list,
+            'hour_list': hour_list,
+            'quarter_hour_list': quarter_hour_list
+        },
+        'spatial_dict': {
+            'building_id_list': building_id_list
+        }
+    }
+    
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data_building_electricity'], 
-        dictionary['path_to_data_building_electricity_add'],
-        dictionary['path_to_data_building_electricity_train'],
-        dictionary['path_to_data_building_electricity_val'],
-        dictionary['path_to_data_building_electricity_test']
-    ]:
+    if subtask == 'buildings_92' and os.path.isdir(dictionary['path_to_data']):
+        shutil.rmtree(dictionary['path_to_data'])
+    for path in [dictionary['path_to_data'],
+        dictionary['path_to_data_subtask'], dictionary['path_to_data_add'],
+        dictionary['path_to_data_train'], dictionary['path_to_data_val'],
+        dictionary['path_to_data_test']]:
         check_create_dir(path)
         
     config['building_electricity'] = dictionary
     return config
     
     
-def config_UM(config: dict) -> dict:
+def config_UM(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing Uber Movement dataset.
     """
     
     # get base config
-    dictionary = config['uber_movement']    
+    config_uber = config['uber_movement']    
     
     # add data paths
-    dictionary['path_to_data_raw_ubermovement'] = (
-        config['general']['path_to_data_raw'] 
-        + 'UberMovement/'
-    )
-    dictionary['path_to_data_ubermovement'] = (
-        config['general']['path_to_data'] 
-        + 'UberMovement/'
-    )
-    dictionary['path_to_data_ubermovement_add'] = (
-        dictionary['path_to_data_ubermovement']
-        + 'additional/'
-    )
-    dictionary['path_to_data_ubermovement_train'] = (
-        dictionary['path_to_data_ubermovement']
-        + 'training/'
-    )
-    dictionary['path_to_data_ubermovement_val'] = (
-        dictionary['path_to_data_ubermovement']
-        + 'validation/'
-    )
-    dictionary['path_to_data_ubermovement_test'] = (
-        dictionary['path_to_data_ubermovement']
-        + 'testing/'
-    )
+    config_uber['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
+        + 'UberMovement/')
+    config_uber['path_to_data'] = (config['general']['path_to_data'] 
+        + 'UberMovement/')
+    config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
+        + '{}/'.format(subtask))
+    config_uber['path_to_data_add'] = (config_uber['path_to_data_subtask']
+        + 'additional/')
+    config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
+        + 'training/')
+    config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
+        + 'validation/')
+    config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
+        + 'testing/')
+    
+    # create list of citites and save to configuration dictionary
+    random.seed(config['general']['seed'])
+    list_of_cities = os.listdir(config_uber['path_to_data_raw'])
+    random.shuffle(list_of_cities)
+    if subtask == 'cities_10':
+        list_of_cities = list_of_cities[:10]
+    elif subtask == 'cities_20':
+        list_of_cities = list_of_cities[:20]
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    quarter_of_year = random.sample(range(1,5), 1)
+    year_list = random.sample(range(2015,2021), 
+        math.floor(5 * config_uber['temporal_test_split']))
+    quarter_of_year_list = random.sample(range(1,5), 
+        math.floor(4 * config_uber['temporal_test_split']))
     random.seed(config['general']['seed'])
-    hours_of_day = random.sample(range(24), 4)
+    hours_of_day_list = random.sample(range(24), 
+        math.floor(24 * config_uber['temporal_test_split']))
+    
+    # out of distribution test splitting rules in space
+    n_cities_test = round(config_uber['spatial_test_split'] * len(list_of_cities))
+    random.seed(config['general']['seed'])
+    list_of_cities_test = random.sample(list_of_cities, n_cities_test)
     
     # dictionary saving rules
-    dictionary['test_split_dict_ubermovement'] = {
+    config_uber['test_split_dict'] = {
         'temporal_dict': {
-            'year': 2017,
-            'quarter_of_year': quarter_of_year,
-            'hours_of_day': hours_of_day
-        },
+            'year': year_list,
+            'quarter_of_year': quarter_of_year_list,
+            'hours_of_day': hours_of_day_list},
         'spatial_dict': {
-            'city_share': 0.1,
-            'city_zone_share': 0.1
-        }
-    }
+            'list_of_cities_test': list_of_cities_test}}
     
-    # Do some processing
+    # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
     quarter_list = ['-1-', '-2-', '-3-', '-4-']
-    dictionary['ubermovement_list_of_cities'] = os.listdir(
-        dictionary['path_to_data_raw_ubermovement']
-    )
-    dictionary['ubermovement_city_files_mapping'] = {}
-    dictionary['ubermovement_city_id_mapping'] = {}
-    for city_id, city in enumerate(dictionary['ubermovement_list_of_cities']):
-        path_to_city = dictionary['path_to_data_raw_ubermovement'] + city + '/'
+    config_uber['city_files_mapping'] = {}
+    config_uber['city_id_mapping'] = {}
+    for city_id, city in enumerate(list_of_cities):
+        path_to_city = config_uber['path_to_data_raw'] + city + '/'
         file_list = os.listdir(path_to_city)
         csv_file_dict_list = []
         for filename in file_list:
             if filename.endswith('.json'):
                 json = filename
-                break
-                
             else:
                 # declare new empty directory to be filled with desired values
                 csv_file_dict = {}
@@ -190,157 +232,162 @@ def config_UM(config: dict) -> dict:
         }
         
         # save 
-        dictionary['ubermovement_city_files_mapping'][city] = file_dict
-        dictionary['ubermovement_city_id_mapping'][city] = city_id
+        config_uber['city_files_mapping'][city] = file_dict
+        config_uber['city_id_mapping'][city] = city_id
   
+    
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data_raw_ubermovement'], 
-        dictionary['path_to_data_raw_ubermovement_add'],
-        dictionary['path_to_data_raw_ubermovement_train'],
-        dictionary['path_to_data_raw_ubermovement_val'],
-        dictionary['path_to_data_raw_ubermovement_test']
-    ]:
-        check_create_dir(path)
+    if subtask == 'cities_10':
+        config_uber['list_of_cities'] = list_of_cities[:10]
+        if os.path.isdir(config_uber['path_to_data']):
+            shutil.rmtree(config_uber['path_to_data'])
+        for path in [config_uber['path_to_data'],
+            config_uber['path_to_data_subtask'], config_uber['path_to_data_add'],
+            config_uber['path_to_data_train'], config_uber['path_to_data_val'],
+            config_uber['path_to_data_test']]:
+            check_create_dir(path)
+            
+        
+    elif subtask == 'cities_20':
+        config_uber['list_of_cities'] = list_of_cities[10:20]
+        # set full path to directory we want to copy
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
+        # copy directory into current subtask
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
+        
+    elif subtask == 'cities_43':
+        config_uber['list_of_cities'] = list_of_cities[20:]
+        # set full path to directory we want to copy
+        path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
+        # copy directory into current subtask
+        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
+        
+    # create dataframe from dictionary
+    df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], orient='index', 
+        columns=['city_id'])
     
-    config['uber_movement'] = dictionary
-    return config
+    # save file
+    saving_path = config_uber['path_to_data_add'] + 'city_to_id_mapping.csv'
+    df.to_csv(saving_path)
     
+    config_uber['subtask'] = subtask
+    config_uber['seed'] = config['general']['seed']
+    return config_uber
     
-def config_CA(config: dict) -> dict:
+
+def config_CA(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing ClimArt dataset.
     """
     
     # get base config
-    dictionary = config['climart']
+    config_climart = config['climart'] 
     
     # add data paths
-    dictionary['path_to_data_raw_climart'] = (
-        config['general']['path_to_data_raw'] 
-        + 'ClimART/'
-    )
-    dictionary['path_to_raw_climart_statistics'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'statistics/'
-    )
-    dictionary['path_to_raw_climart_inputs'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'inputs/'
-    )
-    dictionary['path_to_raw_climart_outputs_clear_sky'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'outputs_clear_sky/'
-    )
-    dictionary['path_to_raw_climart_outputs_pristine'] = (
-        dictionary['path_to_data_raw_climart']
-        + 'outputs_pristine/'
-    )
-    dictionary['path_to_data_climart'] = (
-        config['general']['path_to_data'] 
-        + 'ClimART/'
-    )
-    dictionary['path_to_data_climart_clearsky'] = (
-        dictionary['path_to_data_climart']
-        + 'clear_sky/'
-    )
-    dictionary['path_to_data_climart_pristine'] = (
-        dictionary['path_to_data_climart']
-        + 'pristine/'
-    )
-    dictionary['path_to_data_climart_clearsky_train'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'training/'
-    )
-    dictionary['path_to_data_climart_pristine_train'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'training/'
-    )
-    dictionary['path_to_data_climart_clearsky_val'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'validation/'
-    )
-    dictionary['path_to_data_climart_pristine_val'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'validation/'
-    )
-    dictionary['path_to_data_climart_clearsky_test'] = (
-        dictionary['path_to_data_climart_clearsky']
-        + 'testing/'
-    )
-    dictionary['path_to_data_climart_pristine_test'] = (
-        dictionary['path_to_data_climart_pristine']
-        + 'testing/'
-    )
-    
+    config_climart['path_to_data_raw'] = (
+        config['general']['path_to_data_raw'] + 'ClimART/')
+    config_climart['path_to_data_raw_inputs'] = (
+        config_climart['path_to_data_raw'] + 'inputs/')
+    config_climart['path_to_data_raw_outputs_subtask'] = (
+        config_climart['path_to_data_raw'] + 'outputs_{}/'.format(subtask))
+    config_climart['path_to_data'] = (
+        config['general']['path_to_data'] + 'ClimART/')
+    config_climart['path_to_data_subtask'] = (
+        config_climart['path_to_data']+ '{}/'.format(subtask))
+    config_climart['path_to_data_subtask_train'] = (
+        config_climart['path_to_data_subtask'] + 'training/')
+    config_climart['path_to_data_subtask_val'] = (
+        config_climart['path_to_data_subtask'] + 'validation/')
+    config_climart['path_to_data_subtask_test'] = (
+        config_climart['path_to_data_subtask'] + 'testing/')
     
     # out of distribution test splitting rules in time
+    year_list_test = [1850, 1851, 1852, 1991, 2097, 2098, 2099]
     t_step_size_h = 205
-    n_t_steps_per_year = math.ceil(365 * 24 / t_step_size_h)
-    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, t_step_size_h))
+    n_t_steps_per_year = round(365 * 24 / t_step_size_h)
+    hours_of_year_list = list(range(0, n_t_steps_per_year*t_step_size_h, 
+        t_step_size_h))
     share_hours_sampling = 0.2
-    n_hours_subsample = math.ceil(n_t_steps_per_year * share_hours_sampling)
-    random.seed(HyperParameter.SEED)
-    hours_of_year = random.sample(
-        hours_of_year_list, 
-        n_hours_subsample
-    )
+    n_hours_subsample = round(
+        n_t_steps_per_year * config_climart['temporal_test_split'])
+    random.seed(config['general']['seed'])
+    hours_of_year_test = random.sample(hours_of_year_list, n_hours_subsample)
     
     # out of distribution test splitting rules in space
     n_lat, n_lon = 64, 128
     n_coordinates = n_lat * n_lon
     first_coordinates_index_list = list(range(n_coordinates))
-    share_coordinates_sampling = 0.2
-    n_cord_subsample = math.ceil(share_coordinates_sampling * n_coordinates)
-    random.seed(HyperParameter.SEED)
-    coordinates_index_list = random.sample(
-        first_coordinates_index_list,
-        n_cord_subsample
-    )
+    n_cord_subsample = round(
+        config_climart['spatial_test_split'] * n_coordinates)
+    random.seed(config['general']['seed'])
+    coordinates_index_list = random.sample(first_coordinates_index_list,
+        n_cord_subsample)
     
     coordinate_list = []
     for step in range(n_t_steps_per_year):
-        
         coordinate_list_step = []
         for entry in coordinates_index_list:
             new_entry = entry + step * n_coordinates
             coordinate_list_step.append(new_entry)
             
         coordinate_list += coordinate_list_step
-        
+       
     # dictionary saving rules
-    dictionary['test_plit_dict_climart'] = {
+    config_climart['test_split_dict'] = {
         'temporal_dict': {
-            'year': 2014,
-            'hours_of_year': hours_of_year
+            'year': year_list_test,
+            'hours_of_year': hours_of_year_test
         },
         'spatial_dict': {
             'coordinates': coordinate_list
         }
     }
     
-    # save a list with names of meta file names
-    dictionary['climart_meta_filenames_dict'] = {
-        'meta':'META_INFO.json',
-        'stats':'statistics.npz'
-    }
-    
     # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data_climart'], 
-        dictionary['path_to_data_climart_clearsky'],
-        dictionary['path_to_data_climart_pristine'],
-        dictionary['path_to_data_climart_clearsky_train'],
-        dictionary['path_to_data_climart_pristine_train'],
-        dictionary['path_to_data_climart_clearsky_val'],
-        dictionary['path_to_data_climart_pristine_val'],
-        dictionary['path_to_data_climart_clearsky_test'],
-        dictionary['path_to_data_climart_pristine_test']
-    ]:
+    if subtask == 'pristine':
+        config_climart['datapoints_per_file'] = (
+            config_climart['datapoints_per_file_pristine'])
+        if os.path.isdir(config_climart['path_to_data']):
+            shutil.rmtree(config_climart['path_to_data'])
+    else:
+        config_climart['datapoints_per_file'] = (
+            config_climart['datapoints_per_file_pristine'])
+            
+    for path in [config_climart['path_to_data'], 
+        config_climart['path_to_data_subtask'],
+        config_climart['path_to_data_subtask_train'],
+        config_climart['path_to_data_subtask_val'],
+        config_climart['path_to_data_subtask_test']]:
         check_create_dir(path)
     
-    config['climart'] = dictionary
-    return config
+    config_climart['subtask'] = subtask
+    config_climart['seed'] = config['general']['seed']
+    return config_climart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 def config_OC(config: dict) -> dict:
