@@ -7,86 +7,53 @@ import shutil
 import pandas as pd
 
 
-def check_create_dir(path: str):
-    """
-    Check if passed path exist and create if it doesn't.
-    """
-    
-    if not os.path.isdir(path):
-        os.mkdir(path)
         
 
 def config_BE(config: dict, subtask: str) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
-    
     # get base config
     config_building = config['building_electricity']
     
     # add data paths
     config_building['path_to_raw'] = (
         config['general']['path_to_data_raw'] 
-        + 'BuildingElectricity/{}/'.format(subtask)
-    )
+        + 'BuildingElectricity/{}/'.format(subtask))
     config_building['path_to_raw_building_year_profiles_file'] = (
         config_building['path_to_raw']
-        + 'building-year profiles/feature_scaled/2014 building-year profiles.csv'
-    )
+        + 'building-year profiles/feature_scaled/2014 building-year profiles.csv')
     config_building['path_to_raw_meteo_data_folder'] = (
-        config_building['path_to_raw']
-        + 'meteo data/'
-    )
+        config_building['path_to_raw'] + 'meteo data/')
     config_building['path_to_raw_aerial_imagery_file'] = (
         config_building['path_to_raw']
-        + 'building imagery/histogram/rgb/pixel_values.csv'
-    )
+        + 'building imagery/histogram/rgb/pixel_values.csv')
     config_building['path_to_data'] = (
-        config['general']['path_to_data']
-        + 'BuildingElectricity/'
-    )
+        config['general']['path_to_data'] + 'BuildingElectricity/')
     config_building['path_to_data_subtask'] = (
-        config_building['path_to_data']
-        + '{}/'.format(subtask)
-    )
+        config_building['path_to_data'] + '{}/'.format(subtask))
     config_building['path_to_data_add'] = (
-        config_building['path_to_data_subtask']
-        + 'additional/'
-    )
+        config_building['path_to_data_subtask'] + 'additional/')
     config_building['path_to_data_train'] = (
-        config_building['path_to_data_subtask']
-        + 'training/'
-    )
+        config_building['path_to_data_subtask'] + 'training/')
     config_building['path_to_data_val'] = (
-        config_building['path_to_data_subtask']
-        + 'validation/'
-    )
+        config_building['path_to_data_subtask'] + 'validation/')
     config_building['path_to_data_test'] = (
-        config_building['path_to_data_subtask']
-        + 'testing/'
-    )
+        config_building['path_to_data_subtask'] + 'testing/')
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    month_list = random.sample(
-        range(1,13), 
-        math.floor(12 * config_building['temporal_test_split'])
-    )
+    month_list = random.sample(range(1,13), 
+        math.floor(12 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    day_list = random.sample(
-        range(1, 32),
-        math.floor(31 * config_building['temporal_test_split'])        
-    )
+    day_list = random.sample(range(1, 32),
+        math.floor(31 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    hour_list = random.sample(
-        range(24),
-        math.floor(24 * config_building['temporal_test_split'])        
-    )
+    hour_list = random.sample(range(24),
+        math.floor(24 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    quarter_hour_list = random.sample(
-        [0, 15, 30, 45],
-        math.floor(4 * config_building['temporal_test_split'])       
-    )
+    quarter_hour_list = random.sample([0, 15, 30, 45],
+        math.floor(4 * config_building['temporal_test_split']))
     
     # out of distribution test splitting rules in space
     if subtask == 'buildings_92':
@@ -95,10 +62,8 @@ def config_BE(config: dict, subtask: str) -> dict:
         n_buildings = 459 # ids go from 1-459, missing IDs hence 451 buildings
         
     random.seed(config['general']['seed'])
-    building_id_list = random.sample(
-        range(1, n_buildings+1), 
-        math.floor(n_buildings * config_building['spatial_test_split'])
-    )
+    building_id_list = random.sample(range(1, n_buildings+1), 
+        math.floor(n_buildings * config_building['spatial_test_split']))
     
     # dictionary saving rules
     config_building['temporal_dict'] = {
@@ -110,7 +75,6 @@ def config_BE(config: dict, subtask: str) -> dict:
     config_building['spatial_dict'] = {
         'building_id_list': building_id_list}
  
-    
     # create directory structure for saving results
     if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
         shutil.rmtree(config_building['path_to_data'])
@@ -125,11 +89,44 @@ def config_BE(config: dict, subtask: str) -> dict:
     return config_building
     
     
+def config_WF(config: dict, subtask: str) -> dict:
+    """
+    Augments configuration file for processing Wind Farm dataset.
+    """
+    # get base config
+    config_wind = config['wind_farm']
+    
+    # add data paths
+    config_uber['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
+        + 'WindFarm/')
+    config_uber['path_to_data'] = (config['general']['path_to_data'] 
+        + 'WindFarm/')
+    config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
+        + '{}/'.format(subtask))
+    config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
+        + 'training/')
+    config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
+        + 'validation/')
+    config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
+        + 'testing/')
+        
+    # create directory structure for saving results
+    if subtask == 'compete_train' and os.path.isdir(config_wind['path_to_data']):
+        shutil.rmtree(config_wind['path_to_data'])
+    for path in [config_wind['path_to_data'],
+        config_wind['path_to_data_subtask'], config_wind['path_to_data_train'], 
+        config_wind['path_to_data_val'], config_wind['path_to_data_test']]:
+        check_create_dir(path)
+        
+    config_wind['subtask'] = subtask
+    config_wind['seed'] = config['general']['seed']
+    return config_wind
+    
+    
 def config_UM(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing Uber Movement dataset.
     """
-    
     # get base config
     config_uber = config['uber_movement']    
     
@@ -174,12 +171,11 @@ def config_UM(config: dict, subtask: str) -> dict:
     list_of_cities_test = random.sample(list_of_cities, n_cities_test)
     
     # dictionary saving rules
-    config_uber['test_split_dict'] = {
-        'temporal_dict': {
-            'year': year_list,
-            'quarter_of_year': quarter_of_year_list,
-            'hours_of_day': hours_of_day_list},
-        'spatial_dict': {
+    config_uber['temporal_dict'] = {
+        'year': year_list,
+        'quarter_of_year': quarter_of_year_list,
+        'hours_of_day': hours_of_day_list}}
+    config_uber['spatial_dict'] = {
             'list_of_cities_test': list_of_cities_test}}
     
     # Create city files mapping and city id mapping
@@ -233,7 +229,6 @@ def config_UM(config: dict, subtask: str) -> dict:
         # save 
         config_uber['city_files_mapping'][city] = file_dict
         config_uber['city_id_mapping'][city] = city_id
-  
     
     # create directory structure for saving results
     if subtask == 'cities_10':
@@ -246,7 +241,6 @@ def config_UM(config: dict, subtask: str) -> dict:
             config_uber['path_to_data_test']]:
             check_create_dir(path)
             
-        
     elif subtask == 'cities_20':
         config_uber['list_of_cities'] = list_of_cities[10:20]
         # set full path to directory we want to copy
@@ -278,7 +272,6 @@ def config_CA(config: dict, subtask: str) -> dict:
     """
     Augments configuration file for processing ClimArt dataset.
     """
-    
     # get base config
     config_climart = config['climart'] 
     
@@ -332,15 +325,11 @@ def config_CA(config: dict, subtask: str) -> dict:
         coordinate_list += coordinate_list_step
        
     # dictionary saving rules
-    config_climart['test_split_dict'] = {
-        'temporal_dict': {
+    config_climart['temporal_dict'] = {
             'year': year_list_test,
-            'hours_of_year': hours_of_year_test
-        },
-        'spatial_dict': {
-            'coordinates': coordinate_list
-        }
-    }
+            'hours_of_year': hours_of_year_test},
+    config_climart['spatial_dict'] = {
+            'coordinates': coordinate_list}
     
     # create directory structure for saving results
     if subtask == 'pristine':
@@ -370,7 +359,12 @@ def config_CA(config: dict, subtask: str) -> dict:
     
     
     
-    
+def check_create_dir(path: str):
+  """
+  Check if passed path exist and create if it doesn't.
+  """
+  if not os.path.isdir(path):
+      os.mkdir(path)   
     
     
     

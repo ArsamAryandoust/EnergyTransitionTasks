@@ -17,7 +17,7 @@ building_electricity:
     datapoints_per_file: 150_000
     
 wind_farm:
-    subtask_list: ['compete-train', 'compete-test']
+    subtask_list: ['compete_train', 'compete_test']
     prediction_window: 288
     historic_window: 288
     feature_name_list: ['wind_speed', 'wind_direction', 'temperature_out',

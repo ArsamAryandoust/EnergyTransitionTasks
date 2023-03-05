@@ -1,8 +1,8 @@
 import yaml
 
 import parse_args
-from datasets import building_electricity, uber_movement, climart, additional
-
+from datasets import building_electricity, wind_farm, uber_movement, climart
+from datasets import additional
 
 if __name__ == "__main__":
     """
@@ -20,6 +20,8 @@ if __name__ == "__main__":
     # do the processing according to command line arguments that were passed
     if args.building_electricity:
         building_electricity.process_all_datasets(config)
+    if args.wind_farm:
+        wind_farm.process_all_datasets(config)
     if args.uber_movement:
         uber_movement.process_all_datasets(config)
     if args.climart:
