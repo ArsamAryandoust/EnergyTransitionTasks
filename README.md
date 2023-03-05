@@ -1,6 +1,6 @@
 <img src="https://img.shields.io/badge/BuildingElectricity-ready-blue"/> <img src="https://img.shields.io/badge/WindFarm-preparing-red"/> <img src="https://img.shields.io/badge/UberMovement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/OpenCatalyst-preparing-red"/>
 
-# Prediction tasks and datasets for enhancing the global energy transition
+# AI applications and datasets for enhancing the global energy transition
 
 ### Datasets
 
