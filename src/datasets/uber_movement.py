@@ -410,7 +410,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         shift_factor_add = city_zone_shift_dict[city]
         # check if city is in testing city list
         if city in (
-            config_uber['test_split_dict']['spatial_dict']['list_of_cities_test']
+            config_uber['spatial_dict']['list_of_cities_test']
         ):
             testing_city = True
         else:
@@ -427,7 +427,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         for df_csv_dict in df_csv_dict_list:
             # check if testing year
             if df_csv_dict['year'] == (
-                config_uber['test_split_dict']['temporal_dict']['year']
+                config_uber['temporal_dict']['year']
             ):
                 testing_year = True
             else:
@@ -435,7 +435,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 
             # check if testing quarter of year
             if df_csv_dict['quarter_of_year'] == (
-                config_uber['test_split_dict']['temporal_dict']['quarter_of_year']
+                config_uber['temporal_dict']['quarter_of_year']
             ):
                 testing_quarter = True
             else:
@@ -495,7 +495,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 # extract the rows from dataframe with matching hours of day for test
                 df_test_hours_of_day = df_augmented.loc[
                     df_augmented['hour_of_day'].isin(
-                        config_uber['test_split_dict']['temporal_dict']['hours_of_day']
+                        config_uber['temporal_dict']['hours_of_day']
                     )
                 ]
                 

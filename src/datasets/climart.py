@@ -69,7 +69,7 @@ def split_train_val_test(config_climart: dict):
         df = df.sample(frac=config_climart['subsample_frac'],
             random_state=config_climart['seed'])
         # check if this is a testing year data
-        if config_climart['test_split_dict']['temporal_dict']['year']==int(year):
+        if config_climart['temporal_dict']['year']==int(year):
             # append entire datasets to test dataframes
             df_test = pd.concat([df_test, df], ignore_index=True)
             # free up memory
@@ -78,10 +78,7 @@ def split_train_val_test(config_climart: dict):
         else:
             # extract the rows from dataframes with indices for test coordinates
             df_test_coordiantes = df[
-                df.index.isin(
-                    config_climart['test_split_dict']['spatial_dict']['coordinates']
-                )
-            ]
+                df.index.isin(config_climart['spatial_dict']['coordinates'])]
             # append extracted rows to test dataframes
             df_test = pd.concat([df_test, df_test_coordiantes], ignore_index=True)
             # drop
@@ -90,11 +87,8 @@ def split_train_val_test(config_climart: dict):
             del df_test_coordiantes
             gc.collect()
             # extract the rows from dataframes with matching hours of year
-            df_test_hours_of_year = df.loc[
-                df['hour_of_year'].isin(
-                    config_climart['test_split_dict']['temporal_dict']['hours_of_year']
-                )
-            ]
+            df_test_hours_of_year = df.loc[df['hour_of_year'].isin(
+                    config_climart['temporal_dict']['hours_of_year'])]
             # append extracted rows to test dataframes
             df_test = pd.concat([df_test, df_test_hours_of_year], ignore_index=True)
             # drop
