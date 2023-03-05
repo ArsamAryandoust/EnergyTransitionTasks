@@ -16,53 +16,53 @@ def check_create_dir(path: str):
         os.mkdir(path)
         
 
-def config_BE(config: dict, subtask: str) -> dict:
+def config_building(config: dict, subtask: str) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
     
     # get base config
-    dictionary = config['building_electricity']
+    config_building = config['building_electricity']
     
     # add data paths
-    dictionary['path_to_raw'] = (
+    config_building['path_to_raw'] = (
         config['general']['path_to_data_raw'] 
         + 'BuildingElectricity/{}/'.format(subtask)
     )
-    dictionary['path_to_raw_building_year_profiles_file'] = (
-        dictionary['path_to_raw']
+    config_building['path_to_raw_building_year_profiles_file'] = (
+        config_building['path_to_raw']
         + 'building-year profiles/feature_scaled/2014 building-year profiles.csv'
     )
-    dictionary['path_to_raw_meteo_data_folder'] = (
-        dictionary['path_to_raw']
+    config_building['path_to_raw_meteo_data_folder'] = (
+        config_building['path_to_raw']
         + 'meteo data/'
     )
-    dictionary['path_to_raw_aerial_imagery_file'] = (
-        dictionary['path_to_raw']
+    config_building['path_to_raw_aerial_imagery_file'] = (
+        config_building['path_to_raw']
         + 'building imagery/histogram/rgb/pixel_values.csv'
     )
-    dictionary['path_to_data'] = (
+    config_building['path_to_data'] = (
         config['general']['path_to_data']
         + 'BuildingElectricity/'
     )
-    dictionary['path_to_data_subtask'] = (
-        dictionary['path_to_data']
+    config_building['path_to_data_subtask'] = (
+        config_building['path_to_data']
         + '{}/'.format(subtask)
     )
-    dictionary['path_to_data_add'] = (
-        dictionary['path_to_data_subtask']
+    config_building['path_to_data_add'] = (
+        config_building['path_to_data_subtask']
         + 'additional/'
     )
-    dictionary['path_to_data_train'] = (
-        dictionary['path_to_data_subtask']
+    config_building['path_to_data_train'] = (
+        config_building['path_to_data_subtask']
         + 'training/'
     )
-    dictionary['path_to_data_val'] = (
-        dictionary['path_to_data_subtask']
+    config_building['path_to_data_val'] = (
+        config_building['path_to_data_subtask']
         + 'validation/'
     )
-    dictionary['path_to_data_test'] = (
-        dictionary['path_to_data_subtask']
+    config_building['path_to_data_test'] = (
+        config_building['path_to_data_subtask']
         + 'testing/'
     )
     
@@ -70,22 +70,22 @@ def config_BE(config: dict, subtask: str) -> dict:
     random.seed(config['general']['seed'])
     month_list = random.sample(
         range(1,13), 
-        math.floor(12 * dictionary['temporal_test_split'])
+        math.floor(12 * config_building['temporal_test_split'])
     )
     random.seed(config['general']['seed'])
     day_list = random.sample(
         range(1, 32),
-        math.floor(31 * dictionary['temporal_test_split'])        
+        math.floor(31 * config_building['temporal_test_split'])        
     )
     random.seed(config['general']['seed'])
     hour_list = random.sample(
         range(24),
-        math.floor(24 * dictionary['temporal_test_split'])        
+        math.floor(24 * config_building['temporal_test_split'])        
     )
     random.seed(config['general']['seed'])
     quarter_hour_list = random.sample(
         [0, 15, 30, 45],
-        math.floor(4 * dictionary['temporal_test_split'])       
+        math.floor(4 * config_building['temporal_test_split'])       
     )
     
     # out of distribution test splitting rules in space
@@ -97,33 +97,32 @@ def config_BE(config: dict, subtask: str) -> dict:
     random.seed(config['general']['seed'])
     building_id_list = random.sample(
         range(1, n_buildings+1), 
-        math.floor(n_buildings * dictionary['spatial_test_split'])
+        math.floor(n_buildings * config_building['spatial_test_split'])
     )
     
     # dictionary saving rules
-    dictionary['ood_split_dict'] = {
-        'temporal_dict': {
-            'month_list': month_list,
-            'day_list': day_list,
-            'hour_list': hour_list,
-            'quarter_hour_list': quarter_hour_list
-        },
-        'spatial_dict': {
-            'building_id_list': building_id_list
-        }
-    }
+    config_building['temporal_dict'] = {
+        'month_list': month_list,
+        'day_list': day_list,
+        'hour_list': hour_list,
+        'quarter_hour_list': quarter_hour_list}
+        
+    config_building['spatial_dict'] = {
+        'building_id_list': building_id_list}
+ 
     
     # create directory structure for saving results
-    if subtask == 'buildings_92' and os.path.isdir(dictionary['path_to_data']):
-        shutil.rmtree(dictionary['path_to_data'])
-    for path in [dictionary['path_to_data'],
-        dictionary['path_to_data_subtask'], dictionary['path_to_data_add'],
-        dictionary['path_to_data_train'], dictionary['path_to_data_val'],
-        dictionary['path_to_data_test']]:
+    if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
+        shutil.rmtree(config_building['path_to_data'])
+    for path in [config_building['path_to_data'],
+        config_building['path_to_data_subtask'], config_building['path_to_data_add'],
+        config_building['path_to_data_train'], config_building['path_to_data_val'],
+        config_building['path_to_data_test']]:
         check_create_dir(path)
         
-    config['building_electricity'] = dictionary
-    return config
+    config_building['subtask'] = subtask
+    config_building['seed'] = config['general']['seed']
+    return config_building
     
     
 def config_UM(config: dict, subtask: str) -> dict:

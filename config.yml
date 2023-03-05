@@ -15,8 +15,19 @@ building_electricity:
     spatial_test_split: 0.2
     val_test_split: 0.2
     datapoints_per_file: 150_000
-
-
+    
+wind_farm:
+    subtask_list: ['compete-train', 'compete-test']
+    prediction_window: 288
+    historic_window: 288
+    feature_name_list: ['wind_speed', 'wind_direction', 'temperature_out',
+    temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
+    'blade3_angle', 'reactive_power', 'active_power']
+    temporal_test_split: 0.15
+    spatial_test_split: 0.2
+    val_test_split: 0.2
+    datapoints_per_file: 60_000
+    
 uber_movement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
     temporal_test_split: 0.22

@@ -17,54 +17,53 @@ def process_all_datasets(config: dict):
     # iterated over all subtasks
     for subtask in config['building_electricity']['subtask_list']:
         # augment config with currently iterated subtask paths
-        config = config_BE(config, subtask)
+        config_building = config_BE(config, subtask)
         
         # import all data
         df_consumption, df_building_images, df_meteo_dict = import_all_data(
-            config['building_electricity'])
+            config_building)
         
         # change building IDs here
         df_consumption, df_building_images = adjust_building_ids(
             df_consumption, df_building_images)
 
         # process building imagery
-        process_building_imagery(config['building_electricity'], 
-            df_building_images)
+        process_building_imagery(config_building, df_building_images)
 
         # free up memory
         del df_building_images
         gc.collect()
                 
         # process meteo data and load profiles
-        df_dataset = process_meteo_and_load_profiles(config, df_consumption, 
-            df_meteo_dict)
+        df_dataset = process_meteo_and_load_profiles(config_building, 
+            df_consumption, df_meteo_dict)
         
         # free up memory
         del df_consumption, df_meteo_dict
         gc.collect()
         
         # Do trainining, validation and testing split
-        split_train_val_test(config, df_dataset)
+        split_train_val_test(config_building, df_dataset)
         
         # free up memory
         del df_dataset
         gc.collect()
     
     
-def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
+def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
     Imports electric consumption profiles profiles, building imagery pixel data,
     and meteorological data.
     """
     
     # import all electric consumption profiles
-    df_consumption = pd.read_csv(config['path_to_raw_building_year_profiles_file'])
+    df_consumption = pd.read_csv(config_building['path_to_raw_building_year_profiles_file'])
     
     # import image pixel histogram values
-    df_building_images = pd.read_csv(config['path_to_raw_aerial_imagery_file'])
+    df_building_images = pd.read_csv(config_building['path_to_raw_aerial_imagery_file'])
     
     # create path to sample meteo files
-    meteo_filename_list = os.listdir(config['path_to_raw_meteo_data_folder'])
+    meteo_filename_list = os.listdir(config_building['path_to_raw_meteo_data_folder'])
     
     # decleare empty dictionary for saving all meteo dataframes
     df_meteo_dict = {}
@@ -72,7 +71,7 @@ def import_all_data(config: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     # iterate over all filenames
     for filename in meteo_filename_list:
         # create full path to iterated file
-        path_to_meteo_file = config['path_to_raw_meteo_data_folder'] + filename
+        path_to_meteo_file = config_building['path_to_raw_meteo_data_folder'] + filename
         
         # import meteorological data
         df_meteo = pd.read_csv(path_to_meteo_file)
@@ -104,7 +103,7 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
     return df_consumption, df_building_images
     
 
-def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
+def process_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
     """
     Simply changes the column name of aerial imagery histograms of buildings
     by adding the pre-fix 'building_' to IDs and saves file with new column names.
@@ -131,15 +130,15 @@ def process_building_imagery(config: dict, df_building_images: pd.DataFrame):
     df_building_images_new.columns = new_columns_list
     
     # create saving path for building imagery
-    saving_path = (config['path_to_data_add']
+    saving_path = (config_building['path_to_data_add']
         + 'building_images_pixel_histograms_rgb.csv')
     
     # save df_building_images_new
     df_building_images_new.to_csv(saving_path, index=False)
 
     
-def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
-    df_meteo_dict: pd.DataFrame) -> pd.DataFrame:
+def process_meteo_and_load_profiles(config_building: dict, 
+    df_consumption: pd.DataFrame, df_meteo_dict: pd.DataFrame) -> pd.DataFrame:
     """
     Main data processing. Takes electric load profiles and meteorological data
     and combines these into a single dataset dataframe.
@@ -159,13 +158,13 @@ def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
     new_df_columns = new_df_columns_base.copy()
     
     # append column entries for meteorological data
-    for column_name in config['building_electricity']['meteo_name_list']:
-        for pred_time_step in range(config['building_electricity']['historic_window']):
+    for column_name in config_building['meteo_name_list']:
+        for pred_time_step in range(config_building['historic_window']):
             entry_name = '{}_{}'.format(column_name, pred_time_step+1)
             new_df_columns.append(entry_name)
     
     # append column entries for electric load
-    for pred_time_step in range(config['building_electricity']['prediction_window']):
+    for pred_time_step in range(config_building['prediction_window']):
         entry_name = 'load_{}'.format(pred_time_step+1)
         new_df_columns.append(entry_name)
         
@@ -187,12 +186,12 @@ def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
     values_array = np.zeros(
         (len(building_id_list) * (
             len(time_stamps)
-            - config['building_electricity']['historic_window']
-            - config['building_electricity']['prediction_window']),
+            - config_building['historic_window']
+            - config_building['prediction_window']),
             (len(new_df_columns_base) 
-            + config['building_electricity']['historic_window'] * (
-                len(config['building_electricity']['meteo_name_list']))
-            + config['building_electricity']['prediction_window'])))
+            + config_building['historic_window'] * (
+                len(config_building['meteo_name_list']))
+            + config_building['prediction_window'])))
     
     # create progress bar
     pbar = tqdm(total=len(building_id_list))
@@ -221,9 +220,9 @@ def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
         df_meteo = df_meteo.drop(columns=['local_time'])
         
         # iterate over all time stamps in prediction window steps
-        for i in range(config['building_electricity']['historic_window'], 
+        for i in range(config_building['historic_window'], 
             len(time_stamps) 
-            - config['building_electricity']['prediction_window']):
+            - config_building['prediction_window']):
             # get time stamp
             time = time_stamps[i]
             
@@ -236,15 +235,15 @@ def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
             
             # get iterated meteorological data
             meteo_dict = {}
-            for meteo_name in config['building_electricity']['meteo_name_list']:
+            for meteo_name in config_building['meteo_name_list']:
                 meteo_values = df_meteo[meteo_name][
-                    (i-config['building_electricity']['historic_window']):i
+                    (i-config_building['historic_window']):i
                 ].values
                 meteo_dict[meteo_name] = meteo_values
             
             # get iterated load profile data
             load_profile = building_load[
-                i:(i+config['building_electricity']['prediction_window'])
+                i:(i+config_building['prediction_window'])
             ].values
             
             # add features to values_array. Ensures same order as new_df_columns.
@@ -280,7 +279,7 @@ def process_meteo_and_load_profiles(config: dict, df_consumption: pd.DataFrame,
     return df_dataset
     
     
-def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
+def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
     """
     Splits and saves datasets according to configuration rules.
     """
@@ -289,8 +288,8 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     n_data_total = len(df_dataset)
     
     # get the out-of-distribution splitting rules
-    temporal_ood = config['building_electricity']['ood_split_dict']['temporal_dict']
-    spatial_ood = config['building_electricity']['ood_split_dict']['spatial_dict']
+    temporal_ood = config_building['temporal_dict']
+    spatial_ood = config_building['spatial_dict']
     
     # create spatial ood split
     df_testing = df_dataset.loc[
@@ -322,8 +321,8 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     
     # do validation split
     df_validation = df_testing.sample(
-        frac=config['building_electricity']['val_test_split'], 
-        random_state=config['general']['seed'])
+        frac=config_building['val_test_split'], 
+        random_state=config_building['seed'])
     
     # remove validation data split from testing dataset
     df_testing = df_testing.drop(df_validation.index)
@@ -351,30 +350,27 @@ def split_train_val_test(config: dict, df_dataset: pd.DataFrame):
     )
     
     # save results in chunks
-    save_in_chunks(config,
-        config['building_electricity']['path_to_data_train'] + 'training_data', 
-        df_training)
-    save_in_chunks(config,
-        config['building_electricity']['path_to_data_val'] + 'validation_data', 
+    save_in_chunks(config_building,
+        config_building['path_to_data_train'] + 'training_data', df_training)
+    save_in_chunks(config_building,
+        config_building['path_to_data_val'] + 'validation_data', 
         df_validation)
-    save_in_chunks(config,
-        config['building_electricity']['path_to_data_test'] + 'testing_data', 
-        df_testing)
+    save_in_chunks(config_building,
+        config_building['path_to_data_test'] + 'testing_data', df_testing)
 
     
-def save_in_chunks(config: dict, saving_path: str, df: pd.DataFrame):
+def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
     """
     Shuffles dataframe, then saves it in chunks with number of datapoints per 
     file defined by config such that each file takes less than about 1 GB size.
     """
     
-    df = df.sample(frac=1, random_state=config['general']['seed'])
+    df = df.sample(frac=1, random_state=config_building['seed'])
     for file_counter in range(1, 312321321312):
         path_to_saving = saving_path + '_{}.csv'.format(file_counter)
-        df.iloc[
-            :config['building_electricity']['datapoints_per_file']
-        ].to_csv(path_to_saving, index=False)
-        df = df[config['building_electricity']['datapoints_per_file']:]
+        df.iloc[:config_building['datapoints_per_file']].to_csv(
+            path_to_saving, index=False)
+        df = df[config_building['datapoints_per_file']:]
         if len(df) == 0:
             break
             
