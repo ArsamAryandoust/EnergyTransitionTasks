@@ -16,7 +16,7 @@ def check_create_dir(path: str):
         os.mkdir(path)
         
 
-def config_building(config: dict, subtask: str) -> dict:
+def config_BE(config: dict, subtask: str) -> dict:
     """
     Augments configuration filefor processing Building Electricity dataset.
     """
