@@ -104,7 +104,7 @@ def config_WF(config: dict, subtask: str) -> dict:
     if subtask == 'days_245':
         config_wind['path_to_data_raw_file'] = (config_wind['path_to_data_raw']
             + 'wtbdata_245days.csv')
-    elif subtask == 'days_180':
+    elif subtask == 'days_183':
         config_wind['path_to_data_raw_infile_folder'] = (
             config_wind['path_to_data_raw'] + 'final_phase_test/infile/')
         config_wind['path_to_data_raw_outfile_folder'] = (
@@ -121,11 +121,11 @@ def config_WF(config: dict, subtask: str) -> dict:
         + 'testing/')
         
     # out of distribution test splitting rules in time
-    # days_245 has 245 days in total, days_180 has 180 in total
+    # days_245 has 245 days in total, days_183 has 180 in total
     if subtask== 'days_245':
         n_days = 245
-    elif subtask=='days_180':
-        n_days = 180
+    elif subtask=='days_183':
+        n_days = 183
     # sample start days of blocks of block_size, here 14 days
     block_size = 14
     random.seed(config['general']['seed'])
