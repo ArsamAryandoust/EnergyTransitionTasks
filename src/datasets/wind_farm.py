@@ -63,8 +63,8 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    print(list(set(df_data['TurbID'])).sort())
-    print(list(set(df_data['Day'])).sort())
+    print(list(set(df_data['TurbID'])))
+    print(list(set(df_data['Day'])))
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     turbine_list.sort()
