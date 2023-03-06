@@ -54,8 +54,9 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_args()
     
     # do some checks for validity of args
-    if not (args.building_electricity or args.uber_movement or args.open_catalyst 
-        or args.climart or args.shuffle_UM or args.shuffle_CA):
+    if not (args.building_electricity or args.wind_farm or args.uber_movement 
+        or args.climart or args.open_catalyst or args.shuffle_UM 
+        or args.shuffle_CA):
         print("Must select at least one dataset to process or shuffle!")
         exit(1)
 
