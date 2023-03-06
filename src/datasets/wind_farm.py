@@ -8,6 +8,7 @@ from load_config import config_WF
 
 def process_all_datasets(config: dict):
     """
+    Does the main data processing.
     """
     print("\nProcessing Wind Farm dataset.")
     for subtask in config['wind_farm']['subtask_list']:
@@ -16,13 +17,21 @@ def process_all_datasets(config: dict):
         # load data of this subtask
         df_data, df_locations = load_data(config_wind)
         # expand timestamp
-        df_data = expand_timestamp(df_data)
-        # Split the loaded dataframe into training, validation and testing
-        split_train_val_test(config_wind, df_data, df_locations)
+        df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
+        df_data.drop(columns=['Tmstamp'], inplace=True)
+        # sort data
+        df_data.sort_values(by=['TurbID','Day', 'hour', 'minute'], inplace=True,
+            ignore_index=True)
+        # expand data with sliding time window
+        df_data = create_datapoints(config_wind, df_data)
+        # split the loaded dataframe into training, validation and testing
+        #split_train_val_test(config_wind, df_data, df_locations)
         
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
     """
+    Loads the SCADA data and the location data of each turbine from csv files,
+    and returns these.
     """    
     print('\nLoading data for Wind Farm task!')
     df_locations = pd.read_csv(config_wind['path_to_turb_loc_file'])
@@ -53,17 +62,19 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             pbar.update(1)
     return df_data, df_locations
 
-
-def expand_timestamp(df_data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Splits the time stamp column Tmstamp into hour and minute columns, and
-    drops it.
-    """
     
-    df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
-    df_data.drop(columns=['Tmstamp'], inplace=True)
+def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    """
+    # get a list of all turbine IDs available in data
+    turbine_list = list(set(df_data['TurbID']))
+    turbine_list.sort()
+    
+    print(turbine_list)
+    
     return df_data
-        
+    
+    
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     df_locations: pd.DataFrame):
     """
@@ -100,8 +111,8 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     ###
     
     # merge
-    df_data = pd.merge(df_data, df_locations, on='TurbID', how='left', left_index=True)
-    df_test = pd.merge(df_test, df_locations, on='TurbID', how='left', left_index=True)
+    df_data = pd.merge(df_data, df_locations, on='TurbID', how='left')
+    df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
     df_data.drop(columns=['TurbID'], inplace=True)
     df_test.drop(columns=['TurbID'], inplace=True)
     # free up memory
@@ -116,12 +127,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     ###    
     
     
-    
-    # save and delete
-    
-    # augment testing data here
-    # split val test here
-    # save and delete
+  
     
     
     
