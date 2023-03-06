@@ -108,8 +108,15 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     del df_locations
     gc.collect()
     
+    print(df_data.columns)
+    print(df_test.columns)
     
-    # augment training data here
+    ###
+    # Create data points
+    ###    
+    
+    
+    
     # save and delete
     
     # augment testing data here
