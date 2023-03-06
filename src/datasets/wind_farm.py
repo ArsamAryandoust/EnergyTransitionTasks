@@ -78,6 +78,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         + 4 + config_wind['prediction_window']))
     # set a datapoint counter
     data_counter = 0
+    # create progress bar
+    pbar = tqdm(total=len(turbine_list))
     # iterate over all turbine IDs
     for turbine_id in turbine_list:
         # get corresponding entries
@@ -109,6 +111,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
                 col_counter += 1
             # increment counter
             data_counter += 1
+        # update progress bar for turbine count
+        pbar.update(1)
     
     # create column name
     col_name_list = ['TrbID', 'day', 'hour', 'minute']
