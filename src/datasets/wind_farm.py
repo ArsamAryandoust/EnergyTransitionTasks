@@ -70,7 +70,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     # iterate over all turbine IDs
     for turbine_id in turbine_list:
         # get corresponding entries
-        df_turbine = df_data.loc[df_data['TurbID']==turbine_id]
+        df_turbine = df_data.loc[df_data['TurbID']==turbine_id].copy()
         # sort by time
         df_turbine.sort_values(by=['Day', 'hour', 'minute'], inplace=True,
             ignore_index=True)
