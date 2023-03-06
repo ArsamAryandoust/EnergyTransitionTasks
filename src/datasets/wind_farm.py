@@ -67,8 +67,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
     # get a list of all turbine IDs available in data
-    turbines_list = list(set(df_data['TurbID']))
-    turbines_list.sort()
+    turbine_list = list(set(df_data['TurbID']))
+    turbine_list.sort()
     
     print(turbine_list)
     
