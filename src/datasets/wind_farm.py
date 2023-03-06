@@ -101,7 +101,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
                     # increment column counter
                     col_counter += 1
             # iterate over prediction window
-            for j in range(i, i+ config_wind['prediction_window'])
+            for j in range(i, i+ config_wind['prediction_window']):
                 values_array[data_counter, col_counter] = df_turbine['Patv'][j]
                 # increment column counter
                 col_counter += 1
