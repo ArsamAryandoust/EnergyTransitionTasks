@@ -16,7 +16,7 @@ def process_all_datasets(config: dict):
         df_data = load_data(config_wind)
         
         
-def load_data(config_wind: dict) -> pandas.DataFrame:
+def load_data(config_wind: dict) -> pd.DataFrame:
     """
     """    
     print('Loading data for Wind Farm task!')
