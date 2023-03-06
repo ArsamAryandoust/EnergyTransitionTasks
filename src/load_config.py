@@ -99,6 +99,16 @@ def config_WF(config: dict, subtask: str) -> dict:
     # add data paths
     config_uber['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
         + 'WindFarm/')
+    config_uber['path_to_turb_loc_file'] = (config_uber['path_to_data_raw'] 
+        + 'sdwpf_baidukddcup2022_turb_location.CSV')
+    if subtask == 'compete_train':
+        config_uber['path_to_data_raw_file'] = (config_uber['path_to_data_raw']
+            + 'wtbdata_245days.csv')
+    elif subtask == 'compete_test':
+        config_uber['path_to_data_raw_infile_folder'] = (
+            config_uber['path_to_data_raw'] + 'final_phase_test/infile/')
+        config_uber['path_to_data_raw_outfile_folder'] = (
+            config_uber['path_to_data_raw'] + 'final_phase_test/outfile/')
     config_uber['path_to_data'] = (config['general']['path_to_data'] 
         + 'WindFarm/')
     config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
@@ -110,6 +120,11 @@ def config_WF(config: dict, subtask: str) -> dict:
     config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
         + 'testing/')
         
+    ###
+    # Set the important stuff here ###
+    ###
+    
+    
     # create directory structure for saving results
     if subtask == 'compete_train' and os.path.isdir(config_wind['path_to_data']):
         shutil.rmtree(config_wind['path_to_data'])
