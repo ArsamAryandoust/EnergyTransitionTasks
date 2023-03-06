@@ -22,8 +22,10 @@ def process_all_datasets(config: dict):
         # sort data
         df_data.sort_values(by=['TurbID','Day', 'hour', 'minute'], inplace=True,
             ignore_index=True)
+        # expand data with sliding time window
+        df_data = create_datapoints(config_wind, df_data)
         # split the loaded dataframe into training, validation and testing
-        split_train_val_test(config_wind, df_data, df_locations)
+        #split_train_val_test(config_wind, df_data, df_locations)
         
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
@@ -60,6 +62,18 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             pbar.update(1)
     return df_data, df_locations
 
+    
+def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    """
+    # get a list of all turbine IDs available in data
+    turbines_list = list(set(df_data['TurbID']))
+    turbines_list.sort()
+    
+    print(turbine_list)
+    
+    return df_data
+    
     
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     df_locations: pd.DataFrame):
