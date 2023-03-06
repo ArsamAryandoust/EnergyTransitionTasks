@@ -56,8 +56,8 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def expand_timestamp(df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    df_data['hour'] = df['Tmstamp'].dt.hour
-    df_data['minute'] = df['Tmstamp'].dt.minute
+    df_data['hour'] = df_data['Tmstamp'].dt.hour
+    df_data['minute'] = df_data['Tmstamp'].dt.minute
     df_data.drop(columns=['Tmstamp'], inplace=True)
     return df_data
         
