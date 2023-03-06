@@ -120,10 +120,42 @@ def config_WF(config: dict, subtask: str) -> dict:
     config_wind['path_to_data_test'] = (config_wind['path_to_data_subtask']
         + 'testing/')
         
-    ###
-    # Set the important stuff here ###
-    ###
+    # out of distribution test splitting rules in time
+    # compete_train has 245 days in total, compete_test has 180 in total
+    if subtask== 'compete_train':
+        n_days = 245
+    elif subtask=='compete_test':
+        n_days = 180
+    # sample start days of blocks of block_size, here 14 days
+    block_size = 14
+    random.seed(config['general']['seed'])
+    day_start_list = random.sample(range(1, n_days, block_size), 
+        math.ceil(n_days * config_uber['temporal_test_split']/block_size))
+    # extend the day list by entire block that is sampled
+    days_test = []
+    for start_day in day_start_list:
+        for day in range(start_day, start_day+block_size)
+            days_test.append(day)
+    random.seed(config['general']['seed'])
+    hours_test = random.sample(range(1, 25), 
+        math.floor(24 * config_uber['temporal_test_split']))
+    random.seed(config['general']['seed'])
+    minutes_test = random.sample([0, 10, 20, 30, 40, 50], 
+        math.floor(6 * config_uber['temporal_test_split']))
     
+    # out of distribution test splitting rules in space
+    n_turbines = 134
+    random.seed(config['general']['seed'])
+    turbines_test = random.sample(range(1, n_turbines), 
+        math.floor(n_turbines * config_uber['spatial_test_split']))
+    
+    # testing dictionaries
+    config_wind['temporal_tests'] = {
+        'days_test': days_test,
+        'hours_test': hours_test,
+        'minutes_test': minutes_test}
+    config_wind['spatial_tests'] = {
+        'turbines_test': turbines_test}
     
     # create directory structure for saving results
     if subtask == 'compete_train' and os.path.isdir(config_wind['path_to_data']):
