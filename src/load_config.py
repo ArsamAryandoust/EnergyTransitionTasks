@@ -130,7 +130,7 @@ def config_WF(config: dict, subtask: str) -> dict:
     block_size = 14
     random.seed(config['general']['seed'])
     day_start_list = random.sample(range(1, n_days, block_size), 
-        math.ceil(n_days * config_uber['temporal_test_split']/block_size))
+        math.ceil(n_days * config_wind['temporal_test_split']/block_size))
     # extend the day list by entire block that is sampled
     days_test = []
     for start_day in day_start_list:
@@ -138,16 +138,16 @@ def config_WF(config: dict, subtask: str) -> dict:
             days_test.append(day)
     random.seed(config['general']['seed'])
     hours_test = random.sample(range(1, 25), 
-        math.floor(24 * config_uber['temporal_test_split']))
+        math.floor(24 * config_wind['temporal_test_split']))
     random.seed(config['general']['seed'])
     minutes_test = random.sample([0, 10, 20, 30, 40, 50], 
-        math.floor(6 * config_uber['temporal_test_split']))
+        math.floor(6 * config_wind['temporal_test_split']))
     
     # out of distribution test splitting rules in space
     n_turbines = 134
     random.seed(config['general']['seed'])
     turbines_test = random.sample(range(1, n_turbines), 
-        math.floor(n_turbines * config_uber['spatial_test_split']))
+        math.floor(n_turbines * config_wind['spatial_test_split']))
     
     # testing dictionaries
     config_wind['temporal_ood'] = {
