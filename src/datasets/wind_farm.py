@@ -67,9 +67,15 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
-    values_array = np.zeros(
-        
-        )
+    # set number of maximum days
+    n_days = df_data['Days'].max()
+    # create a zero values array in the maximum size it can fill given no sparsity
+    values_array = np.zeros((len(turbine_list) * n_days * 24 * 6 
+        - config_wind['historic_window'] - config_wind['prediction_window'],
+        len(config_wind['fseries_name_list']) * config_wind['historic_window']
+        + 4 + config_wind['prediction_window']))
+    # set a datapoint counter
+    data_counter = 0
     # iterate over all turbine IDs
     for turbine_id in turbine_list:
         # get corresponding entries
@@ -77,8 +83,45 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         # sort by time
         df_turbine.sort_values(by=['Day', 'hour', 'minute'], inplace=True,
             ignore_index=True)
-        
-        
+        # iterate over entries of df_turbine
+        for i in range(config_wind['historic_window'], 
+            len(df_turbine)-config_wind['prediction_window']):
+            # set spatial and temporal values
+            values_array[data_counter, 0] = turbine_id
+            values_array[data_counter, 1] = df_turbine['Days'][i]
+            values_array[data_counter, 2] = df_turbine['hour'][i]
+            values_array[data_counter, 3] = df_turbine['minute'][i]
+            col_counter = 4
+            # iterate over historic time window
+            for j in range(i-config_wind['historic_window'], i):
+                # iterate over time series feature names
+                for colname in config_wind['fseries_name_list']:
+                    values_array[data_counter, col_counter] = (
+                        df_turbine[colname][j])
+                    # increment column counter
+                    col_counter += 1
+            # iterate over prediction window
+            for j in range(i, i+ config_wind['prediction_window'])
+                values_array[data_counter, col_counter] = df_turbine['Patv'][j]
+                # increment column counter
+                col_counter += 1
+            # increment counter
+            data_counter += 1
+    
+    # create column name
+    col_name_list = ['TrbID', 'day', 'hour', 'minute']
+    new_fseries_name_list = ['wind_speed', 'wind_direction', 'temperature_out',
+    'temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
+    'blade3_angle', 'reactive_power', 'active_power']
+    for i in range(config_wind['historic_window']+1):
+        for colname_base in new_fseries_name_list:
+            colname = colname_base + '_{}'.format(i)
+            col_name_list.append(colname)
+    
+    # create dataframe and overwrite old one
+    df_data = pd.DataFrame(values_array, columns=col_name_list)      
+    # drop zero entries
+    df_data.loc[~(df_data==0).all(axis=1)]
     return df_data
     
     
@@ -95,7 +138,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     temporal_ood = config_wind['temporal_ood']
     # split of temporal ood
     df_test = df_data.loc[
-        (df_data['Day'].isin(temporal_ood['days_test']))
+        (df_data['day'].isin(temporal_ood['days_test']))
         | (df_data['hour'].isin(temporal_ood['hours_test']))
         | (df_data['minute'].isin(temporal_ood['minutes_test']))]
     # drop separated indices
