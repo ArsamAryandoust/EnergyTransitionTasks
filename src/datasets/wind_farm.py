@@ -1,4 +1,5 @@
 import os
+import gc
 
 import pandas as pd
 from tqdm import tqdm
@@ -55,38 +56,57 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 
 def expand_timestamp(df_data: pd.DataFrame) -> pd.DataFrame:
     """
+    Splits the time stamp column Tmstamp into hour and minute columns, and
+    drops it.
     """
     
     df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
     df_data.drop(columns=['Tmstamp'], inplace=True)
-    print(df_data['hour'])
-    print(df_data['minute'])
-    """
-    print(df_data['Tmstamp'])
-    df_data['hour'] = df_data['Tmstamp'][:2]
-    df_data['minute'] = df_data['Tmstamp'][3:]
-    df_data.drop(columns=['Tmstamp'], inplace=True)
-    """
     return df_data
         
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     df_locations: pd.DataFrame):
     """
     """
-    pass
     
-    """
+    ###
+    # Split training and ood testing
+    ###
+    
+    # get spliting rules
     temporal_ood = config_wind['temporal_ood']
     # split of temporal ood
     df_test = df_data.loc[
-        (df_data['month'].isin(temporal_ood['month_list']))
-        | (df_dataset['day'].isin(temporal_ood['day_list']))
-        | (df_dataset['hour'].isin(temporal_ood['hour_list']))
-        | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))]
+        (df_data['Day'].isin(temporal_ood['days_test']))
+        | (df_dataset['hour'].isin(temporal_ood['hours_test']))
+        | (df_dataset['minute'].isin(temporal_ood['minutes_test']))]
+    # drop separated indices
+    df_data = df_data.drop(df_test.index)
+    # get spliting rules
+    spatial_ood = config_wind['spatial_ood']
+    # split of temporal ood
+    df_spatial_test = df_data.loc[
+        df_data['TurbID'].isin(spatial_ood['turbines_test']]
+    # drop separated indices
+    df_data = df_data.drop(df_spatial_test.index)
+    # concat to test
+    df_test = pd.concat([df_test, df_spatial_test], ignore_index=True)
+    # free up memory
+    del df_spatial_test
+    gc.collect()
     
-    """
+    ###
+    # Augment dataframes with location data
+    ###
     
-    # split train and test here
+    # merge
+    df_data = pd.merge(df_data, df_locations, on='TurbID', how='left')
+    df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
+    df_data.drop(columns=['TurbID'], inplace=True)
+    df_test.drop(columns=['TurbID'], inplace=True)
+    # free up memory
+    del df_locations
+    gc.collect()
     
     
     # augment training data here
