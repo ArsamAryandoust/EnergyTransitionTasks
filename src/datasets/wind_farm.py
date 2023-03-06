@@ -55,7 +55,7 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             # concatenate dataframes
             df_data = pd.concat([df_data, df_infile, df_outfile], 
                 ignore_index=True)
-            # data comes in sliding window
+            # data comes in sliding window, so drop the duplicates
             df_data.drop_duplicates(inplace=True, ignore_index=True)
             #update progress bar
             pbar.update(1)
@@ -65,10 +65,11 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    print(len(df_data))
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
-    turbine_list.sort()
+    values_array = np.zeros(
+        
+        )
     # iterate over all turbine IDs
     for turbine_id in turbine_list:
         # get corresponding entries
@@ -76,6 +77,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         # sort by time
         df_turbine.sort_values(by=['Day', 'hour', 'minute'], inplace=True,
             ignore_index=True)
+        
         
     return df_data
     
