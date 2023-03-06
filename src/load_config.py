@@ -189,9 +189,9 @@ def config_UM(config: dict, subtask: str) -> dict:
     config_uber['temporal_dict'] = {
         'year': year_list,
         'quarter_of_year': quarter_of_year_list,
-        'hours_of_day': hours_of_day_list}}
+        'hours_of_day': hours_of_day_list}
     config_uber['spatial_dict'] = {
-            'list_of_cities_test': list_of_cities_test}}
+            'list_of_cities_test': list_of_cities_test}
     
     # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
