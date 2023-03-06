@@ -137,10 +137,10 @@ def config_WF(config: dict, subtask: str) -> dict:
         for day in range(start_day, start_day+block_size):
             days_test.append(day)
     random.seed(config['general']['seed'])
-    hours_test = random.sample(range(1, 25), 
+    hours_test = random.sample(range(24), 
         math.floor(24 * config_wind['temporal_test_split']))
     random.seed(config['general']['seed'])
-    minutes_test = random.sample([0, 10, 20, 30, 40, 50], 
+    minutes_test = random.sample(range(0, 60, 10), 
         math.floor(6 * config_wind['temporal_test_split']))
     
     # out of distribution test splitting rules in space
