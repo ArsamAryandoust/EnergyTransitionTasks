@@ -65,6 +65,7 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
+    print(df_data.columns)
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     # set number of maximum days
