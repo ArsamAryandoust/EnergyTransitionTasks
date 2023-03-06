@@ -27,9 +27,9 @@ def load_data(config_wind: dict) -> pd.DataFrame:
     elif config_wind['subtask'] == 'compete_test':
         # get list of filenames for input and output of challenge
         list_of_files_in = os.listdir(
-            config_uber['path_to_data_raw_infile_folder'])
+            config_wind['path_to_data_raw_infile_folder'])
         list_of_files_out = os.listdir(
-            config_uber['path_to_data_raw_outfile_folder'])
+            config_wind['path_to_data_raw_outfile_folder'])
         
         # declare empty dataframe data
         df_data = pd.DataFrame()                 
@@ -38,9 +38,9 @@ def load_data(config_wind: dict) -> pd.DataFrame:
         # iterate over both folder files simultaneously
         for in_filename, out_filename in zip(list_of_files_in, list_of_files_out):
             # set paths and load data
-            path = config_uber['path_to_data_raw_infile_folder'] + in_filename
+            path = config_wind['path_to_data_raw_infile_folder'] + in_filename
             df_infile = pd.dataframe(path)
-            path = config_uber['path_to_data_raw_outfile_folder'] + out_filename
+            path = config_wind['path_to_data_raw_outfile_folder'] + out_filename
             df_outfile = pd.dataframe(path)
             # concatenate dataframes
             df_data = pd.concat([df_data, df_infile, df_outfile], 
