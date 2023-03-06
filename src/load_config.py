@@ -97,27 +97,27 @@ def config_WF(config: dict, subtask: str) -> dict:
     config_wind = config['wind_farm']
     
     # add data paths
-    config_uber['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
+    config_wind['path_to_data_raw'] = (config['general']['path_to_data_raw'] 
         + 'WindFarm/')
-    config_uber['path_to_turb_loc_file'] = (config_uber['path_to_data_raw'] 
+    config_wind['path_to_turb_loc_file'] = (config_wind['path_to_data_raw'] 
         + 'sdwpf_baidukddcup2022_turb_location.CSV')
     if subtask == 'compete_train':
-        config_uber['path_to_data_raw_file'] = (config_uber['path_to_data_raw']
+        config_wind['path_to_data_raw_file'] = (config_wind['path_to_data_raw']
             + 'wtbdata_245days.csv')
     elif subtask == 'compete_test':
-        config_uber['path_to_data_raw_infile_folder'] = (
-            config_uber['path_to_data_raw'] + 'final_phase_test/infile/')
-        config_uber['path_to_data_raw_outfile_folder'] = (
-            config_uber['path_to_data_raw'] + 'final_phase_test/outfile/')
-    config_uber['path_to_data'] = (config['general']['path_to_data'] 
+        config_wind['path_to_data_raw_infile_folder'] = (
+            config_wind['path_to_data_raw'] + 'final_phase_test/infile/')
+        config_wind['path_to_data_raw_outfile_folder'] = (
+            config_wind['path_to_data_raw'] + 'final_phase_test/outfile/')
+    config_wind['path_to_data'] = (config['general']['path_to_data'] 
         + 'WindFarm/')
-    config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
+    config_wind['path_to_data_subtask'] = (config_wind['path_to_data']
         + '{}/'.format(subtask))
-    config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
+    config_wind['path_to_data_train'] = (config_wind['path_to_data_subtask']
         + 'training/')
-    config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
+    config_wind['path_to_data_val'] = (config_wind['path_to_data_subtask']
         + 'validation/')
-    config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
+    config_wind['path_to_data_test'] = (config_wind['path_to_data_subtask']
         + 'testing/')
         
     ###
