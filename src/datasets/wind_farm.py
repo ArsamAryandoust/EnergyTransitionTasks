@@ -78,15 +78,15 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     # split of temporal ood
     df_test = df_data.loc[
         (df_data['Day'].isin(temporal_ood['days_test']))
-        | (df_dataset['hour'].isin(temporal_ood['hours_test']))
-        | (df_dataset['minute'].isin(temporal_ood['minutes_test']))]
+        | (df_data['hour'].isin(temporal_ood['hours_test']))
+        | (df_data['minute'].isin(temporal_ood['minutes_test']))]
     # drop separated indices
     df_data = df_data.drop(df_test.index)
     # get spliting rules
     spatial_ood = config_wind['spatial_ood']
     # split of temporal ood
     df_spatial_test = df_data.loc[
-        df_data['TurbID'].isin(spatial_ood['turbines_test']]
+        df_data['TurbID'].isin(spatial_ood['turbines_test'])]
     # drop separated indices
     df_data = df_data.drop(df_spatial_test.index)
     # concat to test
