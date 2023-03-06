@@ -56,10 +56,17 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def expand_timestamp(df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    print(df_data['Tmstamp'])
-    df_data['hour'] = df_data['Tmstamp'].dt.hour
-    df_data['minute'] = df_data['Tmstamp'].dt.minute
+    
+    df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
     df_data.drop(columns=['Tmstamp'], inplace=True)
+    print(df_data['hour'])
+    print(df_data['minute'])
+    """
+    print(df_data['Tmstamp'])
+    df_data['hour'] = df_data['Tmstamp'][:2]
+    df_data['minute'] = df_data['Tmstamp'][3:]
+    df_data.drop(columns=['Tmstamp'], inplace=True)
+    """
     return df_data
         
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
