@@ -56,4 +56,26 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     pass
     
     
+    # split train and test here
+    
+    # augment training data here
+    # save and delete
+    
+    # augment testing data here
+    # split val test here
+    # save and delete
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
