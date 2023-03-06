@@ -14,6 +14,7 @@ def process_all_datasets(config: dict):
         config_wind = config_WF(config, subtask)
         # load data of this subtask
         df_data = load_data(config_wind)
+        print('Loaded dataframe is {} long'.format(len(df_data)))
         
         
 def load_data(config_wind: dict) -> pd.DataFrame:
@@ -49,6 +50,4 @@ def load_data(config_wind: dict) -> pd.DataFrame:
             pbar.update(1)
             
         
-    # placeholder
-    df_data = pd.DataFrame()
     return df_data
