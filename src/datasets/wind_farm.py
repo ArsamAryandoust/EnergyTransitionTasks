@@ -97,8 +97,8 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     ###
     
     # merge
-    df_data = pd.merge(df_data, df_locations, on='TurbID', how='left', left_index=True)
-    df_test = pd.merge(df_test, df_locations, on='TurbID', how='left', left_index=True)
+    df_data = pd.merge(df_data, df_locations, on='TurbID', how='left')
+    df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
     df_data.drop(columns=['TurbID'], inplace=True)
     df_test.drop(columns=['TurbID'], inplace=True)
     # free up memory
