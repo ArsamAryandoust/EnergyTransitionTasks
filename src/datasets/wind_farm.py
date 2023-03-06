@@ -39,9 +39,9 @@ def load_data(config_wind: dict) -> pd.DataFrame:
         for in_filename, out_filename in zip(list_of_files_in, list_of_files_out):
             # set paths and load data
             path = config_wind['path_to_data_raw_infile_folder'] + in_filename
-            df_infile = pd.dataframe(path)
+            df_infile = pd.read_csv(path)
             path = config_wind['path_to_data_raw_outfile_folder'] + out_filename
-            df_outfile = pd.dataframe(path)
+            df_outfile = pd.read_csv(path)
             # concatenate dataframes
             df_data = pd.concat([df_data, df_infile, df_outfile], 
                 ignore_index=True)
