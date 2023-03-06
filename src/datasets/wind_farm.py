@@ -15,11 +15,10 @@ def process_all_datasets(config: dict):
         # load data of this subtask
         df_data, df_locations = load_data(config_wind)
         # Split the loaded dataframe into training, validation and testing
-        split_train_val_test(config_wind, df_data)
+        split_train_val_test(config_wind, df_data, df_locations)
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
     """
-    
     """    
     print('\nLoading data for Wind Farm task!')
     df_locations = pd.read_csv(config_wind['path_to_turb_loc_file'])
@@ -32,7 +31,6 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             config_wind['path_to_data_raw_infile_folder'])
         list_of_files_out = os.listdir(
             config_wind['path_to_data_raw_outfile_folder'])
-        
         # declare empty dataframe data
         df_data = pd.DataFrame()                 
         # create progress bar
@@ -49,6 +47,13 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
                 ignore_index=True)
             #update progress bar
             pbar.update(1)
-            
-        
     return df_data, df_locations
+    
+def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
+    df_locations: pd.DataFrame):
+    """
+    """
+    pass
+    
+    
+    
