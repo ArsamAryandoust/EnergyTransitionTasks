@@ -14,18 +14,21 @@ def process_all_datasets(config: dict):
         config_wind = config_WF(config, subtask)
         # load data of this subtask
         df_data, df_locations = load_data(config_wind)
+        # expand timestamp
+        df_data = expand_timestamp(df_data)
         # Split the loaded dataframe into training, validation and testing
         split_train_val_test(config_wind, df_data, df_locations)
+        
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
     """
     """    
     print('\nLoading data for Wind Farm task!')
     df_locations = pd.read_csv(config_wind['path_to_turb_loc_file'])
-    if config_wind['subtask'] == 'compete_train':
+    if config_wind['subtask'] == 'days_245':
         # all data is in single file
         df_data = pd.read_csv(config_wind['path_to_data_raw_file'])
-    elif config_wind['subtask'] == 'compete_test':
+    elif config_wind['subtask'] == 'days_180':
         # get list of filenames for input and output of challenge
         list_of_files_in = os.listdir(
             config_wind['path_to_data_raw_infile_folder'])
@@ -48,15 +51,35 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             #update progress bar
             pbar.update(1)
     return df_data, df_locations
-    
+
+
+def expand_timestamp(df_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    """
+    df_data['hour'] = df['Tmstamp'].dt.hour
+    df_data['minute'] = df['Tmstamp'].dt.minute
+    df_data.drop(columns=['Tmstamp'], inplace=True)
+    return df_data
+        
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     df_locations: pd.DataFrame):
     """
     """
     pass
     
+    """
+    temporal_ood = config_wind['temporal_ood']
+    # split of temporal ood
+    df_test = df_data.loc[
+        (df_data['month'].isin(temporal_ood['month_list']))
+        | (df_dataset['day'].isin(temporal_ood['day_list']))
+        | (df_dataset['hour'].isin(temporal_ood['hour_list']))
+        | (df_dataset['quarter_hour'].isin(temporal_ood['quarter_hour_list']))]
+    
+    """
     
     # split train and test here
+    
     
     # augment training data here
     # save and delete
