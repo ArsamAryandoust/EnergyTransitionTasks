@@ -65,11 +65,11 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    print(df_data.columns)
+    #print(df_data.columns)
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     # set number of maximum days
-    n_days = df_data['Days'].max()
+    n_days = df_data['Day'].max()
     # create a zero values array in the maximum size it can fill given no sparsity
     values_array = np.zeros((len(turbine_list) * n_days * 24 * 6 
         - config_wind['historic_window'] - config_wind['prediction_window'],
@@ -89,7 +89,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
             len(df_turbine)-config_wind['prediction_window']):
             # set spatial and temporal values
             values_array[data_counter, 0] = turbine_id
-            values_array[data_counter, 1] = df_turbine['Days'][i]
+            values_array[data_counter, 1] = df_turbine['Day'][i]
             values_array[data_counter, 2] = df_turbine['hour'][i]
             values_array[data_counter, 3] = df_turbine['minute'][i]
             col_counter = 4
