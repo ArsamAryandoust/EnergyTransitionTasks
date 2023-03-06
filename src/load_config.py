@@ -134,7 +134,7 @@ def config_WF(config: dict, subtask: str) -> dict:
     # extend the day list by entire block that is sampled
     days_test = []
     for start_day in day_start_list:
-        for day in range(start_day, start_day+block_size)
+        for day in range(start_day, start_day+block_size):
             days_test.append(day)
     random.seed(config['general']['seed'])
     hours_test = random.sample(range(1, 25), 
