@@ -1,4 +1,4 @@
-<img src="https://img.shields.io/badge/BuildingElectricity-ready-blue"/> <img src="https://img.shields.io/badge/WindFarm-ready-blue"/> <img src="https://img.shields.io/badge/GenerationScheduling-preparing-red"/> <img src="https://img.shields.io/badge/UberMovement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/ClimateDownscaling-preparing-red"/> <img src="https://img.shields.io/badge/OpenCatalyst-preparing-red"/>
+<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Generation_Scheduling-preparing-red"/> <img src="https://img.shields.io/badge/Uber_Movement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/>
 
 # AI applications and datasets for enhancing the global energy transition
 
