@@ -11,7 +11,6 @@ def process_all_datasets(config: dict):
     """
     Processes all datasets for Building Electricity task.
     """
-    
     print("Processing Building Electricity dataset.")
     
     # iterated over all subtasks
@@ -325,7 +324,7 @@ def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
     
     # remove validation data split from testing dataset
     df_testing = df_testing.drop(df_validation.index)
-     
+    
     # calculate and analyze dataset properties
     n_train, n_val, n_test = len(df_training), len(df_validation), len(df_testing)
     n_total = n_train + n_val + n_test
