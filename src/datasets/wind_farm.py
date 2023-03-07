@@ -31,7 +31,7 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
     Loads the SCADA data and the location data of each turbine from csv files,
     and returns these.
     """    
-    print('\nLoading data for {}!'.format(config_wind['subtask']))
+    print('\nLoading data for {}.'.format(config_wind['subtask']))
     df_locations = pd.read_csv(config_wind['path_to_turb_loc_file'])
     if config_wind['subtask'] == 'days_245':
         # all data is in single file
@@ -119,7 +119,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         pbar.update(1)
     
     # create column name
-    col_name_list = ['TrbID', 'day', 'hour', 'minute']
+    col_name_list = ['TurbID', 'day', 'hour', 'minute']
     new_fseries_name_list = ['wind_speed', 'wind_direction', 'temperature_out',
     'temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
     'blade3_angle', 'reactive_power', 'active_power']

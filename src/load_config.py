@@ -43,16 +43,16 @@ def config_BE(config: dict, subtask: str) -> dict:
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    month_list = random.sample(range(1,13), 
+    ood_months = random.sample(range(1,13), 
         math.floor(12 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    day_list = random.sample(range(1, 32),
+    ood_days = random.sample(range(1, 32),
         math.floor(31 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    hour_list = random.sample(range(24),
+    ood_hours = random.sample(range(24),
         math.floor(24 * config_building['temporal_test_split']))
     random.seed(config['general']['seed'])
-    quarter_hour_list = random.sample([0, 15, 30, 45],
+    ood_quarter_hours = random.sample([0, 15, 30, 45],
         math.floor(4 * config_building['temporal_test_split']))
     
     # out of distribution test splitting rules in space
@@ -60,20 +60,19 @@ def config_BE(config: dict, subtask: str) -> dict:
         n_buildings = 92
     elif subtask == 'buildings_451':
         n_buildings = 459 # ids go from 1-459, missing IDs hence 451 buildings
-        
     random.seed(config['general']['seed'])
-    building_id_list = random.sample(range(1, n_buildings+1), 
+    ood_building_ids = random.sample(range(1, n_buildings+1), 
         math.floor(n_buildings * config_building['spatial_test_split']))
     
     # dictionary saving rules
     config_building['temporal_ood'] = {
-        'month_list': month_list,
-        'day_list': day_list,
-        'hour_list': hour_list,
-        'quarter_hour_list': quarter_hour_list}
+        'ood_months': ood_months,
+        'ood_days': ood_days,
+        'ood_hours': ood_hours,
+        'ood_quarter_hours': ood_quarter_hours}
         
     config_building['spatial_ood'] = {
-        'building_id_list': building_id_list}
+        'ood_building_ids': ood_building_ids}
  
     # create directory structure for saving results
     if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
