@@ -185,8 +185,7 @@ def process_meteo_and_load_profiles(config_building: dict,
                 meteo_dict[meteo_name] = meteo_values
             # get iterated load profile data
             load_profile = building_load[
-                i:(i+config_building['prediction_window'])
-            ].values
+                i:(i+config_building['prediction_window'])].values
             # add features to values_array. Ensures same order as new_df_columns.
             for index_col, entry_name in enumerate(new_df_columns_base):
                 command = 'values_array[datapoint_counter,index_col]={}'.format(
