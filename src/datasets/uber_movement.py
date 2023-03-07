@@ -284,7 +284,7 @@ def transform_col_names(col_list: list, name_base: str) -> list:
     new_col_list = [name_base + '_' + str(entry) for entry in col_list]
     return new_col_list
     
-
+    
 def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame, 
     pd.DataFrame, int, int, int):
     """
@@ -328,8 +328,8 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
     return_values = (df_train, df_val, df_test, train_file_count, val_file_count, 
         test_file_count)
     return return_values   
-        
-        
+    
+    
 def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
     """ 
     Splits and saves datasets according to configuration rules.
