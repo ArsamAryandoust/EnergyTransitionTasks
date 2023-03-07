@@ -284,7 +284,7 @@ def transform_col_names(col_list: list, name_base: str) -> list:
     new_col_list = [name_base + '_' + str(entry) for entry in col_list]
     return new_col_list
     
-
+    
 def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame, 
     pd.DataFrame, int, int, int):
     """
@@ -328,8 +328,8 @@ def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame,
     return_values = (df_train, df_val, df_test, train_file_count, val_file_count, 
         test_file_count)
     return return_values   
-        
-        
+    
+    
 def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
     """ 
     Splits and saves datasets according to configuration rules.
@@ -343,7 +343,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         # get city zone shifting factor for current city
         shift_factor_add = city_zone_shift_dict[city]
         # check if city is in testing city list
-        if city in config_uber['spatial_ood']['list_of_cities_test']:
+        if city in config_uber['spatial_ood']['ood_cities']:
             testing_city = True
         else:
             testing_city = False
@@ -360,8 +360,8 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
             else:
                 testing_year = False
             # check if testing quarter of year
-            if df_csv_dict['quarter_of_year'] == (
-                config_uber['temporal_dict']['quarter_of_year']):
+            if df_csv_dict['quarter_of_year'] in (
+                config_uber['temporal_ood']['ood_quarters_of_year']):
                 testing_quarter = True
             else:
                 testing_quarter = False
@@ -404,7 +404,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 # extract the rows from dataframe with matching hours of day for test
                 df_test_hours_of_day = df_augmented.loc[
                     df_augmented['hour_of_day'].isin(
-                        config_uber['temporal_dict']['hours_of_day'])]
+                        config_uber['temporal_ood']['ood_hours'])]
                 # set the remaining rows for training and validation
                 df_augmented = df_augmented.drop(df_test_hours_of_day.index)
                 # append to test dataframe
@@ -419,7 +419,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 gc.collect()
             # this condition guarantees validation splits at good moments
             if (len(df_test) * (1 - config_uber['val_test_split'])
-                > config_uber['datapoints_per_file']):
+                > config_uber['data_per_file']):
                 # split off validation data from ood testing data
                 df_val_append = df_test.sample(
                     frac=config_uber['val_test_split'], 
@@ -445,11 +445,11 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
             # update progress bar
             pbar.update(1)
     ### Tell us the ratios that result from our splitting rules
-    n_train = (train_file_count * config_uber['datapoints_per_file'] 
+    n_train = (train_file_count * config_uber['data_per_file'] 
         + len(df_train))
-    n_val = (val_file_count * config_uber['datapoints_per_file'] 
+    n_val = (val_file_count * config_uber['data_per_file'] 
         + len(df_val))
-    n_test = (test_file_count * config_uber['datapoints_per_file'] 
+    n_test = (test_file_count * config_uber['data_per_file'] 
         + len(df_test))
     n_total = n_train + n_val + n_test
     print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
@@ -525,17 +525,17 @@ def save_chunk(config_uber: dict, df: pd.DataFrame, chunk_counter: int,
     """ 
     Save a chunk of data and return remaining with chunk counter 
     """
-    while (len(df) > config_uber['datapoints_per_file'] or last_iteration):
+    while (len(df) > config_uber['data_per_file'] or last_iteration):
         # create path to saving
         path_to_saving = saving_path + filename + '_{}.csv'.format(chunk_counter)
         # shuffle dataframe
         df = df.sample(frac=1, random_state=config_uber['seed'])
         # save chunk
         if len(df) > 0:
-            df.iloc[:config_uber['datapoints_per_file']].to_csv(path_to_saving, 
+            df.iloc[:config_uber['data_per_file']].to_csv(path_to_saving, 
                 index=False)
         # delete saved chunk
-        df = df[config_uber['datapoints_per_file']:]
+        df = df[config_uber['data_per_file']:]
         # Must be set to exit loop on last iteration
         last_iteration = False
         # increment chunk counter 

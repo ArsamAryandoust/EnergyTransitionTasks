@@ -185,8 +185,7 @@ def process_meteo_and_load_profiles(config_building: dict,
                 meteo_dict[meteo_name] = meteo_values
             # get iterated load profile data
             load_profile = building_load[
-                i:(i+config_building['prediction_window'])
-            ].values
+                i:(i+config_building['prediction_window'])].values
             # add features to values_array. Ensures same order as new_df_columns.
             for index_col, entry_name in enumerate(new_df_columns_base):
                 command = 'values_array[datapoint_counter,index_col]={}'.format(
@@ -207,6 +206,7 @@ def process_meteo_and_load_profiles(config_building: dict,
         pbar.update(1) 
     # create dataframe from filled matrix values
     df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
+    # drop zero entries
     # free up memory
     del values_array
     gc.collect()
