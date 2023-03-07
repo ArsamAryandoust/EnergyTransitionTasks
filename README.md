@@ -5,6 +5,7 @@
 ### Datasets
 
 * [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
+* [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
 * [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
 * [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
