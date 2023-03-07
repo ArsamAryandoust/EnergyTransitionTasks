@@ -66,7 +66,6 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
-    #print(df_data.columns)
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     # set number of maximum days
@@ -89,7 +88,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
             ignore_index=True)
         # iterate over entries of df_turbine
         for i in range(config_wind['historic_window'], 
-            len(df_turbine)-config_wind['prediction_window']):
+            len(df_turbine) - config_wind['prediction_window']):
             # set spatial and temporal values
             values_array[data_counter, 0] = turbine_id
             values_array[data_counter, 1] = df_turbine['Day'][i]

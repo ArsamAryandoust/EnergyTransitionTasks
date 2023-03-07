@@ -221,8 +221,7 @@ def process_meteo_and_load_profiles(config_building: dict,
         
         # iterate over all time stamps in prediction window steps
         for i in range(config_building['historic_window'], 
-            len(time_stamps) 
-            - config_building['prediction_window']):
+            len(time_stamps) - config_building['prediction_window']):
             # get time stamp
             time = time_stamps[i]
             
