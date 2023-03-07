@@ -103,7 +103,7 @@ def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
     Uses the city to file mapping of city to load the geo-json file and returns
     it as a dataframe.
     """
-    filename = config_uber['json']
+    filename = config_uber['json'][city]
     path_to_json = config_uber['path_to_data_raw'] + city + '/' + filename
     df_geojson = pd.read_json(path_to_json)
     return df_geojson
@@ -476,7 +476,7 @@ def import_csvdata(config_uber: dict, city: str, shift_factor_add: int):
     # get the files dictionary and create an empty list to fill dataframes of csv
     df_csv_dict_list = []
     # iterate over all csv files of current city
-    for csv_file_dict in config_uber['csv_file_dict_list']:
+    for csv_file_dict in config_uber['csv_file_dict_list'][city]:
         # set the path to currently iterated csv ile of city
         path_to_csv = (config_uber['path_to_data_raw'] + city + '/' 
             + csv_file_dict['filename'])
