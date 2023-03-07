@@ -343,7 +343,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         # get city zone shifting factor for current city
         shift_factor_add = city_zone_shift_dict[city]
         # check if city is in testing city list
-        if city in config_uber['spatial_ood']['list_of_cities_test']:
+        if city in config_uber['spatial_ood']['ood_cities']:
             testing_city = True
         else:
             testing_city = False
@@ -360,8 +360,8 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
             else:
                 testing_year = False
             # check if testing quarter of year
-            if df_csv_dict['quarter_of_year'] == (
-                config_uber['temporal_dict']['quarter_of_year']):
+            if df_csv_dict['quarter_of_year'] in (
+                config_uber['temporal_dict']['ood_quarters_of_year']):
                 testing_quarter = True
             else:
                 testing_quarter = False
