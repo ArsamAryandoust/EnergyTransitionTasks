@@ -221,8 +221,7 @@ def process_meteo_and_load_profiles(config_building: dict,
         
         # iterate over all time stamps in prediction window steps
         for i in range(config_building['historic_window'], 
-            len(time_stamps) 
-            - config_building['prediction_window']):
+            len(time_stamps) - config_building['prediction_window']):
             # get time stamp
             time = time_stamps[i]
             
@@ -349,12 +348,16 @@ def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
         )
     )
     
+    # small test if all indexes dropped correctly.
+    if n_data_total != n_total:
+        print("Error! Number of available data is {}".format(n_data_total),
+            "and does not match number of resulting data {}.".format(n_total))
+            
     # save results in chunks
     save_in_chunks(config_building,
         config_building['path_to_data_train'] + 'training_data', df_training)
     save_in_chunks(config_building,
-        config_building['path_to_data_val'] + 'validation_data', 
-        df_validation)
+        config_building['path_to_data_val'] + 'validation_data', df_validation)
     save_in_chunks(config_building,
         config_building['path_to_data_test'] + 'testing_data', df_testing)
 
@@ -364,13 +367,12 @@ def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
     Shuffles dataframe, then saves it in chunks with number of datapoints per 
     file defined by config such that each file takes less than about 1 GB size.
     """
-    
     df = df.sample(frac=1, random_state=config_building['seed'])
     for file_counter in range(1, 312321321312):
         path_to_saving = saving_path + '_{}.csv'.format(file_counter)
-        df.iloc[:config_building['datapoints_per_file']].to_csv(
+        df.iloc[:config_building['data_per_file']].to_csv(
             path_to_saving, index=False)
-        df = df[config_building['datapoints_per_file']:]
+        df = df[config_building['data_per_file']:]
         if len(df) == 0:
             break
             
