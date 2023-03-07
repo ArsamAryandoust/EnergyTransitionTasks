@@ -213,7 +213,7 @@ def config_UM(config: dict, subtask: str) -> dict:
     config_uber['temporal_ood'] = {
         'ood_years': ood_years,
         'ood_quarters_of_year': ood_quarters_of_year,
-        'hours_of_day': ood_hours}
+        'ood_hours': ood_hours}
     config_uber['spatial_ood'] = {
             'ood_cities': ood_cities}
     
