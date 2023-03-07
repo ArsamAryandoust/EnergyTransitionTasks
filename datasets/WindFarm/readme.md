@@ -1,4 +1,4 @@
-# ClimART
+# Wind Farm
 
 Zhou et al. present a prediction challenge, in which the active power generation of a wind farm has to be predicted for two days into the feature, given a series of standard historic values of the farm measured by a supervisory control and data acquisition (SCADA) tool at a given time and the relative geographic position of all turbines in the farm to one another [1]. Wind power naturally has high variability, and knowing the accurate generation of wind farms as well as their expected uncertainties is one of the biggest challenges for integrating high shares of these while guaranteeing stable power system dispatch. We do not identify any risks for the energy transition when enhancing solutions to this task.
 
