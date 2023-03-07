@@ -23,7 +23,7 @@ def process_all_datasets(config: dict):
         # expand data with sliding time window
         df_data = create_datapoints(config_wind, df_data)
         # split the loaded dataframe into training, validation and testing
-        #split_train_val_test(config_wind, df_data, df_locations)
+        split_train_val_test(config_wind, df_data, df_locations)
         
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
