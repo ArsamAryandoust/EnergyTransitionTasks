@@ -103,8 +103,7 @@ def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
     Uses the city to file mapping of city to load the geo-json file and returns
     it as a dataframe.
     """
-    files_dict = config_uber['city_files_mapping'][city]
-    filename = files_dict['json']
+    filename = config_uber['json']
     path_to_json = config_uber['path_to_data_raw'] + city + '/' + filename
     df_geojson = pd.read_json(path_to_json)
     return df_geojson
@@ -344,7 +343,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         # get city zone shifting factor for current city
         shift_factor_add = city_zone_shift_dict[city]
         # check if city is in testing city list
-        if city in (config_uber['spatial_dict']['list_of_cities_test']):
+        if city in config_uber['spatial_ood']['list_of_cities_test']:
             testing_city = True
         else:
             testing_city = False
@@ -356,7 +355,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
         first_iteration = True
         for df_csv_dict in df_csv_dict_list:
             # check if testing year
-            if df_csv_dict['year'] == (config_uber['temporal_dict']['year']):
+            if df_csv_dict['year'] in config_uber['temporal_ood']['ood_years']:
                 testing_year = True
             else:
                 testing_year = False
@@ -475,10 +474,9 @@ def import_csvdata(config_uber: dict, city: str, shift_factor_add: int):
     Imports the Uber Movement data for a passed city 
     """
     # get the files dictionary and create an empty list to fill dataframes of csv
-    files_dict = config_uber['city_files_mapping'][city]
     df_csv_dict_list = []
     # iterate over all csv files of current city
-    for csv_file_dict in files_dict['csv_file_dict_list']:
+    for csv_file_dict in config_uber['csv_file_dict_list']:
         # set the path to currently iterated csv ile of city
         path_to_csv = (config_uber['path_to_data_raw'] + city + '/' 
             + csv_file_dict['filename'])
