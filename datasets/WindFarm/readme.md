@@ -1,0 +1,9 @@
+# ClimART
+
+Zhou et al. present a prediction challenge, in which the active power generation of a wind farm has to be predicted for two days into the feature, given a series of standard historic values of the farm measured by a supervisory control and data acquisition (SCADA) tool at a given time and the relative geographic position of all turbines in the farm to one another [1]. Wind power naturally has high variability, and knowing the accurate generation of wind farms as well as their expected uncertainties is one of the biggest challenges for integrating high shares of these while guaranteeing stable power system dispatch. We do not identify any risks for the energy transition when enhancing solutions to this task.
+
+The authors publish SCADA data of a wind farm with 134 equal wind turbines for 245 and 180 days under an Apache-2.0 license (\url{https://www.apache.org/licenses/LICENSE-2.0}) on a Baidu challenge website (\url{https://aistudio.baidu.com/aistudio/competition/detail/152/0/introduction}). The original application comes with no sub-tasks. Here, we split the task into data published for training, which we refer to as the \emph{days-245} sub-task and data that was used for hidden tests of the competition and revealed later, which we refer to as the \emph{days-183} sub-task, because the authors use the same day counters for these without revealing in what temporal relationship data points stand to each other across the two datasets. We split the continuous time series of measured data from the SCADA system into data points consisting of a past time series of all values (features) and the future time series of active power generation of a single turbine (labels).
+
+
+### Citation:
+[1] 6] Zhou, J. et al. SDWPF: A Dataset for Spatial Dynamic Wind Power Forecasting Challenge at KDD Cup 2022. Preprint at https://arxiv.org/pdf/2208.04360.pdf (2022).
