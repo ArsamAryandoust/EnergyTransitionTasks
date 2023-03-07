@@ -14,7 +14,7 @@ building_electricity:
     temporal_test_split: 0.15
     spatial_test_split: 0.2
     val_test_split: 0.2
-    datapoints_per_file: 150_000
+    data_per_file: 150_000
     
     
 wind_farm:
@@ -27,7 +27,7 @@ wind_farm:
     spatial_test_split: 0.2
     val_test_split: 0.2
     subsample_frac: 0.1
-    datapoints_per_file: 60_000
+    data_per_file: 60_000
     
     
 uber_movement:
@@ -36,7 +36,7 @@ uber_movement:
     spatial_test_split: 0.2
     val_test_split: 0.18
     subsample_frac: 1
-    datapoints_per_file: 20_000_000
+    data_per_file: 20_000_000
     
     
 climart:
@@ -45,8 +45,8 @@ climart:
     spatial_test_split: 0.35
     val_test_split: 0.2
     subsample_frac: 1
-    datapoints_per_file_pristine: 80_000
-    datapoints_per_file_clearsky: 35_000
+    data_per_file_pristine: 80_000
+    data_per_file_clearsky: 35_000
     
     
 open_catalst:
