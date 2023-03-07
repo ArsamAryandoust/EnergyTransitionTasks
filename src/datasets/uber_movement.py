@@ -361,7 +361,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 testing_year = False
             # check if testing quarter of year
             if df_csv_dict['quarter_of_year'] in (
-                config_uber['temporal_dict']['ood_quarters_of_year']):
+                config_uber['temporal_ood']['ood_quarters_of_year']):
                 testing_quarter = True
             else:
                 testing_quarter = False
@@ -404,7 +404,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 # extract the rows from dataframe with matching hours of day for test
                 df_test_hours_of_day = df_augmented.loc[
                     df_augmented['hour_of_day'].isin(
-                        config_uber['temporal_dict']['ood_hours'])]
+                        config_uber['temporal_ood']['ood_hours'])]
                 # set the remaining rows for training and validation
                 df_augmented = df_augmented.drop(df_test_hours_of_day.index)
                 # append to test dataframe
