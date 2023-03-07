@@ -65,14 +65,10 @@ def config_BE(config: dict, subtask: str) -> dict:
         math.floor(n_buildings * config_building['spatial_test_split']))
     
     # dictionary saving rules
-    config_building['temporal_ood'] = {
-        'ood_months': ood_months,
-        'ood_days': ood_days,
-        'ood_hours': ood_hours,
+    config_building['temporal_ood'] = {'ood_months': ood_months,
+        'ood_days': ood_days, 'ood_hours': ood_hours,
         'ood_quarter_hours': ood_quarter_hours}
-        
-    config_building['spatial_ood'] = {
-        'ood_building_ids': ood_building_ids}
+    config_building['spatial_ood'] = {'ood_building_ids': ood_building_ids}
  
     # create directory structure for saving results
     if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
@@ -131,30 +127,27 @@ def config_WF(config: dict, subtask: str) -> dict:
     day_start_list = random.sample(range(1, n_days, block_size), 
         math.ceil(n_days * config_wind['temporal_test_split']/block_size))
     # extend the day list by entire block that is sampled
-    days_test = []
+    ood_days = []
     for start_day in day_start_list:
         for day in range(start_day, start_day+block_size):
-            days_test.append(day)
+            ood_days.append(day)
     random.seed(config['general']['seed'])
-    hours_test = random.sample(range(24), 
+    ood_hours = random.sample(range(24), 
         math.floor(24 * config_wind['temporal_test_split']))
     random.seed(config['general']['seed'])
-    minutes_test = random.sample(range(0, 60, 10), 
+    ood_minutes = random.sample(range(0, 60, 10), 
         math.floor(6 * config_wind['temporal_test_split']))
     
     # out of distribution test splitting rules in space
     n_turbines = 134
     random.seed(config['general']['seed'])
-    turbines_test = random.sample(range(1, n_turbines), 
+    ood_turbine_ids = random.sample(range(1, n_turbines), 
         math.floor(n_turbines * config_wind['spatial_test_split']))
     
     # testing dictionaries
-    config_wind['temporal_ood'] = {
-        'days_test': days_test,
-        'hours_test': hours_test,
-        'minutes_test': minutes_test}
-    config_wind['spatial_ood'] = {
-        'turbines_test': turbines_test}
+    config_wind['temporal_ood'] = {'ood_days': ood_days, 'ood_hours': ood_hours,
+        'ood_minutes': ood_minutes}
+    config_wind['spatial_ood'] = {'ood_turbine_ids': ood_turbine_ids}
     
     # create directory structure for saving results
     if subtask == 'days_245' and os.path.isdir(config_wind['path_to_data']):
