@@ -70,6 +70,7 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
     """
+     print('\nCreating data points for {}!'.format(config_wind['subtask']))
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     # set number of maximum days
@@ -144,9 +145,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     # get total number of data points 
     n_data_total = len(df_data)
     
-    ###
     # Split training and ood testing
-    ###
     temporal_ood = config_wind['temporal_ood']
     # split of temporal ood
     df_test = df_data.loc[
@@ -168,9 +167,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     del df_spatial_test
     gc.collect()
     
-    ###
     # Augment dataframes with location data
-    ###
     df_data = pd.merge(df_data, df_locations, on='TurbID', how='left')
     df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
     df_data.drop(columns=['TurbID'], inplace=True)
@@ -179,17 +176,13 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     del df_locations
     gc.collect()
     
-    ###
     # Split ood validation and testing
-    ###
     df_val = df_test.sample(frac=config_wind['val_test_split'], 
         random_state=config_wind['seed'])
     # remove validation data split from testing dataset
     df_test.drop(df_val.index, inplace=True)
     
-    ###
     # Calculate and analyze dataset properties
-    ###
     n_train, n_val, n_test = len(df_data), len(df_val), len(df_test)
     n_total = n_train + n_val + n_test
     print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
