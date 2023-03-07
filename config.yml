@@ -19,15 +19,15 @@ building_electricity:
     
 wind_farm:
     subtask_list: ['days_245', 'days_183']
-    prediction_window: 24 #288
-    historic_window: 24 #288
+    prediction_window: 288
+    historic_window: 288
     fseries_name_list: ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2',
     'Pab3', 'Prtv', 'Patv']
     temporal_test_split: 0.25
     spatial_test_split: 0.2
     val_test_split: 0.2
-    subsample_frac: 0.01
-    data_per_file: 2_0000_000 #60_000
+    subsample_frac: 1
+    data_per_file: 60_000
     
     
 uber_movement:
@@ -52,6 +52,5 @@ climart:
 open_catalst:
     chunk_size_opencatalyst: 150_000
     subsample_opencatalyst: 0.2
-
-
-
+    
+    
