@@ -60,8 +60,12 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             df_data.drop_duplicates(inplace=True, ignore_index=True)
             #update progress bar
             pbar.update(1)
+            
+    # subsample
+    df_data = df_data.sample(frac=config_wind['subsample_frac'], 
+        random_state=config_wind['seed'])
     return df_data, df_locations
-
+    
     
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -118,10 +122,13 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     new_fseries_name_list = ['wind_speed', 'wind_direction', 'temperature_out',
     'temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
     'blade3_angle', 'reactive_power', 'active_power']
-    for i in range(config_wind['historic_window']+1):
+    for i in range(1, config_wind['historic_window']+1):
         for colname_base in new_fseries_name_list:
             colname = colname_base + '_{}'.format(i)
             col_name_list.append(colname)
+    for i in range(1, config_wind['prediction_window']+1):
+        colname = 'future_active_power_{}'.format(i)
+        col_name_list.append(colname)
     
     # create dataframe and overwrite old one
     df_data = pd.DataFrame(values_array, columns=col_name_list)      
