@@ -65,14 +65,10 @@ def config_BE(config: dict, subtask: str) -> dict:
         math.floor(n_buildings * config_building['spatial_test_split']))
     
     # dictionary saving rules
-    config_building['temporal_ood'] = {
-        'ood_months': ood_months,
-        'ood_days': ood_days,
-        'ood_hours': ood_hours,
+    config_building['temporal_ood'] = {'ood_months': ood_months,
+        'ood_days': ood_days, 'ood_hours': ood_hours,
         'ood_quarter_hours': ood_quarter_hours}
-        
-    config_building['spatial_ood'] = {
-        'ood_building_ids': ood_building_ids}
+    config_building['spatial_ood'] = {'ood_building_ids': ood_building_ids}
  
     # create directory structure for saving results
     if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
@@ -131,30 +127,27 @@ def config_WF(config: dict, subtask: str) -> dict:
     day_start_list = random.sample(range(1, n_days, block_size), 
         math.ceil(n_days * config_wind['temporal_test_split']/block_size))
     # extend the day list by entire block that is sampled
-    days_test = []
+    ood_days = []
     for start_day in day_start_list:
         for day in range(start_day, start_day+block_size):
-            days_test.append(day)
+            ood_days.append(day)
     random.seed(config['general']['seed'])
-    hours_test = random.sample(range(24), 
+    ood_hours = random.sample(range(24), 
         math.floor(24 * config_wind['temporal_test_split']))
     random.seed(config['general']['seed'])
-    minutes_test = random.sample(range(0, 60, 10), 
+    ood_minutes = random.sample(range(0, 60, 10), 
         math.floor(6 * config_wind['temporal_test_split']))
     
     # out of distribution test splitting rules in space
     n_turbines = 134
     random.seed(config['general']['seed'])
-    turbines_test = random.sample(range(1, n_turbines), 
+    ood_turbine_ids = random.sample(range(1, n_turbines), 
         math.floor(n_turbines * config_wind['spatial_test_split']))
     
     # testing dictionaries
-    config_wind['temporal_ood'] = {
-        'days_test': days_test,
-        'hours_test': hours_test,
-        'minutes_test': minutes_test}
-    config_wind['spatial_ood'] = {
-        'turbines_test': turbines_test}
+    config_wind['temporal_ood'] = {'ood_days': ood_days, 'ood_hours': ood_hours,
+        'ood_minutes': ood_minutes}
+    config_wind['spatial_ood'] = {'ood_turbine_ids': ood_turbine_ids}
     
     # create directory structure for saving results
     if subtask == 'days_245' and os.path.isdir(config_wind['path_to_data']):
@@ -203,31 +196,32 @@ def config_UM(config: dict, subtask: str) -> dict:
     
     # out of distribution test splitting rules in time
     random.seed(config['general']['seed'])
-    year_list = random.sample(range(2015,2021), 
+    ood_years = random.sample(range(2015,2021), 
         math.floor(5 * config_uber['temporal_test_split']))
-    quarter_of_year_list = random.sample(range(1,5), 
+    ood_quarters_of_year = random.sample(range(1,5), 
         math.floor(4 * config_uber['temporal_test_split']))
     random.seed(config['general']['seed'])
-    hours_of_day_list = random.sample(range(24), 
+    ood_hours = random.sample(range(24), 
         math.floor(24 * config_uber['temporal_test_split']))
     
     # out of distribution test splitting rules in space
     n_cities_test = round(config_uber['spatial_test_split'] * len(list_of_cities))
     random.seed(config['general']['seed'])
-    list_of_cities_test = random.sample(list_of_cities, n_cities_test)
+    ood_cities = random.sample(list_of_cities, n_cities_test)
     
     # dictionary saving rules
     config_uber['temporal_ood'] = {
-        'year': year_list,
-        'quarter_of_year': quarter_of_year_list,
-        'hours_of_day': hours_of_day_list}
+        'ood_years': ood_years,
+        'ood_quarters_of_year': ood_quarters_of_year,
+        'hours_of_day': ood_hours}
     config_uber['spatial_ood'] = {
-            'list_of_cities_test': list_of_cities_test}
+            'ood_cities': ood_cities}
     
     # Create city files mapping and city id mapping
     year_list = list(range(2015, 2021))
     quarter_list = ['-1-', '-2-', '-3-', '-4-']
-    config_uber['city_files_mapping'] = {}
+    config_uber['json'] = {}
+    config_uber['csv_file_dict_list'] = {}
     config_uber['city_id_mapping'] = {}
     for city_id, city in enumerate(list_of_cities):
         path_to_city = config_uber['path_to_data_raw'] + city + '/'
@@ -245,35 +239,26 @@ def config_UM(config: dict, subtask: str) -> dict:
                     daytype = 1
                 elif 'OnlyWeekends' in filename:
                     daytype = 0
-                
                 # determine year
                 for year in year_list:
                     if str(year) in filename:
                         break
-                        
                 # determine quarter of year
                 for quarter_of_year in quarter_list:
                     if quarter_of_year in filename:
                         quarter_of_year = int(quarter_of_year[1])
                         break
-                
                 # fill dictionary with desired values
                 csv_file_dict['daytype'] = daytype
                 csv_file_dict['year'] = year
                 csv_file_dict['quarter_of_year'] = quarter_of_year
                 csv_file_dict['filename'] = filename
-                
                 # append csv file dictionary to list
                 csv_file_dict_list.append(csv_file_dict)
                 
-        # create file name dictionary
-        file_dict = {
-            'json' : json,
-            'csv_file_dict_list': csv_file_dict_list
-        }
-        
         # save 
-        config_uber['city_files_mapping'][city] = file_dict
+        config_uber['json'][city] = json
+        config_uber['csv_file_dict_list'][city] = csv_file_dict_list
         config_uber['city_id_mapping'][city] = city_id
     
     # create directory structure for saving results
