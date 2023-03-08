@@ -74,7 +74,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     # get a list of all turbine IDs available in data
     turbine_list = list(set(df_data['TurbID']))
     # set number of maximum days
-    n_days = df_data['Day'].max()
+    n_days = len(set(df_data['Day']))
     # create a zero values array in the maximum size it can fill given no sparsity
     values_array = np.zeros((len(turbine_list) * n_days * 24 * 6 
         - config_wind['historic_window'] - config_wind['prediction_window'],
@@ -134,7 +134,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     # create dataframe and overwrite old one
     df_data = pd.DataFrame(values_array, columns=col_name_list)      
     # drop zero entries
-    df_data.loc[~(df_data==0).all(axis=1)]
+    df_data = df_data.loc[~(df_data==0).all(axis=1)]
     return df_data
     
     

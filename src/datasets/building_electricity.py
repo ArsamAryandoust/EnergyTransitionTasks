@@ -207,6 +207,7 @@ def process_meteo_and_load_profiles(config_building: dict,
     # create dataframe from filled matrix values
     df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
     # drop zero entries
+    df_data = df_data.loc[~(df_data==0).all(axis=1)]
     # free up memory
     del values_array
     gc.collect()
