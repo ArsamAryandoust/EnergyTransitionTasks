@@ -1,6 +1,6 @@
-<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Generation_Scheduling-preparing-red"/> <img src="https://img.shields.io/badge/Uber_Movement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/>
+<img src="https://img.shields.io/badge/Building_Electricity-preparing-red"/> <img src="https://img.shields.io/badge/Wind_Farm-preparing-red"/> <img src="https://img.shields.io/badge/Generation_Scheduling-preparing-red"/> <img src="https://img.shields.io/badge/Uber_Movement-preparing-red"/> <img src="https://img.shields.io/badge/ClimART-preparing-red"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/>
 
-# AI applications and datasets for enhancing the global energy transition
+# Machine learning tasks and datasets for enhancing the global energy transition
 
 ### Datasets
 
@@ -53,13 +53,14 @@ cd EnergyTransitionTasks
 ### Docker
 
 The easiest way to build and run a Docker container for processing data is with 
-the `build.sh` and `run.sh` scripts we provide. To do this, execute the following 
-commands:
+the `run.sh` script we provide. To do this, execute the following command:
 
 ```
-./build.sh
 ./run.sh
 ```
+
+Make sure to comment out the building commands inside `run.sh` after the first
+execution.
 
 
 ### Process data
@@ -73,16 +74,6 @@ python3 src/main.py --help
 For example, processing the Building Electricity dataset can be done with:
 ```
 python3 src/main.py -building_electricity
-```
-
-
-### Tests
-
-The easiest way to build and run Docker containers for integration and unit tests
-is through docker compose. To do this, simply execute the following commands:
-```
-docker-compose build
-docker-compose up
 ```
 
 
