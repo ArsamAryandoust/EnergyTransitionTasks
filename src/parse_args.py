@@ -25,6 +25,12 @@ def parse_arguments() -> argparse.Namespace:
         epilog="Thanks for working to tackle climate change!!!"
     )
     
+    # dataverse
+    parser.add_argument(
+        "-upload_proc_be", "-up_be",
+        help="Upload processed building electricity data."
+        action="store_true")
+
     # processing
     parser.add_argument(
         "-building_electricity", "-BE", "-be",
@@ -54,10 +60,14 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_args()
     
     # do some checks for validity of args
-    if not (args.building_electricity or args.wind_farm or args.uber_movement 
-        or args.climart or args.open_catalyst or args.shuffle_UM 
-        or args.shuffle_CA):
-        print("Must select at least one dataset to process or shuffle!")
-        exit(1)
+    if not (args.up_be):
+        print("No up- or download operation requested!\n")
+        if not (args.building_electricity or args.wind_farm 
+            or args.uber_movement or args.climart or args.open_catalyst 
+            or args.shuffle_UM or args.shuffle_CA):
+            print("Must select at least one dataset to process or shuffle!")
+            exit(1)
+    
 
+    
     return args
