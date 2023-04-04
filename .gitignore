@@ -1,2 +1,12 @@
 src/__pycache__
 src/datasets/__pycache__
+
+datasets/BuildingElectricity/data
+datasets/WindFarm/data
+datasets/GenerationScheduling/data
+datasets/UberMovement/data
+datasets/ClimART/data
+datasets/ClimateDownscaling/data
+datasets/OpenCatalyst/data
+datasets/Polianna/data
+
