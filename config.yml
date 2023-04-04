@@ -1,7 +1,14 @@
 general:
-    seed: 3
-    path_to_data: '../data/'
-    path_to_data_raw: '../data/raw/'
+  seed: 3
+  path_to_data: '../data/'
+  path_to_data_raw: '../data/raw/'
+
+dataverse:
+  path_to_token: '../../.aa_secrets/dataverse_token'
+  base_url: 'https://dataverse.harvard.edu'  
+  
+  BuildingElectricity_raw:
+    persistentId: 'doi:10.7910/DVN/IP26PQ'
 
 building_electricity:
     subtask_list: ['buildings_92', 'buildings_451']
