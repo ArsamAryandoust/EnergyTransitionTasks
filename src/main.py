@@ -1,7 +1,7 @@
 import yaml
 
 import parse_args
-import dataverse
+from dataverse import upload_dataset
 from datasets import building_electricity, wind_farm, uber_movement, climart
 from datasets import shuffle
 
@@ -18,6 +18,9 @@ if __name__ == "__main__":
     with open("config.yml", "r") as configfile:
         config = yaml.safe_load(configfile)
 
+    # do dataverse operations
+    if args.upload is not None:
+        upload_dataset.upload(config, args.upload)
 
     # do main data processing according to command line arguments passed
     if args.building_electricity:

@@ -6,8 +6,8 @@ def parse_arguments() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         prog="EnergyTransitionTasks",
-        description= """ Processes raw energy transition tasks datasets. We currently 
-        implement the processing of four datasets:
+        description= """ Processes raw energy transition tasks datasets. 
+        We currently implement the processing of four datasets:
         
         - Building Electricity
         - Wind Farm
@@ -24,6 +24,12 @@ def parse_arguments() -> argparse.Namespace:
         epilog="Thanks for working to tackle climate change!!!"
     )
     
+    # dataverse
+    parser.add_argument(
+        "-upload",
+        help="Pass the dataset name you want to upload to Harvard Dataverse!")
+    
+
     # processing
     parser.add_argument(
         "-building_electricity", "-BE", "-be",
@@ -53,14 +59,11 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_args()
     
     # do some checks for validity of args
-    if not args.upload_proc_be:
-        print("No up- or download operation requested!\n")
-        if not (args.building_electricity or args.wind_farm 
-            or args.uber_movement or args.climart or args.open_catalyst 
-            or args.shuffle_UM or args.shuffle_CA):
-            print("Must select at least one dataset to process or shuffle!")
-            exit(1)
-    
-
+    if args.upload is None:
+      if not (args.building_electricity or args.wind_farm 
+        or args.uber_movement or args.climart or args.open_catalyst 
+        or args.shuffle_UM or args.shuffle_CA):
+        print("Must select at least one dataset to process or shuffle!")
+        exit(1)
     
     return args
