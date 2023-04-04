@@ -1,8 +1,9 @@
 import yaml
 
 import parse_args
+import dataverse
 from datasets import building_electricity, wind_farm, uber_movement, climart
-from datasets import additional
+from datasets import shuffle
 
 if __name__ == "__main__":
     """
@@ -16,8 +17,9 @@ if __name__ == "__main__":
     # load config from yaml file
     with open("config.yml", "r") as configfile:
         config = yaml.safe_load(configfile)
-    
-    # do the processing according to command line arguments that were passed
+
+
+    # do main data processing according to command line arguments passed
     if args.building_electricity:
         building_electricity.process_all_datasets(config)
     if args.wind_farm:
@@ -28,15 +30,17 @@ if __name__ == "__main__":
         climart.process_all_datasets(config)
     if args.open_catalyst:
         print("Processing Open Catalyst dataset.")
+    
+
+    # do shuffling for chosen datasets
     if args.shuffle_UM:
         print("Shuffling processed Uber Movement data.")
         config['uber_movement']['seed'] = config['seed']
-        additional.shuffle_data_files(config['uber_movement'])
-        
+        shuffle.shuffle_data_files(config['uber_movement'])
     if args.shuffle_CA:
         print("Shuffling processed ClimArt data.")
         config['climart']['seed'] = config['seed']
-        additional.shuffle_data_files(config['climart'])
+        shuffle.shuffle_data_files(config['climart'])
     
     print("Successfully executed all instructions!")
 
