@@ -2,7 +2,19 @@
 
 # Machine learning tasks and datasets for enhancing the global energy transition
 
-### Datasets
+Artificial intelligence (AI) and its subfield of machine learning (ML) have a
+significant potential for enhancing technologies, policies and social processes
+that we urgently need for mitigating and adapting to climate change. Improving the
+design of AI and ML models for tackling the energy transition, however, requires
+knowledge about the characteristics of prediction tasks and datasets that are involved.
+The current literature lacks a collection of relevant prediction tasks and their
+datasets, as well as an analysis of their characteristics and relationships to each
+other. In this repository, we review the literature of prediction tasks that are
+relevant for enhancing the global energy transition and process a collection of
+public datasets into a single tabular data format (.csv) for these to simplify the
+design of new AI and ML models for solving them.
+
+## Datasets
 
 * [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
 * [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
@@ -13,22 +25,8 @@
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 * [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
 
-### Summary
- 
-Artificial intelligence (AI) and its subfield of machine learning (ML) have a 
-significant potential for enhancing technologies, policies and social processes 
-that we urgently need for mitigating and adapting to climate change. Improving the 
-design of AI and ML models for tackling the energy transition, however, requires 
-knowledge about the characteristics of prediction tasks and datasets that are involved. 
-The current literature lacks a collection of relevant prediction tasks and their 
-datasets, as well as an analysis of their characteristics and relationships to each 
-other. In this repository, we review the literature of prediction tasks that are 
-relevant for enhancing the global energy transition and process a collection of 
-public datasets into a single tabular data format (.csv) for these to simplify the 
-design of new AI and ML models for solving them.
 
-
-### Contributing
+## Contributing
 
 * If you have published or unpublished datasets that fit our purpose, your contribution
 is highly appreciated. For changes to code, please download this repository, create 
@@ -41,7 +39,7 @@ appreciated. For this, please go to the `Discussions` tab, create a `New discuss
 and give us your detailed feedback.
 
 
-### Download
+## Download
 
 Download this repository and a sample of each dataset to your home directory:
 
@@ -52,7 +50,7 @@ cd EnergyTransitionTasks
 ```
 
 
-### Docker
+## Run Docker
 
 The easiest way to build and run a Docker container for processing data is with 
 the `run.sh` script we provide. To do this, execute the following command:
@@ -62,10 +60,10 @@ the `run.sh` script we provide. To do this, execute the following command:
 ```
 
 Make sure to comment out the building commands inside `run.sh` after the first
-execution.
+execution, so you don't rebuild redundant containers.
 
 
-### Process data
+## Execute data processing
 
 All raw datasets can be processed using the `main.py` file inside the `src` folder.
 All available options can be found by executing the following command inside Docker:
@@ -73,7 +71,7 @@ All available options can be found by executing the following command inside Doc
 python3 src/main.py --help
 ```
 
-For example, processing the Building Electricity dataset can be done with:
+Example: Processing the Building Electricity dataset can be done with
 ```
 python3 src/main.py -building_electricity
 ```
