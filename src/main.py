@@ -17,11 +17,7 @@ if __name__ == "__main__":
     # load config from yaml file
     with open("config.yml", "r") as configfile:
         config = yaml.safe_load(configfile)
-   
 
-    # do the data processing
-    if args.upload_proc_be:
-        dataverse.upload_proc_be(config)
 
     # do main data processing according to command line arguments passed
     if args.building_electricity:
