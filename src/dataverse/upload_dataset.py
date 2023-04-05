@@ -34,7 +34,7 @@ def upload(config: dict, dataset_name: str):
 
   # upload all failed files
   for entry in upload_fail_record:
-    entry_path, entry_name = entry
+    entry_path, entry_name = entry[0], entry[1]
     save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
       base_path_len, upload_fail_record)
 
