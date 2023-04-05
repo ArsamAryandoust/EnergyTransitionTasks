@@ -9,6 +9,8 @@ dataverse:
   
   BuildingElectricity_raw:
     persistentId: 'doi:10.7910/DVN/T3OK7E'
+    saving_path: 'datasets/BuildingElectricity/raw/'
+   
 
 building_electricity:
     subtask_list: ['buildings_92', 'buildings_451']

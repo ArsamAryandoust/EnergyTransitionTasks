@@ -3,12 +3,12 @@ src/datasets/__pycache__
 src/dataverse/__pycache__
 
 .upload_records/
-datasets/BuildingElectricity/data
-datasets/WindFarm/data
-datasets/GenerationScheduling/data
-datasets/UberMovement/data
-datasets/ClimART/data
-datasets/ClimateDownscaling/data
-datasets/OpenCatalyst/data
-datasets/Polianna/data
+datasets/BuildingElectricity/raw
+datasets/WindFarm/raw
+datasets/GenerationScheduling/raw
+datasets/UberMovement/raw
+datasets/ClimART/raw
+datasets/ClimateDownscaling/raw
+datasets/OpenCatalyst/raw
+datasets/Polianna/raw
 

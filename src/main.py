@@ -1,13 +1,13 @@
 import yaml
 
 import parse_args
-from dataverse import upload_dataset
+from dataverse import upload_dataset, download_dataset
 from datasets import building_electricity, wind_farm, uber_movement, climart
 from datasets import shuffle
 
 if __name__ == "__main__":
     """
-    Parses the command line arguments and loads the configurations from config.yml
+    Parses command line arguments and loads the configurations from config.yml
     and then executes program accordingly.
     """
     
@@ -21,6 +21,8 @@ if __name__ == "__main__":
     # do dataverse operations
     if args.upload is not None:
         upload_dataset.upload(config, args.upload)
+    if args.download is not None:
+        download_dataset.download(config, args.download)
 
     # do main data processing according to command line arguments passed
     if args.building_electricity:
