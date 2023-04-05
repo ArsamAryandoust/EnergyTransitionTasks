@@ -35,8 +35,12 @@ def upload(config: dict, dataset_name: str):
   # upload all failed files
   for entry in upload_fail_record:
     entry_path, entry_name = entry[0], entry[1]
-    save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
-      base_path_len, upload_fail_record)
+    try:
+      save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
+        base_path_len)
+      upload_fail_record.remove(entry)
+    except:
+      print("Caution: Exception occurred on repeated upload attempt!")
 
   # save upload fail record as json
   upload_fail_record = json.dumps(dict(upload_fail_record))
@@ -54,21 +58,22 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
   """
   for entry in os.scandir(path_to_dir):
     if entry.is_file():
-      upload_fail_record = save_file(entry.name, entry.path, dataverse_server, 
-        persistentId, api_key, base_path_len, upload_fail_record)
+      save_file(entry.name, entry.path, dataverse_server, persistentId, api_key,
+        base_path_len)
     elif entry.is_dir():
       try: 
         upload_fail_record = recursive_call(entry.path, dataverse_server, 
           persistentId, api_key, base_path_len, upload_fail_record)
       except:
-        pass
+        print("Exception occurred!\n", entry_path)
+        upload_fail_record.append((entry_path, entry_name))
+
 
   return upload_fail_record
 
 
 def save_file(entry_name: str, entry_path: str, dataverse_server: str, 
-  persistentId: str, api_key: str, base_path_len: int, 
-  upload_fail_record: dict):
+  persistentId: str, api_key: str, base_path_len: int):
   """
   """
   if '.csv' in entry_name:
@@ -87,12 +92,5 @@ def save_file(entry_name: str, entry_path: str, dataverse_server: str,
       dataverse_server, persistentId, api_key
     )
   )
-  time.sleep(1)
-  try:
-    requests.post(url_persistent_id, data=payload, files=files)
-  except:
-    print(entry_name, entry_path, '\n')
-    upload_fail_record.append((entry_path, entry_name))
-
-  return upload_fail_record
+  requests.post(url_persistent_id, data=payload, files=files)
 
