@@ -2,6 +2,7 @@ src/__pycache__
 src/datasets/__pycache__
 src/dataverse/__pycache__
 
+.upload_records/
 datasets/BuildingElectricity/data
 datasets/WindFarm/data
 datasets/GenerationScheduling/data

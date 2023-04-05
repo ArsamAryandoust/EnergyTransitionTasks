@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import time
 
+
 def upload(config: dict, dataset_name: str):
   """
   """
@@ -24,12 +25,28 @@ def upload(config: dict, dataset_name: str):
   # get the path base length for shortening paths later
   base_path_len = len(path_to_data)
   
-  # load or set to empty a record of already uploaded files
+  # load or set to empty a record of failed upload files
   upload_fail_record = []
   
   # iterate over all files in dataset directory
   upload_fail_record = recursive_call(path_to_data, dataverse_server, 
     persistentId, api_key, base_path_len, upload_fail_record)
+
+  # upload all failed files
+  for entry in upload_fail_record:
+    entry_path, entry_name = entry
+    save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
+      base_path_len, upload_fail_record)
+
+  # save upload fail record as json
+  upload_fail_record = json.dumps(dict(upload_fail_record))
+  path_to_record = '.upload_records/'
+  if not os.path.isdir(path_to_record):
+    os.mkdir(path_to_record)
+  path_to_record += dataset_name + '.json'
+  with open(path_to_record, 'w') as write_file:
+    json.dump(upload_fail_record, write_file)
+
 
 def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str, 
   api_key: str, base_path_len: int, upload_fail_record: dict) -> dict:
@@ -37,23 +54,29 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
   """
   for entry in os.scandir(path_to_dir):
     if entry.is_file():
-      upload_fail_record = save_file(entry, dataverse_server, persistentId, api_key,        base_path_len, upload_fail_record)
-    elif entry.is_dir():
-      upload_fail_record = recursive_call(entry.path, dataverse_server, 
+      upload_fail_record = save_file(entry.name, entry.path, dataverse_server, 
         persistentId, api_key, base_path_len, upload_fail_record)
+    elif entry.is_dir():
+      try: 
+        upload_fail_record = recursive_call(entry.path, dataverse_server, 
+          persistentId, api_key, base_path_len, upload_fail_record)
+      except:
+        pass
 
   return upload_fail_record
 
-def save_file(entry: os.DirEntry, dataverse_server: str, persistentId: str, 
-  api_key: str, base_path_len: int, upload_fail_record: dict):
+
+def save_file(entry_name: str, entry_path: str, dataverse_server: str, 
+  persistentId: str, api_key: str, base_path_len: int, 
+  upload_fail_record: dict):
   """
   """
-  if '.csv' in entry.name:
-    file_content = pd.read_csv(entry.path).to_csv(index=False)
-  elif '.json' in entry.name:
-    file_content = json.dumps(json.load(entry.path))
-  files = {'file': (entry.name, file_content)}
-  path = entry.path[base_path_len:-len(entry.name)]
+  if '.csv' in entry_name:
+    file_content = pd.read_csv(entry_path).to_csv(index=False)
+  elif '.json' in entry_name:
+    file_content = json.dumps(json.load(entry_path))
+  files = {'file': (entry_name, file_content)}
+  path = entry_path[base_path_len:-len(entry_name)]
   params = {
     "tabIngest": "false",
     "directoryLabel": path
@@ -66,11 +89,10 @@ def save_file(entry: os.DirEntry, dataverse_server: str, persistentId: str,
   )
   time.sleep(1)
   try:
-    r = requests.post(url_persistent_id, data=payload, files=files)
-  except requests.exceptions.ConnectionError as e:
-    r = "No response"
-    print(entry.name)
-    print(entry.path)
-    upload_fail_record.append((entry.path, entry.name))
+    requests.post(url_persistent_id, data=payload, files=files)
+  except:
+    print(entry_name, entry_path, '\n')
+    upload_fail_record.append((entry_path, entry_name))
 
   return upload_fail_record
+

@@ -8,7 +8,7 @@ dataverse:
   base_url: 'https://dataverse.harvard.edu'  
   
   BuildingElectricity_raw:
-    persistentId: 'doi:10.7910/DVN/GIEQLD'
+    persistentId: 'doi:10.7910/DVN/W119KL'
 
 building_electricity:
     subtask_list: ['buildings_92', 'buildings_451']
