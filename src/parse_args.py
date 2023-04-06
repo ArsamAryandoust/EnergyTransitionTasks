@@ -27,8 +27,10 @@ def parse_arguments() -> argparse.Namespace:
     # dataverse
     parser.add_argument(
         "-upload",
-        help="Pass the dataset name you want to upload to Harvard Dataverse!")
-    
+        help="Pass dataset name you want to upload to Harvard Dataverse!")
+    parser.add_argument(
+        "-download",
+        help="Pass dataset name you want to download from Harvard Dataverse!")
 
     # processing
     parser.add_argument(
@@ -59,7 +61,7 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_args()
     
     # do some checks for validity of args
-    if args.upload is None:
+    if (args.upload is None and args.download is None):
       if not (args.building_electricity or args.wind_farm 
         or args.uber_movement or args.climart or args.open_catalyst 
         or args.shuffle_UM or args.shuffle_CA):
