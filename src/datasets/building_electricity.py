@@ -143,7 +143,7 @@ def process_meteo_and_load_profiles(config_building: dict,
   # decreases computational time significantly.
   values_array = np.zeros((len(building_id_list) * (
       len(time_stamps) - config_building['historic_window'] 
-      - config_building['prediction_window']),
+        - config_building['prediction_window']),
     (len(new_df_columns_base) + config_building['historic_window'] * (
       len(config_building['meteo_name_list'])) 
       + config_building['prediction_window'])))
