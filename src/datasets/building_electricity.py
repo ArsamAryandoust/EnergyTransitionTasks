@@ -22,12 +22,12 @@ def process_all_datasets(config: dict):
     # change building IDs here
     df_consumption, df_building_images = adjust_building_ids(
       df_consumption, df_building_images)
-    """
     # process building imagery
     process_building_imagery(config_building, df_building_images)
     # free up memory
     del df_building_images
     gc.collect()
+    """
     # process meteo data and load profiles
     df_dataset = process_meteo_and_load_profiles(config_building, 
       df_consumption, df_meteo_dict)
@@ -88,29 +88,29 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
     
 
 def process_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
-    """
-    Simply changes the column name of aerial imagery histograms of buildings
-    by adding the pre-fix 'building_' to IDs and saves file with new column names.
-    """
-    # get list of columns
-    columns_df_list = df_building_images.columns
-    # declare empty list to fill
-    new_columns_list = []
-    # iterate over all column names
-    for entry in columns_df_list:
-        # create new entry
-        new_entry = 'building_{}'.format(entry)
-        # append new entry to new column list
-        new_columns_list.append(new_entry)
-    # copy old dataframe 1 to 1    
-    df_building_images_new = df_building_images
-    # only replace its column names
-    df_building_images_new.columns = new_columns_list
-    # create saving path for building imagery
-    saving_path = (config_building['path_to_data_add']
-        + 'building_images_pixel_histograms_rgb.csv')
-    # save df_building_images_new
-    df_building_images_new.to_csv(saving_path, index=False)
+  """
+  Simply changes the column name of aerial imagery histograms of buildings
+  by adding the pre-fix 'building_' to IDs and saves file with new column names.
+  """
+  # get list of columns
+  columns_df_list = df_building_images.columns
+  # declare empty list to fill
+  new_columns_list = []
+  # iterate over all column names
+  for entry in columns_df_list:
+    # create new entry
+    new_entry = 'building_{}'.format(entry)
+    # append new entry to new column list
+    new_columns_list.append(new_entry)
+  # copy old dataframe 1 to 1    
+  df_building_images_new = df_building_images
+  # only replace its column names
+  df_building_images_new.columns = new_columns_list
+  # create saving path for building imagery
+  saving_path = (config_building['path_to_data_add']
+    + 'building_images_pixel_histograms_rgb.csv')
+  # save df_building_images_new
+  df_building_images_new.to_csv(saving_path, index=False)
 
     
 def process_meteo_and_load_profiles(config_building: dict, 
