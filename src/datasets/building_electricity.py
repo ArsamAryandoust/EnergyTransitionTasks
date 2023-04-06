@@ -72,7 +72,7 @@ def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame,
 def adjust_building_ids(df_consumption: pd.DataFrame, 
   df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
   """
-  Maps the original building IDs into a new set of IDs starting from 0 to length
+  Maps original building IDs into a new set of IDs starting from 0 to length
   """
   # create a list of all available building IDs
   building_id_list = list(df_consumption.columns.values[1:])
@@ -89,7 +89,7 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
 def process_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
   """
   Simply changes the column name of aerial imagery histograms of buildings
-  by adding the pre-fix 'building_' to IDs and saves file with new column names.
+  by adding pre-fix 'building_' to IDs and saves file with new column names.
   """
   # get list of columns
   columns_df_list = df_building_images.columns
@@ -139,8 +139,8 @@ def process_meteo_and_load_profiles(config_building: dict,
   time_stamps = df_consumption['building ID'].iloc[1:].reset_index(drop=True)
   # create a list of all building IDs
   building_id_list = list(df_consumption.columns.values[1:])
-  # decleare empty values array. Filling matrix pre-allocates memory and decreases
-  # computational time significantly.
+  # decleare empty values array. Filling matrix pre-allocates memory and
+  # decreases computational time significantly.
   values_array = np.zeros((len(building_id_list) * (
       len(time_stamps) - config_building['historic_window'] 
       - config_building['prediction_window']),
