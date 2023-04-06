@@ -6,7 +6,6 @@ general:
 dataverse:
   path_to_token: '../../.aa_secrets/dataverse_token'
   base_url: 'https://dataverse.harvard.edu'  
-  
   BuildingElectricity_raw:
     persistentId: 'doi:10.7910/DVN/T3OK7E'
     saving_path: 'datasets/BuildingElectricity/raw/'
@@ -14,7 +13,7 @@ dataverse:
     persistentId: ''
     saving_path: 'datasets/BuildingElectricity/processed/'
 
-building_electricity:
+BuildingElectricity:
     subtask_list: ['buildings_92', 'buildings_451']
     prediction_window: 96
     historic_window: 96
@@ -26,8 +25,7 @@ building_electricity:
     val_test_split: 0.2
     data_per_file: 150_000
     
-    
-wind_farm:
+WindFarm:
     subtask_list: ['days_245', 'days_183']
     prediction_window: 288
     historic_window: 288
@@ -39,8 +37,7 @@ wind_farm:
     subsample_frac: 1
     data_per_file: 60_000
     
-    
-uber_movement:
+UberMovement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
     temporal_test_split: 0.22
     spatial_test_split: 0.2
@@ -48,8 +45,7 @@ uber_movement:
     subsample_frac: 1
     data_per_file: 20_000_000
     
-    
-climart:
+Climart:
     subtask_list: ['pristine', 'clear_sky']
     temporal_test_split: 0.2
     spatial_test_split: 0.35
@@ -58,8 +54,7 @@ climart:
     data_per_file_pristine: 80_000
     data_per_file_clearsky: 35_000
     
-    
-open_catalst:
+OpenCatalyst:
     chunk_size_opencatalyst: 150_000
     subsample_opencatalyst: 0.2
     
