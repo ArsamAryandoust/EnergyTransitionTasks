@@ -15,7 +15,7 @@ def upload(config: dict, dataset_name: str):
   persistentId = config['dataverse'][dataset_name]['persistentId']
 
   # set full path to dataset root directory
-  if 'raw' in dataset_name:
+  if '_raw' in dataset_name:
     path_to_data = (
       config['general']['path_to_data_raw'] + dataset_name[:-4] + '/'
     )

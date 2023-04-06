@@ -33,13 +33,12 @@ def process_all_datasets(config: dict):
     # free up memory
     del df_consumption, df_meteo_dict
     gc.collect()
-    """
     # Do trainining, validation and testing split
     split_train_val_test(config_building, df_dataset)
     # free up memory
     del df_dataset
     gc.collect()
-    """
+
     
 def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame, 
   pd.DataFrame):
@@ -217,76 +216,76 @@ def process_meteo_and_load_profiles(config_building: dict,
     
     
 def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
-    """
-    Splits and saves datasets according to configuration rules.
-    """
-    # get total number of data points 
-    n_data_total = len(df_dataset)
-    # get the out-of-distribution splitting rules
-    temporal_ood = config_building['temporal_ood']
-    spatial_ood = config_building['spatial_ood']
-    # create spatial ood split
-    df_testing = df_dataset.loc[
-        (df_dataset['building_id'].isin(spatial_ood['ood_building_ids']))]
-    # remove split spatial ood data points
-    df_dataset = df_dataset.drop(df_testing.index)
-    # create temporal ood split
-    df_temporal_ood = df_dataset.loc[
-        (df_dataset['month'].isin(temporal_ood['ood_months']))
-        | (df_dataset['day'].isin(temporal_ood['ood_days']))
-        | (df_dataset['hour'].isin(temporal_ood['ood_hours']))
-        | (df_dataset['quarter_hour'].isin(temporal_ood['ood_quarter_hours']))]
-    # remove the spatial ood split data points which is training dataset
-    df_training = df_dataset.drop(df_temporal_ood.index)
-    # free up memory
-    del df_dataset
-    gc.collect()
-    # append to testing dataset
-    df_testing = pd.concat([df_testing, df_temporal_ood], ignore_index=True)
-    # free up memory
-    del df_temporal_ood
-    gc.collect()
-    # do validation split
-    df_validation = df_testing.sample(
-        frac=config_building['val_test_split'], 
-        random_state=config_building['seed'])
-    # remove validation data split from testing dataset
-    df_testing = df_testing.drop(df_validation.index)
-    # calculate and analyze dataset properties
-    n_train,n_val,n_test = len(df_training),len(df_validation),len(df_testing)
-    n_total = n_train + n_val + n_test
-    # print
-    print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
-            n_train/n_total),
-        "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
-            n_val/n_total),
-        "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
-            n_test/n_total))
-    # test if all indexes dropped correctly.
-    if n_data_total != n_total:
-        print("Error! Number of available data is {}".format(n_data_total),
-            "and does not match number of resulting data {}.".format(n_total))
-    # save results in chunks
-    save_in_chunks(config_building,
-        config_building['path_to_data_train'] + 'training_data', df_training)
-    save_in_chunks(config_building,
-        config_building['path_to_data_val'] + 'validation_data', df_validation)
-    save_in_chunks(config_building,
-        config_building['path_to_data_test'] + 'testing_data', df_testing)
+  """
+  Splits and saves datasets according to configuration rules.
+  """
+  # get total number of data points 
+  n_data_total = len(df_dataset)
+  # get the out-of-distribution splitting rules
+  temporal_ood = config_building['temporal_ood']
+  spatial_ood = config_building['spatial_ood']
+  # create spatial ood split
+  df_testing = df_dataset.loc[
+    (df_dataset['building_id'].isin(spatial_ood['ood_building_ids']))]
+  # remove split spatial ood data points
+  df_dataset = df_dataset.drop(df_testing.index)
+  # create temporal ood split
+  df_temporal_ood = df_dataset.loc[
+    (df_dataset['month'].isin(temporal_ood['ood_months']))
+    | (df_dataset['day'].isin(temporal_ood['ood_days']))
+    | (df_dataset['hour'].isin(temporal_ood['ood_hours']))
+    | (df_dataset['quarter_hour'].isin(temporal_ood['ood_quarter_hours']))]
+  # remove the spatial ood split data points which is training dataset
+  df_training = df_dataset.drop(df_temporal_ood.index)
+  # free up memory
+  del df_dataset
+  gc.collect()
+  # append to testing dataset
+  df_testing = pd.concat([df_testing, df_temporal_ood], ignore_index=True)
+  # free up memory
+  del df_temporal_ood
+  gc.collect()
+  # do validation split
+  df_validation = df_testing.sample(
+    frac=config_building['val_test_split'], 
+    random_state=config_building['seed'])
+  # remove validation data split from testing dataset
+  df_testing = df_testing.drop(df_validation.index)
+  # calculate and analyze dataset properties
+  n_train,n_val,n_test = len(df_training),len(df_validation),len(df_testing)
+  n_total = n_train + n_val + n_test
+  # print
+  print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+      n_train/n_total),
+    "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+      n_val/n_total),
+    "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+      n_test/n_total))
+  # test if all indexes dropped correctly.
+  if n_data_total != n_total:
+      print("Error! Number of available data is {}".format(n_data_total),
+          "and does not match number of resulting data {}.".format(n_total))
+  # save results in chunks
+  save_in_chunks(config_building,
+    config_building['path_to_data_train'] + 'training_data', df_training)
+  save_in_chunks(config_building,
+    config_building['path_to_data_val'] + 'validation_data', df_validation)
+  save_in_chunks(config_building,
+    config_building['path_to_data_test'] + 'testing_data', df_testing)
 
     
 def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
-    """
-    Shuffles dataframe, then saves it in chunks with number of datapoints per 
-    file defined by config such that each file takes less than about 1 GB size.
-    """
-    df = df.sample(frac=1, random_state=config_building['seed'])
-    for file_counter in range(1, 312321321312):
-        path_to_saving = saving_path + '_{}.csv'.format(file_counter)
-        df.iloc[:config_building['data_per_file']].to_csv(
-            path_to_saving, index=False)
-        df = df[config_building['data_per_file']:]
-        if len(df) == 0:
-            break
+  """
+  Shuffles dataframe, then saves it in chunks with number of datapoints per 
+  file defined by config such that each file takes less than about 1 GB size.
+  """
+  df = df.sample(frac=1, random_state=config_building['seed'])
+  for file_counter in range(1, 312321321312):
+    path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+    df.iloc[:config_building['data_per_file']].to_csv(
+      path_to_saving, index=False)
+    df = df[config_building['data_per_file']:]
+    if len(df) == 0:
+      break
             
             
