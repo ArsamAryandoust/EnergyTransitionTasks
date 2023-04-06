@@ -19,10 +19,10 @@ def process_all_datasets(config: dict):
     # import all data
     df_consumption, df_building_images, df_meteo_dict = import_all_data(
       config_building)
-    """
     # change building IDs here
     df_consumption, df_building_images = adjust_building_ids(
       df_consumption, df_building_images)
+    """
     # process building imagery
     process_building_imagery(config_building, df_building_images)
     # free up memory
@@ -71,20 +71,20 @@ def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame,
   
 
 def adjust_building_ids(df_consumption: pd.DataFrame, 
-    df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
-    """
-    Maps the original building IDs into a new set of IDs starting from 0 to length
-    """
-    # create a list of all available building IDs
-    building_id_list = list(df_consumption.columns.values[1:])
-    # create empty dict for mapping old to new building IDs from zero to length
-    build_id_map_dict = {}
-    for count_index, building_id_old in enumerate(building_id_list):
-        build_id_map_dict[building_id_old] = count_index + 1
-    # do the renaming
-    df_consumption.rename(build_id_map_dict, inplace=True)
-    df_building_images.rename(build_id_map_dict, inplace=True)
-    return df_consumption, df_building_images
+  df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+  """
+  Maps the original building IDs into a new set of IDs starting from 0 to length
+  """
+  # create a list of all available building IDs
+  building_id_list = list(df_consumption.columns.values[1:])
+  # create empty dict for mapping old to new building IDs from zero to length
+  build_id_map_dict = {}
+  for count_index, building_id_old in enumerate(building_id_list):
+    build_id_map_dict[building_id_old] = count_index + 1
+  # do the renaming
+  df_consumption.rename(build_id_map_dict, inplace=True)
+  df_building_images.rename(build_id_map_dict, inplace=True)
+  return df_consumption, df_building_images
     
 
 def process_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
