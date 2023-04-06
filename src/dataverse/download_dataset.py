@@ -1,12 +1,24 @@
 import os
 import json
 import requests
-import zipfile
+import shutil
 
 def download(config: dict, dataset_name: str):
   """
   """
-  print("Downloading data!")
+  # set saving path
+  path_to_folder = config['dataverse'][dataset_name]['saving_path']
+  path_to_file = path_to_folder + 'files.zip'
+  if os.path.isdir(path_to_folder):
+    # this check is needed when downloading processed data
+    directory_content = os.listdir(path_to_folder)
+    if len(directory_content) > 0:
+      print("Directory is not empty. Check if data is not already downloaded!")
+      exit(1)
+  else:
+    os.mkdir(path_to_folder)
+    print("Downloading data!")
+  
   # set basic data and construct url
   with open(config['dataverse']['path_to_token'], 'r') as token:
     api_key = token.read().replace('\n', '')
@@ -14,22 +26,14 @@ def download(config: dict, dataset_name: str):
   persistentId = config['dataverse'][dataset_name]['persistentId']
   url_persistent_id = (
     "{}/api/access/dataset/:persistentId/?persistentId={}&key={}".format(
-      dataverse_server, persistentId, api_key
-    )
-  )
-  # set saving path
-  saving_path = config['dataverse'][dataset_name]['saving_path']
-  if not os.path.isdir(saving_path):
-    os.mkdir(saving_path)
-  saving_path += 'files.zip'
-  """
+      dataverse_server, persistentId, api_key))
   # download data
   r = requests.get(url_persistent_id)
   # write data
-  with open(saving_path, 'wb') as file:
+  with open(path_to_file, 'wb') as file:
     file.write(r.content)
-  """
-  # unzip data
-  with zipfile.ZipFile(saving_path, 'r') as zip:
-    saving_path.replace('files.zip', '')
-    zip.extractall(saving_path)
+  # unzip archive
+  shutil.unpack_archive(path_to_file, path_to_folder)
+  # remove .zip file
+  os.remove(path_to_file)
+  
