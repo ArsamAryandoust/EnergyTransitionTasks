@@ -15,8 +15,8 @@ dataverse:
 
 BuildingElectricity:
     subtask_list: ['buildings_92', 'buildings_451']
-    prediction_window: 96
-    historic_window: 96
+    prediction_window: 96 # declare this in quarter hours
+    historic_window: 24 # declare this in hours
     meteo_name_list: ['air_density', 'cloud_cover', 'precipitation', 
     'radiation_surface','radiation_toa', 'snow_mass', 'snowfall', 'temperature',
     'wind_speed']

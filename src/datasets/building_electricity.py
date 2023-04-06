@@ -167,7 +167,7 @@ def process_meteo_and_load_profiles(config_building: dict,
     # drop local_time column 
     df_meteo = df_meteo.drop(columns=['local_time'])
     # iterate over all time stamps in prediction window steps
-    for i in range(config_building['historic_window'], 
+    for i in range(config_building['historic_window'] * 4, 
       len(time_stamps) - config_building['prediction_window']):
       # get time stamp
       time = time_stamps[i]
@@ -181,7 +181,8 @@ def process_meteo_and_load_profiles(config_building: dict,
       meteo_dict = {}
       for meteo_name in config_building['meteo_name_list']:
         meteo_values = df_meteo[meteo_name][
-          (i-config_building['historic_window']):i
+          range(i-config_building['historic_window'], i, 4)
+          #(i-config_building['historic_window']):i
         ].values
         meteo_dict[meteo_name] = meteo_values
       # get iterated load profile data
