@@ -27,13 +27,13 @@ def process_all_datasets(config: dict):
     # free up memory
     del df_building_images
     gc.collect()
-    """
     # process meteo data and load profiles
     df_dataset = process_meteo_and_load_profiles(config_building, 
       df_consumption, df_meteo_dict)
     # free up memory
     del df_consumption, df_meteo_dict
     gc.collect()
+    """
     # Do trainining, validation and testing split
     split_train_val_test(config_building, df_dataset)
     # free up memory
@@ -114,106 +114,106 @@ def process_building_imagery(config_building: dict, df_building_images: pd.DataF
 
     
 def process_meteo_and_load_profiles(config_building: dict, 
-    df_consumption: pd.DataFrame, df_meteo_dict: pd.DataFrame) -> pd.DataFrame:
-    """
-    Main data processing. Takes electric load profiles and meteorological data
-    and combines these into a single dataset dataframe.
-    """
-    # Create dataframe column
-    new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 
-        'building_id']
-    # fill a separate list 
-    new_df_columns = new_df_columns_base.copy()
-    # append column entries for meteorological data
-    for column_name in config_building['meteo_name_list']:
-        for pred_time_step in range(config_building['historic_window']):
-            entry_name = '{}_{}'.format(column_name, pred_time_step+1)
-            new_df_columns.append(entry_name)
-    # append column entries for electric load
-    for pred_time_step in range(config_building['prediction_window']):
-        entry_name = 'load_{}'.format(pred_time_step+1)
-        new_df_columns.append(entry_name)
-        
-    # Create datasets
-    df_consumption.drop(index=1, inplace=True)
-    # get corresponding time stamps series and reset indices
-    time_stamps = df_consumption['building ID'].iloc[1:].reset_index(drop=True)
-    # create a list of all building IDs
-    building_id_list = list(df_consumption.columns.values[1:])
-    # decleare empty values array. Filling matrix pre-allocates memory and decreases
-    # computational time significantly.
-    values_array = np.zeros((len(building_id_list) * (
-            len(time_stamps) - config_building['historic_window'] 
-            - config_building['prediction_window']),
-        (len(new_df_columns_base) + config_building['historic_window'] * (
-            len(config_building['meteo_name_list'])) 
-            + config_building['prediction_window'])))
-    # create progress bar
-    pbar = tqdm(total=len(building_id_list))
-    # declare df row counter
-    datapoint_counter = 0
-    # iterate over all building IDs
-    for building_id in building_id_list:
-        # get cluster id as integer
-        cluster_id = df_consumption[building_id].iloc[0].astype(int)
-        # get building load with new indices
-        building_load = df_consumption[building_id].iloc[1:].reset_index(
-            drop=True)
-        # transform building id into integer
-        building_id = int(building_id)
-        # create key to corresponding meteo data
-        key_meteo = 'meteo_{}_2014.csv'.format(cluster_id)
-        # get corresponding meteorological data
-        df_meteo = df_meteo_dict[key_meteo]
-        # drop local_time column 
-        df_meteo = df_meteo.drop(columns=['local_time'])
-        # iterate over all time stamps in prediction window steps
-        for i in range(config_building['historic_window'], 
-            len(time_stamps) - config_building['prediction_window']):
-            # get time stamp
-            time = time_stamps[i]
-            # get single entries of timestamp
-            year = int(time[0:4])
-            month = int(time[5:7])
-            day = int(time[8:10])
-            hour = int(time[11:13])
-            quarter_hour = int(time[14:16])
-            # get iterated meteorological data
-            meteo_dict = {}
-            for meteo_name in config_building['meteo_name_list']:
-                meteo_values = df_meteo[meteo_name][
-                    (i-config_building['historic_window']):i
-                ].values
-                meteo_dict[meteo_name] = meteo_values
-            # get iterated load profile data
-            load_profile = building_load[
-                i:(i+config_building['prediction_window'])].values
-            # add features to values_array. Ensures same order as new_df_columns.
-            for index_col, entry_name in enumerate(new_df_columns_base):
-                command = 'values_array[datapoint_counter,index_col]={}'.format(
-                    entry_name)
-                exec(command)
-            # add meteorological data to entry
-            for meteo_name, meteo_profile in meteo_dict.items():
-                for i in range(len(meteo_profile)):
-                    index_col += 1
-                    values_array[datapoint_counter,index_col] = meteo_profile[i]
-            # add load profile to entry
-            for i in range(len(load_profile)):
-                index_col += 1
-                values_array[datapoint_counter, index_col] = load_profile[i]
-            # increment df row counter
-            datapoint_counter += 1
-        # increment progbar
-        pbar.update(1) 
-    # create dataframe from filled matrix values
-    df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
-    # drop zero entries
-    df_dataset = df_dataset.loc[~(df_dataset==0).all(axis=1)]
-    # free up memory
-    del values_array
-    gc.collect()
-    return df_dataset
+  df_consumption: pd.DataFrame, df_meteo_dict: pd.DataFrame) -> pd.DataFrame:
+  """
+  Main data processing. Takes electric load profiles and meteorological data
+  and combines these into a single dataset dataframe.
+  """
+  # Create dataframe column
+  new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 
+    'building_id']
+  # fill a separate list 
+  new_df_columns = new_df_columns_base.copy()
+  # append column entries for meteorological data
+  for column_name in config_building['meteo_name_list']:
+    for pred_time_step in range(config_building['historic_window']):
+      entry_name = '{}_{}'.format(column_name, pred_time_step+1)
+      new_df_columns.append(entry_name)
+  # append column entries for electric load
+  for pred_time_step in range(config_building['prediction_window']):
+    entry_name = 'load_{}'.format(pred_time_step+1)
+    new_df_columns.append(entry_name)
+      
+  # Create datasets
+  df_consumption.drop(index=1, inplace=True)
+  # get corresponding time stamps series and reset indices
+  time_stamps = df_consumption['building ID'].iloc[1:].reset_index(drop=True)
+  # create a list of all building IDs
+  building_id_list = list(df_consumption.columns.values[1:])
+  # decleare empty values array. Filling matrix pre-allocates memory and decreases
+  # computational time significantly.
+  values_array = np.zeros((len(building_id_list) * (
+      len(time_stamps) - config_building['historic_window'] 
+      - config_building['prediction_window']),
+    (len(new_df_columns_base) + config_building['historic_window'] * (
+      len(config_building['meteo_name_list'])) 
+      + config_building['prediction_window'])))
+  # create progress bar
+  pbar = tqdm(total=len(building_id_list))
+  # declare df row counter
+  datapoint_counter = 0
+  # iterate over all building IDs
+  for building_id in building_id_list:
+    # get cluster id as integer
+    cluster_id = df_consumption[building_id].iloc[0].astype(int)
+    # get building load with new indices
+    building_load = df_consumption[building_id].iloc[1:].reset_index(
+      drop=True)
+    # transform building id into integer
+    building_id = int(building_id)
+    # create key to corresponding meteo data
+    key_meteo = 'meteo_{}_2014.csv'.format(cluster_id)
+    # get corresponding meteorological data
+    df_meteo = df_meteo_dict[key_meteo]
+    # drop local_time column 
+    df_meteo = df_meteo.drop(columns=['local_time'])
+    # iterate over all time stamps in prediction window steps
+    for i in range(config_building['historic_window'], 
+      len(time_stamps) - config_building['prediction_window']):
+      # get time stamp
+      time = time_stamps[i]
+      # get single entries of timestamp
+      year = int(time[0:4])
+      month = int(time[5:7])
+      day = int(time[8:10])
+      hour = int(time[11:13])
+      quarter_hour = int(time[14:16])
+      # get iterated meteorological data
+      meteo_dict = {}
+      for meteo_name in config_building['meteo_name_list']:
+        meteo_values = df_meteo[meteo_name][
+          (i-config_building['historic_window']):i
+        ].values
+        meteo_dict[meteo_name] = meteo_values
+      # get iterated load profile data
+      load_profile = building_load[
+        i:(i+config_building['prediction_window'])].values
+      # add features to values_array. Ensures same order as new_df_columns.
+      for index_col, entry_name in enumerate(new_df_columns_base):
+        command = 'values_array[datapoint_counter,index_col]={}'.format(
+          entry_name)
+        exec(command)
+      # add meteorological data to entry
+      for meteo_name, meteo_profile in meteo_dict.items():
+        for i in range(len(meteo_profile)):
+          index_col += 1
+          values_array[datapoint_counter,index_col] = meteo_profile[i]
+      # add load profile to entry
+      for i in range(len(load_profile)):
+        index_col += 1
+        values_array[datapoint_counter, index_col] = load_profile[i]
+      # increment df row counter
+      datapoint_counter += 1
+    # increment progbar
+    pbar.update(1) 
+  # create dataframe from filled matrix values
+  df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
+  # drop zero entries
+  df_dataset = df_dataset.loc[~(df_dataset==0).all(axis=1)]
+  # free up memory
+  del values_array
+  gc.collect()
+  return df_dataset
     
     
 def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
