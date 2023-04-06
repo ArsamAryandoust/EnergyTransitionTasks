@@ -45,7 +45,7 @@ def parse_arguments() -> argparse.Namespace:
     print("\nNo download or upload operations where requested!\n")
     if args.shuffle is None:
       print("\n No data shuffling operation is requested!\n")
-      if args.shuffle is None:
+      if args.process is None:
         print("\n No dataset has been requested to be processed!\n")
         print("Must select at least one dataset to process!")
         exit(1)
