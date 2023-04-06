@@ -12,6 +12,10 @@ dataverse:
   BuildingElectricity:
     persistentId: 'doi:10.7910/DVN/MS0KPW'
     saving_path: 'datasets/BuildingElectricity/processed/'
+  WindFarm_raw:
+    persistentId: 'doi:10.7910/DVN/BCDE1C'
+    saving_path: 'datasets/BuildingElectricity/raw/'
+    
 
 BuildingElectricity:
     subtask_list: ['buildings_92', 'buildings_451']
