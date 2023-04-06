@@ -16,10 +16,10 @@ def process_all_datasets(config: dict):
   for subtask in config['BuildingElectricity']['subtask_list']:
     # augment config with currently iterated subtask paths
     config_building = config_BE(config, subtask)
-    """
     # import all data
     df_consumption, df_building_images, df_meteo_dict = import_all_data(
       config_building)
+    """
     # change building IDs here
     df_consumption, df_building_images = adjust_building_ids(
       df_consumption, df_building_images)
@@ -41,33 +41,34 @@ def process_all_datasets(config: dict):
     gc.collect()
     """
     
-def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
-    """
-    Imports electric consumption profiles profiles, building imagery pixel data,
-    and meteorological data.
-    """
-    # import all electric consumption profiles
-    df_consumption = pd.read_csv(
-        config_building['path_to_raw_building_year_profiles_file'])
-    # import image pixel histogram values
-    df_building_images = pd.read_csv(
-        config_building['path_to_raw_aerial_imagery_file'])
-    # create path to sample meteo files
-    meteo_filename_list = os.listdir(
-        config_building['path_to_raw_meteo_data_folder'])
-    # decleare empty dictionary for saving all meteo dataframes
-    df_meteo_dict = {}
-    # iterate over all filenames
-    for filename in meteo_filename_list:
-        # create full path to iterated file
-        path_to_meteo_file = (config_building['path_to_raw_meteo_data_folder'] 
-            + filename)
-        # import meteorological data
-        df_meteo = pd.read_csv(path_to_meteo_file)
-        # save imported dataframe to dataframe dictionary
-        df_meteo_dict[filename] = df_meteo
-    return df_consumption, df_building_images, df_meteo_dict
-    
+def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame, 
+  pd.DataFrame):
+  """
+  Imports electric consumption profiles profiles, building imagery pixel data,
+  and meteorological data.
+  """
+  # import all electric consumption profiles
+  df_consumption = pd.read_csv(
+    config_building['path_to_raw_building_year_profiles_file'])
+  # import image pixel histogram values
+  df_building_images = pd.read_csv(
+    config_building['path_to_raw_aerial_imagery_file'])
+  # create path to sample meteo files
+  meteo_filename_list = os.listdir(
+    config_building['path_to_raw_meteo_data_folder'])
+  # decleare empty dictionary for saving all meteo dataframes
+  df_meteo_dict = {}
+  # iterate over all filenames
+  for filename in meteo_filename_list:
+    # create full path to iterated file
+    path_to_meteo_file = (config_building['path_to_raw_meteo_data_folder'] 
+      + filename)
+    # import meteorological data
+    df_meteo = pd.read_csv(path_to_meteo_file)
+    # save imported dataframe to dataframe dictionary
+    df_meteo_dict[filename] = df_meteo
+  return df_consumption, df_building_images, df_meteo_dict
+  
 
 def adjust_building_ids(df_consumption: pd.DataFrame, 
     df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):

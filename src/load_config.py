@@ -16,7 +16,7 @@ def config_BE(config: dict, subtask: str) -> dict:
   # get base config
   config_building = config['BuildingElectricity']
   
-  # fix little twist
+  # fix little mismtach in subtask naming between raw data and desired results
   if subtask == 'buildings_92':
     raw_subtask = 'profiles_100'
   elif subtask == 'buildings_451':
