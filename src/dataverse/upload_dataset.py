@@ -68,7 +68,6 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
         print("Exception occurred!\n", entry_path)
         upload_fail_record.append((entry_path, entry_name))
 
-
   return upload_fail_record
 
 
