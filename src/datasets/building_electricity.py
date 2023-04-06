@@ -8,37 +8,38 @@ import math
 from load_config import config_BE
 
 def process_all_datasets(config: dict):
+  """
+  Processes all datasets for Building Electricity task.
+  """
+  print("Processing Building Electricity dataset.")
+  # iterated over all subtasks
+  for subtask in config['building_electricity']['subtask_list']:
+    # augment config with currently iterated subtask paths
+    config_building = config_BE(config, subtask)
     """
-    Processes all datasets for Building Electricity task.
+    # import all data
+    df_consumption, df_building_images, df_meteo_dict = import_all_data(
+      config_building)
+    # change building IDs here
+    df_consumption, df_building_images = adjust_building_ids(
+      df_consumption, df_building_images)
+    # process building imagery
+    process_building_imagery(config_building, df_building_images)
+    # free up memory
+    del df_building_images
+    gc.collect()
+    # process meteo data and load profiles
+    df_dataset = process_meteo_and_load_profiles(config_building, 
+      df_consumption, df_meteo_dict)
+    # free up memory
+    del df_consumption, df_meteo_dict
+    gc.collect()
+    # Do trainining, validation and testing split
+    split_train_val_test(config_building, df_dataset)
+    # free up memory
+    del df_dataset
+    gc.collect()
     """
-    print("Processing Building Electricity dataset.")
-    # iterated over all subtasks
-    for subtask in config['building_electricity']['subtask_list']:
-        # augment config with currently iterated subtask paths
-        config_building = config_BE(config, subtask)
-        # import all data
-        df_consumption, df_building_images, df_meteo_dict = import_all_data(
-            config_building)
-        # change building IDs here
-        df_consumption, df_building_images = adjust_building_ids(
-            df_consumption, df_building_images)
-        # process building imagery
-        process_building_imagery(config_building, df_building_images)
-        # free up memory
-        del df_building_images
-        gc.collect()
-        # process meteo data and load profiles
-        df_dataset = process_meteo_and_load_profiles(config_building, 
-            df_consumption, df_meteo_dict)
-        # free up memory
-        del df_consumption, df_meteo_dict
-        gc.collect()
-        # Do trainining, validation and testing split
-        split_train_val_test(config_building, df_dataset)
-        # free up memory
-        del df_dataset
-        gc.collect()
-    
     
 def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
