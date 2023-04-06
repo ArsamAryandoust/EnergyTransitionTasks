@@ -28,16 +28,19 @@ def upload(config: dict, dataset_name: str):
   # load or set to empty a record of failed upload files
   upload_fail_record = []
   
+  # create requests session
+  s = requests.Session()
+  
   # iterate over all files in dataset directory
   upload_fail_record = recursive_call(path_to_data, dataverse_server, 
-    persistentId, api_key, base_path_len, upload_fail_record)
+    persistentId, api_key, base_path_len, upload_fail_record, s)
 
   # upload all failed files
   for entry in upload_fail_record:
     entry_path, entry_name = entry[0], entry[1]
     try:
       save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
-        base_path_len)
+        base_path_len, s)
       upload_fail_record.remove(entry)
     except:
       print("Caution: Exception occurred on repeated upload attempt!")
@@ -53,17 +56,17 @@ def upload(config: dict, dataset_name: str):
 
 
 def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str, 
-  api_key: str, base_path_len: int, upload_fail_record: dict) -> dict:
+  api_key: str, base_path_len: int, upload_fail_record: dict, s) -> dict:
   """
   """
   for entry in os.scandir(path_to_dir):
     if entry.is_file():
       save_file(entry.name, entry.path, dataverse_server, persistentId, api_key,
-        base_path_len)
+        base_path_len, s)
     elif entry.is_dir():
       try: 
         upload_fail_record = recursive_call(entry.path, dataverse_server, 
-          persistentId, api_key, base_path_len, upload_fail_record)
+          persistentId, api_key, base_path_len, upload_fail_record, s)
       except:
         print("Exception occurred!\n", entry_path)
         upload_fail_record.append((entry_path, entry_name))
@@ -72,7 +75,7 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
 
 
 def save_file(entry_name: str, entry_path: str, dataverse_server: str, 
-  persistentId: str, api_key: str, base_path_len: int):
+  persistentId: str, api_key: str, base_path_len: int, s):
   """
   """
   if '.csv' in entry_name:
@@ -91,5 +94,5 @@ def save_file(entry_name: str, entry_path: str, dataverse_server: str,
       dataverse_server, persistentId, api_key
     )
   )
-  requests.post(url_persistent_id, data=payload, files=files)
+  s.post(url_persistent_id, data=payload, files=files)
 
