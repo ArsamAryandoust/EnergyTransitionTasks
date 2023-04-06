@@ -13,7 +13,7 @@ def process_all_datasets(config: dict):
   """
   print("Processing Building Electricity dataset.")
   # iterated over all subtasks
-  for subtask in config['building_electricity']['subtask_list']:
+  for subtask in config['BuildingElectricity']['subtask_list']:
     # augment config with currently iterated subtask paths
     config_building = config_BE(config, subtask)
     """

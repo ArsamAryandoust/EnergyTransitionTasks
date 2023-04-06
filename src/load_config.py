@@ -14,7 +14,7 @@ def config_BE(config: dict, subtask: str) -> dict:
   Augments configuration filefor processing Building Electricity dataset.
   """
   # get base config
-  config_building = config['building_electricity']
+  config_building = config['BuildingElectricity']
   
   # fix little twist
   if subtask == 'profiles_92':
