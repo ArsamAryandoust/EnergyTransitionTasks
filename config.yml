@@ -7,13 +7,13 @@ dataverse:
   path_to_token: '../../.aa_secrets/dataverse_token'
   base_url: 'https://dataverse.harvard.edu'  
   BuildingElectricity_raw:
-    persistentId: 'doi:10.7910/DVN/T3OK7E'
+    persistentId: #'doi:10.7910/DVN/T3OK7E'
     saving_path: 'datasets/BuildingElectricity/raw/'
   BuildingElectricity:
-    persistentId: 'doi:10.7910/DVN/MS0KPW'
+    persistentId: #'doi:10.7910/DVN/MS0KPW'
     saving_path: 'datasets/BuildingElectricity/processed/'
   WindFarm_raw:
-    persistentId: 'doi:10.7910/DVN/BCDE1C'
+    persistentId: #'doi:10.7910/DVN/BCDE1C'
     saving_path: 'datasets/BuildingElectricity/raw/'
     
 

@@ -53,9 +53,16 @@ execution, so you don't rebuild redundant containers.
 ## Download datasets
 Any dataset can be downloaded using the `-download` flag followed by the 
 <dataset name>:
+
 ```
 python3 src/main.py -download <dataset name>
 ```
+
+Any dataset can be downloaded using the `-download` flag followed by the 
+<dataset name>:
+
+
+## Examples
 
 
 ## Contributing
