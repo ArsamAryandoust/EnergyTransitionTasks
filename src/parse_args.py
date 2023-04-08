@@ -50,13 +50,13 @@ def parse_arguments() -> argparse.Namespace:
   if (args.upload is None and args.download is None):
     print("\nNo download or upload operations where requested!\n")
     if args.process is None:
-      print("\n No dataset has been requested to be processed!\n")
+      print("\nNo dataset has been requested to be processed!\n")
       if args.test is None:
-        print("\n No dataset has been requested to be tested!\n")
+        print("\nNo dataset has been requested to be tested!\n")
         if args.analyse is None:
-          print("\n No dataset has been requested to be analyzed!\n")
+          print("\nNo dataset has been requested to be analyzed!\n")
           if args.shuffle is None:
-            print("\n No data shuffling operation is requested!\n")
+            print("\nNo data shuffling operation is requested!\n")
             print("Must select one of these instructions!")
             exit(1)
   
