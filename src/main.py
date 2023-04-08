@@ -44,7 +44,7 @@ if __name__ == "__main__":
       print("To do: Implement Open Catalyst dataset processing.")
   # test passed dataset
   elif args.test is not None:
-    test_dataset.test(config, args.test)
+    test_dataset.test(config, args.test[0], args.test[1])
   # analyse passed dataset
   elif args.analyse is not None:
     analyse_dataset.analyse(config, args.analyse)
