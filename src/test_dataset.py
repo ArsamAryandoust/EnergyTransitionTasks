@@ -8,7 +8,6 @@ def test(config: dict, dataset_name: str):
   path_to_data = config['general']['path_to_data']
   
   # load data
-  load_data(dataset_name, path_to_data=path_to_data)
-  
+  train, val, test = load_data(dataset_name, path_to_data=path_to_data)
   
   print("Successfully tested {}!".format(dataset_name))
