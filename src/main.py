@@ -1,6 +1,6 @@
 import yaml
-import parse_args, upload_dataset, shuffle
-from selberai.data import download_dataset
+import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
+from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
 
 
@@ -32,10 +32,15 @@ if __name__ == "__main__":
       climart.process_all_datasets(config)
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
+  elif args.test is not None:
+    test_dataset.test(config, args.test)
+  elif args.analyse is not None:
+    analyse_dataset.analyse(config, args.analyse)
   elif args.shuffle is not None:
     print("Shuffling processed {} data.".format(args.shuffle))
     config[args.shuffle]['seed'] = config['seed']
     shuffle.shuffle_data_files(config[args.shuffle])
+  
   
   print("Successfully executed all instructions!")
 
