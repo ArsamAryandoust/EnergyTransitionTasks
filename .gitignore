@@ -1,6 +1,7 @@
 src/__pycache__
-src/datasets/__pycache__
-src/dataverse/__pycache__
+src/process/__pycache__
+src/selberai/__pycache__
+src/selberai/data/__pycache__
 
 .upload_records/
 datasets/*/raw
