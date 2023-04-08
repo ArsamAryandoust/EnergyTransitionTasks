@@ -26,13 +26,19 @@ def parse_arguments() -> argparse.Namespace:
   
   parser.add_argument(
     "-upload",
-    help="Pass dataset name you want to upload to Harvard Dataverse!")
+    help="Upload data to EnergyTransitionTasks https://dataverse.harvard.edu!")
   parser.add_argument(
     "-download",
-    help="Pass dataset name you want to download from Harvard Dataverse!")
+    help="NOT implemented! Download data from https://dataverse.harvard.edu!")
   parser.add_argument(
     "-process",
-    help="Process datasets for Building Electricity task")
+    help="Process datasets for passed task")
+  parser.add_argument(
+    "-test",
+    help="Test processed datasets for passed task")
+  parser.add_argument(
+    "-analyse",
+    help="Analyse processed datasets for passed task")
   parser.add_argument(
     "-shuffle",
     help="Pass dataset name you want to shuffle!")
@@ -43,11 +49,15 @@ def parse_arguments() -> argparse.Namespace:
   # do some checks for validity of args
   if (args.upload is None and args.download is None):
     print("\nNo download or upload operations where requested!\n")
-    if args.shuffle is None:
-      print("\n No data shuffling operation is requested!\n")
-      if args.process is None:
-        print("\n No dataset has been requested to be processed!\n")
-        print("Must select at least one dataset to process!")
-        exit(1)
+    if args.process is None:
+      print("\n No dataset has been requested to be processed!\n")
+      if args.test is None:
+        print("\n No dataset has been requested to be tested!\n")
+        if args.analyse is None:
+          print("\n No dataset has been requested to be analyzed!\n")
+          if args.shuffle is None:
+            print("\n No data shuffling operation is requested!\n")
+            print("Must select one of these instructions!")
+            exit(1)
   
   return args
