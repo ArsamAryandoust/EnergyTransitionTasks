@@ -35,7 +35,7 @@ def parse_arguments() -> argparse.Namespace:
     help="Process datasets for passed task")
   parser.add_argument(
     "-test",
-    nargs='+'
+    nargs='+',
     help="Test processed datasets for passed task")
   parser.add_argument(
     "-analyse",
