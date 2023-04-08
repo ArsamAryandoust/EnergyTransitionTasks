@@ -12,6 +12,9 @@
 * [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
 
 
+<!-- ## Citation -->
+
+
 ## Contributing
 
 Artificial intelligence (AI) and its subfield of machine learning (ML) have a
@@ -36,5 +39,8 @@ problems with these or want to suggest ways to improve these, your feedback is
 highly appreciated. For this, please go to the `Discussions` tab, create a 
 `New discussion`, and give us your detailed feedback.
 
+
+
+<!-- ## Getting started -->
 
 
