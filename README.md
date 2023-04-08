@@ -2,6 +2,18 @@
 
 # 1X machine learning tasks and datasets for enhancing the global energy transition
 
+* [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
+* [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
+* [Generation Scheduling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/GenerationScheduling)
+* [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
+* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
+* [Climate Downscaling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimateDownscaling)
+* [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
+* [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
+
+
+## Contributing
+
 Artificial intelligence (AI) and its subfield of machine learning (ML) have a
 significant potential for enhancing technologies, policies and social processes
 that we urgently need for mitigating and adapting to climate change. Improving the
@@ -13,59 +25,6 @@ other. In this repository, we review the literature of prediction tasks that are
 relevant for enhancing the global energy transition and process a collection of
 public datasets into a single tabular data format (.csv) for these to simplify the
 design of new AI and ML models for solving them.
-
-
-## Datasets
-
-* [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
-* [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
-* [Generation Scheduling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/GenerationScheduling)
-* [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
-* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
-* [Climate Downscaling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimateDownscaling)
-* [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
-* [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
-
-
-## Download Code
-Download this repository to your home directory:
-
-```
-cd 
-git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks
-cd EnergyTransitionTasks
-```
-
-## Run Docker
-The easiest way to build and run a Docker container for downloading, processing
-and uploading datasets is with the `run.sh` script we provide. To do this, 
-execute the following command to build and run a Docker container:
-
-```
-./run.sh
-```
-
-All commands are implemented through the `main.py` file inside the `src` folder.
-Make sure to comment out the building commands inside `run.sh` after the first
-execution, so you don't rebuild redundant containers.
-
-
-## Download datasets
-Any dataset can be downloaded using the `-download` flag followed by the 
-<dataset name>:
-
-```
-python3 src/main.py -download <dataset name>
-```
-
-Any dataset can be downloaded using the `-download` flag followed by the 
-<dataset name>:
-
-
-## Examples
-
-
-## Contributing
 
 * If you have published or unpublished datasets that fit our purpose, your 
 contribution is highly appreciated. For changes to code, please download this 
