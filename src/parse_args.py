@@ -26,10 +26,10 @@ def parse_arguments() -> argparse.Namespace:
   
   parser.add_argument(
     "-upload",
-    help="Upload data to EnergyTransitionTasks https://dataverse.harvard.edu!")
+    help="Upload data to EnergyTransitionTasks https://dataverse.harvard.edu")
   parser.add_argument(
     "-download",
-    help="NOT implemented! Download data from https://dataverse.harvard.edu!")
+    help="NOT implemented! Download data from https://dataverse.harvard.edu")
   parser.add_argument(
     "-process",
     help="Process datasets for passed task")
