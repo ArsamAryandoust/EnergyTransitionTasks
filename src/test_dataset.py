@@ -12,7 +12,7 @@ def test(config: dict, name: str):
     path_to_data = config['general']['path_to_data']+name+'/'+subtask+'/'    
     
     # load data
-    train, val, test = load_data.load(dataset_name, path_to_data=path_to_data)
+    train, val, test = load_data.load(name, path_to_data=path_to_data)
   
   
   
