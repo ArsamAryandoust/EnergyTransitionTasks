@@ -78,7 +78,7 @@ def save_file(entry_name: str, entry_path: str, dataverse_server: str,
   persistentId: str, api_key: str, base_path_len: int, s):
   """
   """
-  if '.csv' in entry_name:
+  if ('.csv' in entry_name or '.CSV' in entry_name) :
     file_content = pd.read_csv(entry_path).to_csv(index=False)
   elif '.json' in entry_name:
     file_content = json.dumps(json.load(entry_path))
