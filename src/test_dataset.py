@@ -1,5 +1,6 @@
 import selberai.data.load_data as load_data
 
+import numpy as np
 def test(config: dict, name: str, subtask: str):
   """
   """
