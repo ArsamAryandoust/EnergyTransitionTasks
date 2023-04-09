@@ -1,5 +1,4 @@
-
-
+import selberai.data.load_data as load_data
 
 def analyse(config: dict, name: str, subtask: str):
   """

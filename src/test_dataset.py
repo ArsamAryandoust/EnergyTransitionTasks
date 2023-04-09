@@ -9,7 +9,7 @@ def test(config: dict, name: str, subtask: str):
   # Load data
   ###
   
-  # set the path to data we want to load
+  # set the path to data and token we want to load
   path_to_data = config['general']['path_to_data']+name+'/'+subtask+'/'    
   path_to_token = config['dataverse']['path_to_token']
   
