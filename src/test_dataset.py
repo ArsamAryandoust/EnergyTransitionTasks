@@ -13,8 +13,9 @@ def test(config: dict, name: str, subtask: str):
     api_key = token.read().replace('\n', '')
   
   # load data
-  train, val, test, add = load_data.load(name, path_to_data=path_to_data, 
+  dataset_dict = load_data.load(name, path_to_data=path_to_data, 
     token=api_key)
+  
   
   
   
