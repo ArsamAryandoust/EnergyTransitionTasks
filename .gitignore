@@ -7,3 +7,4 @@ src/selberai/data/__pycache__
 datasets/*/raw
 datasets/*/processed
 
+notebooks/.ipynb_checkpoints
