@@ -18,6 +18,7 @@ if [ $update -eq 1 ]; then
   
   # reload notebooks
   sudo cp -r .notebooks notebooks
+  
 
   # Clone code from selberai branch latest_release
   sudo rm -r src/selberai
