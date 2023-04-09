@@ -3,7 +3,7 @@
 | Feature | Description | Format |
 | --- | ----------- | ----------- |
 | x_t | year, month, day, hour, quarter of hour | (n, 5) |
-| x_s | building ID that can be mapped to RGB image pixel histograms | (n, 1)/ \ (n, 100, 3) |
+| x_s | building ID that can be mapped to RGB image pixel histograms | (n, 1)/  <br /> (n, 100, 3) |
 | x_st | 24h of hourly past meteorological data for air density, cloud cover, precipitation, radiation surface, radiation top of athmosphere, snow mass, snowfall, temperature  | (n, 24, 9) |
 
 
