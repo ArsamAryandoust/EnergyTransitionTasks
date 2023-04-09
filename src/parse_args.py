@@ -39,6 +39,7 @@ def parse_arguments() -> argparse.Namespace:
     help="Test processed datasets for passed task")
   parser.add_argument(
     "-analyse",
+    nargs='+',
     help="Analyse processed datasets for passed task")
   parser.add_argument(
     "-shuffle",
