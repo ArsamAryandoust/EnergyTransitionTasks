@@ -17,8 +17,8 @@ if [ $update -eq 1 ]; then
   git pull origin latest_release
   
   # reload notebooks
-  sudo cp -r .notebooks notebooks
- 
+  sudo rm -r .notebooks notebooks
+
   # Clone code from selberai branch latest_release
   sudo rm -r src/selberai
   git clone -b latest_release https://github.com/Selber-AI/selberai
