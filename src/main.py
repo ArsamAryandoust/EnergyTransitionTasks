@@ -47,7 +47,7 @@ if __name__ == "__main__":
     test_dataset.test(config, args.test[0], args.test[1])
   # analyse passed dataset
   elif args.analyse is not None:
-    analyse_dataset.analyse(config, args.analyse)
+    analyse_dataset.analyse(config, args.analyse[0], args.analyse[1])
   # shuffle files of passed dataset
   elif args.shuffle is not None:
     print("Shuffling processed {} data.".format(args.shuffle))
