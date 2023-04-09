@@ -39,6 +39,7 @@ def parse_arguments() -> argparse.Namespace:
     help="Test processed datasets for passed task")
   parser.add_argument(
     "-analyse",
+    nargs='+',
     help="Analyse processed datasets for passed task")
   parser.add_argument(
     "-shuffle",
@@ -49,15 +50,15 @@ def parse_arguments() -> argparse.Namespace:
   
   # do some checks for validity of args
   if (args.upload is None and args.download is None):
-    print("\nNo download or upload operations where requested!\n")
+    print("\nNo download or upload operations where requested!")
     if args.process is None:
-      print("\nNo dataset has been requested to be processed!\n")
+      print("\nNo dataset has been requested to be processed!")
       if args.test is None:
-        print("\nNo dataset has been requested to be tested!\n")
+        print("\nNo dataset has been requested to be tested!")
         if args.analyse is None:
-          print("\nNo dataset has been requested to be analyzed!\n")
+          print("\nNo dataset has been requested to be analyzed!")
           if args.shuffle is None:
-            print("\nNo data shuffling operation is requested!\n")
+            print("\nNo data shuffling operation is requested!")
             print("Must select one of these instructions!")
             exit(1)
   

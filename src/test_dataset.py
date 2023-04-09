@@ -1,21 +1,43 @@
 import selberai.data.load_data as load_data
 
+import numpy as np
 def test(config: dict, name: str, subtask: str):
   """
   """
-  print('Testing {}'.format(name))
+  print('Testing {} for subtask {}'.format(name, subtask))
   
-  # set the path to data we want to load
+  ###
+  # Load data
+  ###
+  
+  # set the path to data and token we want to load
   path_to_data = config['general']['path_to_data']+name+'/'+subtask+'/'    
-  
-  # import api_key
-  with open(config['dataverse']['path_to_token'], 'r') as token:
-    api_key = token.read().replace('\n', '')
+  path_to_token = config['dataverse']['path_to_token']
   
   # load data
-  train, val, test, add = load_data.load(name, path_to_data=path_to_data, 
-    token=api_key)
+  dataset = load_data.load(name, path_to_data=path_to_data, 
+    path_to_token=path_to_token)
   
   
+  ###
+  # Test variance of features and labels
+  ###
   
-  print("Successfully tested {}!".format(name))
+  var_train_x_t = np.var(dataset.train['x_t'], axis=0)
+  var_train_x_s = np.var(dataset.train['x_s'], axis=0)
+  var_train_x_st = np.var(dataset.train['x_st'], axis=0)
+  var_train_y = np.var(dataset.train['y'], axis=0)
+  
+  var_val_x_t = np.var(dataset.val['x_t'], axis=0)
+  var_val_x_s = np.var(dataset.val['x_s'], axis=0)
+  var_val_x_st = np.var(dataset.val['x_st'], axis=0)
+  var_val_y = np.var(dataset.val['y'], axis=0)
+  
+  var_test_x_t = np.var(dataset.test['x_t'], axis=0)
+  var_test_x_s = np.var(dataset.test['x_s'], axis=0)
+  var_test_x_st = np.var(dataset.test['x_st'], axis=0)
+  var_test_y = np.var(dataset.test['y'], axis=0)
+  
+  print('Variance train x_st:', var_train_x_st)
+  print('Variance val x_st:', var_val_x_st)
+  print('Variance test x_st:', var_test_x_st)
