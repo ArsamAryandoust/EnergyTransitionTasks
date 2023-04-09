@@ -16,10 +16,10 @@
 | --- | ----------- | ----------- |
 | id_histo_map | A mapping of building IDs to RGB histogram data of a buildings aerial image. This can be used to dynamically, or statically, expand x_s into the recommended format of (n, 300) or (n, 100, 3). Each subtask has a different file with 92 and 451 buildings respectively. | (300, 92) (300, 451) |
 
-n:= number of data points
-x_t := time-variant features
-x_s := space-variant features
-x_st := space-time-variant features
+n:= number of data points <br />
+x_t := time-variant features <br />
+x_s := space-variant features <br />
+x_st := space-time-variant features <br />
 y := labels
 
 Aryandoust et al. predict the electric load profile of single buildings for a future time window of 24h in 15-min steps, given purely remotely sensed features consisting of the aerial image of a building and the meteorological conditions in the region of a building for a past time window of 24h in 1-h steps [1]. Among many different types of electric load forecasts that are useful for enhancing the energy transition, this falls into the category of short-term spatio-temporal load forecasts, and can be used for both planning and dispatch of renewable electricity systems. The primary goal is to assess the information content of candidate data points prior to physically measuring or streaming these, a method known as active learning, so as to reduce the need for smart meters and data queries to the most informative data only. Enhancing solutions to this task, however, bears the risk of having significantly larger computation-related GHG emissions compared with distributing smart meters and querying their data at random using passive learning. This is because the assessment of informativeness of data points is found to cost 4-11 times more computation in the original study.
