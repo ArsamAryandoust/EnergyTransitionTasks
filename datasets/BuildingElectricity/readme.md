@@ -3,7 +3,7 @@
 | Feature | Description | Format |
 | --- | ----------- | ----------- |
 | x_t | year, month, day, hour, quarter of hour | (n, 5) |
-| x_s | building ID that can be mapped to RGB image pixel histograms | (n, 1)/ |
+| x_s | building ID that can be mapped to RGB image pixel histograms | (n, 1) |
 | x_st | 24h of hourly past meteorological data for air density, cloud cover, precipitation, radiation surface, radiation top of athmosphere, snow mass, snowfall, temperature  | (n, 24, 9) |
 
 
@@ -14,7 +14,7 @@
 
 | Additional data | Description | Format |
 | --- | ----------- | ----------- |
-| id_histo_map | A mapping of building IDs to RGB histogram data of a buildings aerial image. This can be used to dynamically, or statically, expand x_s into the recommended format of (n, 100, 3) | (300, 92/451) |
+| id_histo_map | A mapping of building IDs to RGB histogram data of a buildings aerial image. This can be used to dynamically, or statically, expand x_s into the recommended format of (n, 300) or (n, 100, 3). Each subtask has a different file with 92 and 451 buildings respectively. | (300, 92) (300, 451) |
 
 
 Aryandoust et al. predict the electric load profile of single buildings for a future time window of 24h in 15-min steps, given purely remotely sensed features consisting of the aerial image of a building and the meteorological conditions in the region of a building for a past time window of 24h in 1-h steps [1]. Among many different types of electric load forecasts that are useful for enhancing the energy transition, this falls into the category of short-term spatio-temporal load forecasts, and can be used for both planning and dispatch of renewable electricity systems. The primary goal is to assess the information content of candidate data points prior to physically measuring or streaming these, a method known as active learning, so as to reduce the need for smart meters and data queries to the most informative data only. Enhancing solutions to this task, however, bears the risk of having significantly larger computation-related GHG emissions compared with distributing smart meters and querying their data at random using passive learning. This is because the assessment of informativeness of data points is found to cost 4-11 times more computation in the original study.
