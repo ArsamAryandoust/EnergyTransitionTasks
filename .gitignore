@@ -8,3 +8,5 @@ datasets/*/raw
 datasets/*/processed
 
 notebooks/.ipynb_checkpoints
+
+.notebooks/
