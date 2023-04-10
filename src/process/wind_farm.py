@@ -18,7 +18,7 @@ def process_all_datasets(config: dict):
     config_wind = config_WF(config, subtask)
     
     # load data of this subtask
-    #df_data, df_locations = load_data(config_wind)
+    df_data, df_locations = load_data(config_wind)
     
     # expand timestamp
     #df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
