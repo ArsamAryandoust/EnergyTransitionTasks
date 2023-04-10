@@ -141,13 +141,16 @@ def process_meteo_and_load_profiles(config_building: dict,
   # Create dataframe column
   new_df_columns_base = ['year', 'month', 'day', 'hour', 'quarter_hour', 
     'building_id']
+    
   # fill a separate list 
   new_df_columns = new_df_columns_base.copy()
+  
   # append column entries for meteorological data
   for column_name in config_building['meteo_name_list']:
     for pred_time_step in range(config_building['historic_window']):
       entry_name = '{}_{}'.format(column_name, pred_time_step+1)
       new_df_columns.append(entry_name)
+      
   # append column entries for electric load
   for pred_time_step in range(config_building['prediction_window']):
     entry_name = 'load_{}'.format(pred_time_step+1)
@@ -155,10 +158,13 @@ def process_meteo_and_load_profiles(config_building: dict,
       
   # Create datasets
   df_consumption.drop(index=1, inplace=True)
+  
   # get corresponding time stamps series and reset indices
   time_stamps = df_consumption['building ID'].iloc[1:].reset_index(drop=True)
+  
   # create a list of all building IDs
   building_id_list = list(df_consumption.columns.values[1:])
+  
   # decleare empty values array. Filling matrix pre-allocates memory and
   # decreases computational time significantly.
   values_array = np.zeros((len(building_id_list) * (
@@ -167,36 +173,47 @@ def process_meteo_and_load_profiles(config_building: dict,
     (len(new_df_columns_base) + config_building['historic_window'] * (
       len(config_building['meteo_name_list'])) 
       + config_building['prediction_window'])))
+      
   # create progress bar
   pbar = tqdm(total=len(building_id_list))
+  
   # declare df row counter
   datapoint_counter = 0
+  
   # iterate over all building IDs
   for building_id in building_id_list:
     # get cluster id as integer
     cluster_id = df_consumption[building_id].iloc[0].astype(int)
+    
     # get building load with new indices
     building_load = df_consumption[building_id].iloc[1:].reset_index(
       drop=True)
+      
     # transform building id into integer
     building_id = int(building_id)
+    
     # create key to corresponding meteo data
     key_meteo = 'meteo_{}_2014.csv'.format(cluster_id)
+    
     # get corresponding meteorological data
     df_meteo = df_meteo_dict[key_meteo]
+    
     # drop local_time column 
     df_meteo = df_meteo.drop(columns=['local_time'])
+    
     # iterate over all time stamps in prediction window steps
     for i in range(config_building['historic_window'] * 4, 
       len(time_stamps) - config_building['prediction_window']):
       # get time stamp
       time = time_stamps[i]
+      
       # get single entries of timestamp
       year = int(time[0:4])
       month = int(time[5:7])
       day = int(time[8:10])
       hour = int(time[11:13])
       quarter_hour = int(time[14:16])
+      
       # get iterated meteorological data
       meteo_dict = {}
       for meteo_name in config_building['meteo_name_list']:
@@ -204,34 +221,47 @@ def process_meteo_and_load_profiles(config_building: dict,
           list(range(i-config_building['historic_window'] *4, i, 4))
         ].values
         meteo_dict[meteo_name] = meteo_values
+        
       # get iterated load profile data
       load_profile = building_load[
         i:(i+config_building['prediction_window'])].values
+        
       # add features to values_array. Ensures same order as new_df_columns.
       for index_col, entry_name in enumerate(new_df_columns_base):
+        # build the command
         command = 'values_array[datapoint_counter,index_col]={}'.format(
           entry_name)
+          
+        # execute the command
         exec(command)
+        
       # add meteorological data to entry
       for meteo_name, meteo_profile in meteo_dict.items():
         for i in range(len(meteo_profile)):
           index_col += 1
           values_array[datapoint_counter,index_col] = meteo_profile[i]
+          
       # add load profile to entry
       for i in range(len(load_profile)):
         index_col += 1
         values_array[datapoint_counter, index_col] = load_profile[i]
+        
       # increment df row counter
       datapoint_counter += 1
+      
     # increment progbar
     pbar.update(1) 
+    
   # create dataframe from filled matrix values
   df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
+  
   # drop zero entries
   df_dataset = df_dataset.loc[~(df_dataset==0).all(axis=1)]
+  
   # free up memory
   del values_array
   gc.collect()
+  
   return df_dataset
     
     
@@ -241,39 +271,51 @@ def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
   """
   # get total number of data points 
   n_data_total = len(df_dataset)
+  
   # get the out-of-distribution splitting rules
   temporal_ood = config_building['temporal_ood']
   spatial_ood = config_building['spatial_ood']
+  
   # create spatial ood split
   df_testing = df_dataset.loc[
     (df_dataset['building_id'].isin(spatial_ood['ood_building_ids']))]
+    
   # remove split spatial ood data points
   df_dataset = df_dataset.drop(df_testing.index)
+  
   # create temporal ood split
   df_temporal_ood = df_dataset.loc[
     (df_dataset['month'].isin(temporal_ood['ood_months']))
     | (df_dataset['day'].isin(temporal_ood['ood_days']))
     | (df_dataset['hour'].isin(temporal_ood['ood_hours']))
     | (df_dataset['quarter_hour'].isin(temporal_ood['ood_quarter_hours']))]
+    
   # remove the spatial ood split data points which is training dataset
   df_training = df_dataset.drop(df_temporal_ood.index)
+  
   # free up memory
   del df_dataset
   gc.collect()
+  
   # append to testing dataset
   df_testing = pd.concat([df_testing, df_temporal_ood], ignore_index=True)
+  
   # free up memory
   del df_temporal_ood
   gc.collect()
+  
   # do validation split
   df_validation = df_testing.sample(
     frac=config_building['val_test_split'], 
     random_state=config_building['seed'])
+    
   # remove validation data split from testing dataset
   df_testing = df_testing.drop(df_validation.index)
+  
   # calculate and analyze dataset properties
-  n_train,n_val,n_test = len(df_training),len(df_validation),len(df_testing)
+  n_train, n_val, n_test = len(df_training), len(df_validation), len(df_testing)
   n_total = n_train + n_val + n_test
+  
   # print
   print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
       n_train/n_total),
@@ -281,10 +323,12 @@ def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
       n_val/n_total),
     "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
       n_test/n_total))
+      
   # test if all indexes dropped correctly.
   if n_data_total != n_total:
       print("Error! Number of available data is {}".format(n_data_total),
           "and does not match number of resulting data {}.".format(n_total))
+          
   # save results in chunks
   save_in_chunks(config_building,
     config_building['path_to_data_train'] + 'training_data', df_training)
@@ -300,11 +344,15 @@ def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
   file defined by config such that each file takes less than about 1 GB size.
   """
   df = df.sample(frac=1, random_state=config_building['seed'])
+  
   for file_counter in range(1, 312321321312):
     path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+    
     df.iloc[:config_building['data_per_file']].to_csv(
       path_to_saving, index=False)
+      
     df = df[config_building['data_per_file']:]
+    
     if len(df) == 0:
       break
             
