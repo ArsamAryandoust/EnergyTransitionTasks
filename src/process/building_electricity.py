@@ -27,7 +27,8 @@ def process_all_datasets(config: dict):
       df_consumption, df_building_images)
       
     # process building imagery
-    save_building_imagery(config_building, df_building_images)
+    df_building_images = save_building_imagery(config_building, 
+      df_building_images)
     
     # free up memory
     del df_building_images
@@ -105,16 +106,19 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   return df_consumption, df_building_images
     
 
-def save_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
+def save_building_imagery(config_building: dict, 
+  df_building_images: pd.DataFrame) -> (pd.DataFrame):
   """
-  Simply changes the column name of aerial imagery histograms of buildings
-  by adding pre-fix 'building_' to IDs and saves file with new column names.
+  Sorts after IDs, and saves and returns file with new order.
   """
   # get list of columns
-  columns_df_list = list(df_building_images.columns.values)
+  columns_df_list = list(df_building_images.columns.values.astype(int))
   
   # sort in ascending order
   columns_df_list.sort()
+  
+  # turn back into string
+  columns_df_list = map(str, columns_df_list)
   
   # rearrange df_building_images only
   df_building_images = df_building_images[columns_df_list]
@@ -124,6 +128,8 @@ def save_building_imagery(config_building: dict, df_building_images: pd.DataFram
   
   # save df_building_images_new
   df_building_images.to_csv(saving_path, index=False)
+  
+  return df_building_images
 
     
 def process_meteo_and_load_profiles(config_building: dict, 
