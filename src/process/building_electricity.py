@@ -12,29 +12,38 @@ def process_all_datasets(config: dict):
   Processes all datasets for Building Electricity task.
   """
   print("Processing Building Electricity dataset.")
+  
   # iterated over all subtasks
   for subtask in config['BuildingElectricity']['subtask_list']:
     # augment config with currently iterated subtask paths
     config_building = config_BE(config, subtask)
+    
     # import all data
     df_consumption, df_building_images, df_meteo_dict = import_all_data(
       config_building)
+      
     # change building IDs here
     df_consumption, df_building_images = adjust_building_ids(
       df_consumption, df_building_images)
+      
     # process building imagery
-    process_building_imagery(config_building, df_building_images)
+    save_building_imagery(config_building, df_building_images)
+    
     # free up memory
     del df_building_images
     gc.collect()
+    
     # process meteo data and load profiles
     df_dataset = process_meteo_and_load_profiles(config_building, 
       df_consumption, df_meteo_dict)
+      
     # free up memory
     del df_consumption, df_meteo_dict
     gc.collect()
+    
     # Do trainining, validation and testing split
     split_train_val_test(config_building, df_dataset)
+    
     # free up memory
     del df_dataset
     gc.collect()
@@ -49,23 +58,30 @@ def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame,
   # import all electric consumption profiles
   df_consumption = pd.read_csv(
     config_building['path_to_raw_building_year_profiles_file'])
+    
   # import image pixel histogram values
   df_building_images = pd.read_csv(
     config_building['path_to_raw_aerial_imagery_file'])
+    
   # create path to sample meteo files
   meteo_filename_list = os.listdir(
     config_building['path_to_raw_meteo_data_folder'])
+    
   # decleare empty dictionary for saving all meteo dataframes
   df_meteo_dict = {}
+  
   # iterate over all filenames
   for filename in meteo_filename_list:
     # create full path to iterated file
     path_to_meteo_file = (config_building['path_to_raw_meteo_data_folder'] 
       + filename)
+      
     # import meteorological data
     df_meteo = pd.read_csv(path_to_meteo_file)
+    
     # save imported dataframe to dataframe dictionary
     df_meteo_dict[filename] = df_meteo
+    
   return df_consumption, df_building_images, df_meteo_dict
   
 
@@ -76,38 +92,37 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   """
   # create a list of all available building IDs
   building_id_list = list(df_consumption.columns.values[1:])
+  
   # create empty dict for mapping old to new building IDs from zero to length
   build_id_map_dict = {}
   for count_index, building_id_old in enumerate(building_id_list):
     build_id_map_dict[building_id_old] = count_index + 1
+    
   # do the renaming
   df_consumption.rename(build_id_map_dict, inplace=True)
   df_building_images.rename(build_id_map_dict, inplace=True)
+  
+  
   return df_consumption, df_building_images
     
 
-def process_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
+def save_building_imagery(config_building: dict, df_building_images: pd.DataFrame):
   """
   Simply changes the column name of aerial imagery histograms of buildings
   by adding pre-fix 'building_' to IDs and saves file with new column names.
   """
   # get list of columns
   columns_df_list = df_building_images.columns
-  # declare empty list to fill
-  new_columns_list = []
-  # iterate over all column names
-  for entry in columns_df_list:
-    # create new entry
-    new_entry = 'building_{}'.format(entry)
-    # append new entry to new column list
-    new_columns_list.append(new_entry)
-  # copy old dataframe 1 to 1    
-  df_building_images_new = df_building_images
-  # only replace its column names
-  df_building_images_new.columns = new_columns_list
+  
+  # sort in ascending order
+  columns_df_list.sort()
+  
+  # rearrange df_building_images only
+  df_building_images = df_building_images[columns_df_list]
+  
   # create saving path for building imagery
-  saving_path = (config_building['path_to_data_add']
-    + 'building_images_pixel_histograms_rgb.csv')
+  saving_path = config_building['path_to_data_add']+ 'id_histo_map.csv'
+  
   # save df_building_images_new
   df_building_images_new.to_csv(saving_path, index=False)
 
