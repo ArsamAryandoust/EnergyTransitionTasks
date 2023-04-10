@@ -9,16 +9,9 @@ done
 
 
 if [ $update -eq 1 ]; then
-  # save copy notebooks
-  sudo cp -r notebooks .notebooks
-  
   # Pull latest code from EnergyTransitionTasks
   git stash push .
   git pull origin latest_release
-  
-  # reload notebooks
-  sudo cp -r .notebooks notebooks
-  
 
   # Clone code from selberai branch latest_release
   sudo rm -r src/selberai
