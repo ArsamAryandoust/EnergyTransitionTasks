@@ -102,7 +102,6 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   df_consumption.rename(build_id_map_dict, inplace=True)
   df_building_images.rename(build_id_map_dict, inplace=True)
   
-  
   return df_consumption, df_building_images
     
 
@@ -112,7 +111,7 @@ def save_building_imagery(config_building: dict, df_building_images: pd.DataFram
   by adding pre-fix 'building_' to IDs and saves file with new column names.
   """
   # get list of columns
-  columns_df_list = df_building_images.columns
+  columns_df_list = list(df_building_images.columns.values)
   
   # sort in ascending order
   columns_df_list.sort()
