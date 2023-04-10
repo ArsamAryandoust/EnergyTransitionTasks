@@ -123,7 +123,7 @@ def save_building_imagery(config_building: dict, df_building_images: pd.DataFram
   saving_path = config_building['path_to_data_add']+ 'id_histo_map.csv'
   
   # save df_building_images_new
-  df_building_images_new.to_csv(saving_path, index=False)
+  df_building_images.to_csv(saving_path, index=False)
 
     
 def process_meteo_and_load_profiles(config_building: dict, 
