@@ -8,22 +8,27 @@ from tqdm import tqdm
 from load_config import config_WF
 
 def process_all_datasets(config: dict):
-    """
-    Does the main data processing.
-    """
-    print("\nProcessing Wind Farm dataset.")
-    for subtask in config['wind_farm']['subtask_list']:
-        # augment conigurations with additional information
-        config_wind = config_WF(config, subtask)
-        # load data of this subtask
-        df_data, df_locations = load_data(config_wind)
-        # expand timestamp
-        df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
-        df_data.drop(columns=['Tmstamp'], inplace=True)
-        # expand data with sliding time window
-        df_data = create_datapoints(config_wind, df_data)
-        # split the loaded dataframe into training, validation and testing
-        split_train_val_test(config_wind, df_data, df_locations)
+  """
+  Does the main data processing.
+  """
+  print("\nProcessing Wind Farm dataset.")
+  
+  for subtask in config['wind_farm']['subtask_list']:
+    # augment configuration with additional information
+    config_wind = config_WF(config, subtask)
+    
+    # load data of this subtask
+    #df_data, df_locations = load_data(config_wind)
+    
+    # expand timestamp
+    #df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
+    #df_data.drop(columns=['Tmstamp'], inplace=True)
+    
+    # expand data with sliding time window
+    #df_data = create_datapoints(config_wind, df_data)
+    
+    # split the loaded dataframe into training, validation and testing
+    #split_train_val_test(config_wind, df_data, df_locations)
         
         
 def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
@@ -61,7 +66,7 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
             #update progress bar
             pbar.update(1)
             
-    # subsample
+    # subsample/shuffle
     df_data = df_data.sample(frac=config_wind['subsample_frac'], 
         random_state=config_wind['seed'])
     return df_data, df_locations
