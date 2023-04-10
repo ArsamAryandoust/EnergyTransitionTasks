@@ -146,6 +146,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       # iterate over prediction window
       for j in range(i, i+config_wind['prediction_window']):
       
+        # set active power as label to be predicted
         values_array[data_counter, col_counter] = df_turbine['Patv'][j]
         
         # increment column counter
