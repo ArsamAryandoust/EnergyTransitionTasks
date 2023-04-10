@@ -4,7 +4,7 @@
 | --- | ----------- | ----------- |
 | x_t | time stamp containing year, month, day, hour, quarter of hour | (n, 5) |
 | x_s | building ID that can be mapped to RGB image pixel histograms | (n, 1) |
-| x_st | 24h of hourly past meteorological data for air density, cloud cover, precipitation, radiation surface, radiation top of athmosphere, snow mass, snowfall, temperature  | (n, 24, 9) |
+| x_st | 24h of hourly past meteorological data for air density, cloud cover, precipitation, radiation surface, radiation top of athmosphere, snow mass, snowfall, temperature  | (n, 9, 24) |
 
 
 | Label | Description | Format |
