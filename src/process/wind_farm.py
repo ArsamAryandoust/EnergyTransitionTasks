@@ -47,7 +47,6 @@ def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
   
   # for days_183, data is in multiple files
   elif config_wind['subtask'] == 'days_183':
-    
     # get list of filenames for input and output of challenge
     list_of_files_in = os.listdir(
       config_wind['path_to_data_raw_infile_folder'])
