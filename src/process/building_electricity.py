@@ -111,7 +111,7 @@ def save_building_imagery(config_building: dict, df_building_images: pd.DataFram
   by adding pre-fix 'building_' to IDs and saves file with new column names.
   """
   # get list of columns
-  columns_df_list = list(df_building_images.columns.values)
+  columns_df_list = list(df_building_images.columns.values.astype(int))
   
   # sort in ascending order
   columns_df_list.sort()
