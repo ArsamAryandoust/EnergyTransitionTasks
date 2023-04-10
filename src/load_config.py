@@ -97,7 +97,7 @@ def config_WF(config: dict, subtask: str) -> dict:
     Augments configuration file for processing Wind Farm dataset.
     """
     # get base config
-    config_wind = config['wind_farm']
+    config_wind = config['WindFarm']
     
     # add data paths
     config_wind['path_to_data_raw'] = (config['general']['path_to_data_raw'] 

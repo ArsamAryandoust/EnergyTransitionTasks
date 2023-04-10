@@ -13,7 +13,7 @@ def process_all_datasets(config: dict):
   """
   print("\nProcessing Wind Farm dataset.")
   
-  for subtask in config['wind_farm']['subtask_list']:
+  for subtask in config['WindFarm']['subtask_list']:
     # augment configuration with additional information
     config_wind = config_WF(config, subtask)
     
