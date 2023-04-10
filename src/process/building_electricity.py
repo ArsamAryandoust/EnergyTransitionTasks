@@ -116,6 +116,9 @@ def save_building_imagery(config_building: dict, df_building_images: pd.DataFram
   # sort in ascending order
   columns_df_list.sort()
   
+  # turn back into string
+  columns_df_list = map(str, columns_df_list)
+  
   # rearrange df_building_images only
   df_building_images = df_building_images[columns_df_list]
   
