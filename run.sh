@@ -19,6 +19,8 @@ if [ $update -eq 1 ]; then
   mv selberai/selberai src/
   sudo rm -r selberai
 fi
+ 
+
 
 
 if [ $build -eq 1 ]; then
