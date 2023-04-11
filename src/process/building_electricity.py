@@ -89,19 +89,26 @@ def import_all_data(config_building: dict) -> (pd.DataFrame, pd.DataFrame,
 def adjust_building_ids(df_consumption: pd.DataFrame, 
   df_building_images: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
   """
-  Maps original building IDs into a new set of IDs starting from 0 to length
+  Maps original building IDs into a new set of IDs starting from 1 to length
   """
   # create a list of all available building IDs
   building_id_list = list(df_consumption.columns.values[1:])
   
   # create empty dict for mapping old to new building IDs from zero to length
   build_id_map_dict = {}
+  new_col_list = []
   for count_index, building_id_old in enumerate(building_id_list):
-    build_id_map_dict[building_id_old] = count_index + 1
+    building_id_new = count_index + 1
+    build_id_map_dict[building_id_old] = building_id_new
+    new_col_list.append(str(building_id_new))
     
   # do the renaming
   df_consumption.rename(build_id_map_dict, inplace=True)
   df_building_images.rename(build_id_map_dict, inplace=True)
+  
+  # shorten up to renaming maximum
+  df_consumption = df_consumption[new_col_list]
+  df_building_images = df_building_images[new_col_list]
   
   return df_consumption, df_building_images
     

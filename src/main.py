@@ -28,9 +28,11 @@ if __name__ == "__main__":
     else:
       print('\nYou chose "no". Process interrupted!')
       exit(1)
+      
   # download passed dataset
   elif args.download is not None:
     download_dataset.download(config, args.download)
+    
   # process passed dataset
   elif args.process is not None:
     if args.process == 'BuildingElectricity':
@@ -43,12 +45,15 @@ if __name__ == "__main__":
       climart.process_all_datasets(config)
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
+      
   # test passed dataset
   elif args.test is not None:
     test_dataset.test(config, args.test[0], args.test[1])
+    
   # analyse passed dataset
   elif args.analyse is not None:
     analyse_dataset.analyse(config, args.analyse[0], args.analyse[1])
+    
   # shuffle files of passed dataset
   elif args.shuffle is not None:
     print("Shuffling processed {} data.".format(args.shuffle))
