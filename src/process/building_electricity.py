@@ -100,7 +100,7 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   for count_index, building_id_old in enumerate(building_id_list):
     building_id_new = count_index + 1
     build_id_map_dict[building_id_old] = building_id_new
-    new_col_list.append(str(building_id_new))
+    new_col_list.append(building_id_new)
     
   # do the renaming
   df_consumption.rename(columns=build_id_map_dict, inplace=True)
