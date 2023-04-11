@@ -98,7 +98,7 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   build_id_map_dict = {}
   new_col_list = []
   for count_index, building_id_old in enumerate(building_id_list):
-    building_id_new = count_index + 1
+    building_id_new = str(count_index + 1)
     build_id_map_dict[building_id_old] = building_id_new
     new_col_list.append(building_id_new)
     
@@ -126,7 +126,7 @@ def save_building_imagery(config_building: dict,
   columns_df_list.sort()
   
   # turn back into string
-  #columns_df_list = map(str, columns_df_list)
+  columns_df_list = map(str, columns_df_list)
   
   # rearrange df_building_images only
   df_building_images = df_building_images[columns_df_list]
