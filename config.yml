@@ -10,7 +10,7 @@ dataverse:
     persistentId: #'doi:10.7910/DVN/T3OK7E'
     saving_path: 'datasets/BuildingElectricity/raw/'
   BuildingElectricity:
-    persistentId: 'doi:10.7910/DVN/1TL1CG'
+    persistentId: 'doi:10.7910/DVN/O2MDHX'
     saving_path: 'datasets/BuildingElectricity/processed/'
   WindFarm_raw:
     persistentId: #'doi:10.7910/DVN/BCDE1C'
