@@ -22,10 +22,11 @@ if __name__ == "__main__":
   if args.upload is not None:
     # set a safety instance
     print('\nAre you sure you want to upload {}? \n'.format(args.upload))
-    resp = input('Type yes or no! \n'.format(args.upload))
+    resp = input('Please enter "yes" or "no"! \n'.format(args.upload))
     if resp == 'yes' or resp == 'y':
       upload_dataset.upload(config, args.upload)
     else:
+      print('\nYou chose "no". Process interrupted!')
       exit(1)
   # download passed dataset
   elif args.download is not None:
