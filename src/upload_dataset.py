@@ -35,6 +35,7 @@ def upload(config: dict, dataset_name: str):
   upload_fail_record = recursive_call(path_to_data, dataverse_server, 
     persistentId, api_key, base_path_len, upload_fail_record, s)
 
+  """
   # upload all failed files
   for entry in upload_fail_record:
     entry_path, entry_name = entry[0], entry[1]
@@ -44,7 +45,8 @@ def upload(config: dict, dataset_name: str):
       upload_fail_record.remove(entry)
     except:
       print("Caution: Exception occurred on repeated upload attempt!")
-
+  """
+  
   # save upload fail record as json
   upload_fail_record = json.dumps(dict(upload_fail_record))
   path_to_record = '.upload_records/'
