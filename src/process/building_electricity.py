@@ -107,8 +107,9 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   df_building_images.rename(columns=build_id_map_dict, inplace=True)
   
   # shorten up to renaming maximum
-  df_consumption = df_consumption[new_col_list]
   df_building_images = df_building_images[new_col_list]
+  new_col_list.insert(0, 'building ID')
+  df_consumption = df_consumption[new_col_list]
   
   return df_consumption, df_building_images
     
