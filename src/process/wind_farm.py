@@ -22,11 +22,6 @@ def process_all_datasets(config: dict):
     
     # expand timestamp
     df_data = expand_timestamp(df_data)
-    df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
-    df_data.drop(columns=['Tmstamp'], inplace=True)
-    cols = df_data.columns.tolist()
-    cols = cols[:2] + cols[-2:] + cols[2:-2]
-    df_data = df_data[cols]
     
     # create data points with sliding time window
     df_data = create_datapoints(config_wind, df_data)
@@ -34,23 +29,6 @@ def process_all_datasets(config: dict):
     # split the loaded dataframe into training, validation and testing
     split_train_val_test(config_wind, df_data, df_locations)
         
-
-def expand_timestamp(df_data: pd.DataFrame) -> (pd.DataFrame):
-  """
-  """
-  # split timestamp column into separate columns with hour and minute
-  df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
-  
-  # drop the original timestamp column
-  df_data.drop(columns=['Tmstamp'], inplace=True)
-  
-  # Put hour and minute columns next to Day column. NOTE: not necessary, but 
-  # reads better in notebooks
-  cols = df_data.columns.tolist()
-  cols = cols[:2] + cols[-2:] + cols[2:-2]
-  df_data = df_data[cols]
-  
-  return df_data
         
 def import_all_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
   """
@@ -106,6 +84,24 @@ def import_all_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
     
   return df_data, df_locations
     
+    
+def expand_timestamp(df_data: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
+  # split timestamp column into separate columns with hour and minute
+  df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
+  
+  # drop the original timestamp column
+  df_data.drop(columns=['Tmstamp'], inplace=True)
+  
+  # Put hour and minute columns next to Day column. NOTE: not necessary, but 
+  # reads better in notebooks
+  cols = df_data.columns.tolist()
+  cols = cols[:2] + cols[-2:] + cols[2:-2]
+  df_data = df_data[cols]
+  
+  return df_data
+  
     
 def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   """
@@ -202,8 +198,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   df_data = df_data.loc[~(df_data==0).all(axis=1)]
   
   return df_data
-    
-    
+  
+  
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   df_locations: pd.DataFrame):
   """
