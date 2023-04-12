@@ -18,7 +18,7 @@ def process_all_datasets(config: dict):
     config_wind = config_WF(config, subtask)
     
     # load data of this subtask
-    df_data, df_locations = load_data(config_wind)
+    df_data, df_locations = import_all_data(config_wind)
     
     # expand timestamp
     df_data[['hour', 'minute']] = df_data.Tmstamp.str.split(':', expand=True)
@@ -31,7 +31,7 @@ def process_all_datasets(config: dict):
     split_train_val_test(config_wind, df_data, df_locations)
         
         
-def load_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
+def import_all_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
   """
   Loads the SCADA data and the location data of each turbine from csv files,
   and returns these.
