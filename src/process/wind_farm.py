@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from load_config import config_WF
 
-def process_all_datasets(config: dict):
+def process_all_datasets(config: dict, save: bool):
   """
   Does the main data processing.
   """
@@ -15,13 +15,16 @@ def process_all_datasets(config: dict):
   
   for subtask in config['WindFarm']['subtask_list']:
     # augment configuration with additional information
-    config_wind = config_WF(config, subtask)
+    config_wind = config_WF(config, subtask, save)
     
     # load data of this subtask
     df_data, df_locations = import_all_data(config_wind)
     
     # expand timestamp
     df_data = expand_timestamp(df_data)
+    
+    # clean data
+    df_data = clean_data(df_data)
     
     # create data points with sliding time window
     df_data = create_datapoints(config_wind, df_data)
@@ -99,6 +102,13 @@ def expand_timestamp(df_data: pd.DataFrame) -> (pd.DataFrame):
   cols = df_data.columns.tolist()
   cols = cols[:2] + cols[-2:] + cols[2:-2]
   df_data = df_data[cols]
+  
+  return df_data
+  
+  
+def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
   
   return df_data
   

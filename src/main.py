@@ -36,13 +36,13 @@ if __name__ == "__main__":
   # process passed dataset
   elif args.process is not None:
     if args.process == 'BuildingElectricity':
-      building_electricity.process_all_datasets(config)
+      building_electricity.process_all_datasets(config, save=True)
     elif args.process == 'WindFarm':
-      wind_farm.process_all_datasets(config)
+      wind_farm.process_all_datasets(config, save=True)
     elif args.process == 'UberMovement':
-      uber_movement.process_all_datasets(config)
+      uber_movement.process_all_datasets(config, save=True)
     elif args.process == 'Climart':
-      climart.process_all_datasets(config)
+      climart.process_all_datasets(config, save=True)
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
       

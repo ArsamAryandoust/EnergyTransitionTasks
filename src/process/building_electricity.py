@@ -7,7 +7,7 @@ import math
 
 from load_config import config_BE
 
-def process_all_datasets(config: dict):
+def process_all_datasets(config: dict, save: bool):
   """
   Processes all datasets for Building Electricity task.
   """
@@ -16,7 +16,7 @@ def process_all_datasets(config: dict):
   # iterated over all subtasks
   for subtask in config['BuildingElectricity']['subtask_list']:
     # augment config with currently iterated subtask paths
-    config_building = config_BE(config, subtask)
+    config_building = config_BE(config, subtask, save)
     
     # import all data
     df_consumption, df_building_images, df_meteo_dict = import_all_data(
@@ -27,8 +27,8 @@ def process_all_datasets(config: dict):
       df_consumption, df_building_images)
       
     # process building imagery
-    df_building_images = save_building_imagery(config_building, 
-      df_building_images)
+    df_building_images = process_building_imagery(config_building, 
+      df_building_images, save)
     
     # free up memory
     del df_building_images
@@ -43,7 +43,7 @@ def process_all_datasets(config: dict):
     gc.collect()
     
     # Do trainining, validation and testing split
-    split_train_val_test(config_building, df_dataset)
+    split_train_val_test(config_building, df_dataset, save)
     
     # free up memory
     del df_dataset
@@ -114,8 +114,8 @@ def adjust_building_ids(df_consumption: pd.DataFrame,
   return df_consumption, df_building_images
     
 
-def save_building_imagery(config_building: dict, 
-  df_building_images: pd.DataFrame) -> (pd.DataFrame):
+def process_building_imagery(config_building: dict, 
+  df_building_images: pd.DataFrame, save: bool) -> (pd.DataFrame):
   """
   Sorts after IDs, and saves and returns file with new order.
   """
@@ -125,17 +125,15 @@ def save_building_imagery(config_building: dict,
   # sort in ascending order
   columns_df_list.sort()
   
-  # turn back into string
-  #columns_df_list = map(str, columns_df_list)
-  
   # rearrange df_building_images only
   df_building_images = df_building_images[columns_df_list]
   
-  # create saving path for building imagery
-  saving_path = config_building['path_to_data_add']+ 'id_histo_map.csv'
-  
-  # save df_building_images_new
-  df_building_images.to_csv(saving_path, index=False)
+  if save:
+    # create saving path for building imagery
+    saving_path = config_building['path_to_data_add']+ 'id_histo_map.csv'
+    
+    # save df_building_images_new
+    df_building_images.to_csv(saving_path, index=False)
   
   return df_building_images
 
@@ -273,7 +271,8 @@ def process_meteo_and_load_profiles(config_building: dict,
   return df_dataset
     
     
-def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
+def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame, 
+  save: bool):
   """
   Splits and saves datasets according to configuration rules.
   """
@@ -339,14 +338,18 @@ def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame):
           
   # save results in chunks
   save_in_chunks(config_building,
-    config_building['path_to_data_train'] + 'training_data', df_training)
+    config_building['path_to_data_train'] + 'training_data', 
+    df_training, save)
   save_in_chunks(config_building,
-    config_building['path_to_data_val'] + 'validation_data', df_validation)
+    config_building['path_to_data_val'] + 'validation_data', 
+    df_validation, save)
   save_in_chunks(config_building,
-    config_building['path_to_data_test'] + 'testing_data', df_testing)
+    config_building['path_to_data_test'] + 'testing_data', 
+    df_testing, save)
 
     
-def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
+def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame,
+  save: bool):
   """
   Shuffles dataframe, then saves it in chunks with number of datapoints per 
   file defined by config such that each file takes less than about 1 GB size.
@@ -354,10 +357,12 @@ def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame):
   df = df.sample(frac=1, random_state=config_building['seed'])
   
   for file_counter in range(1, 312321321312):
-    path_to_saving = saving_path + '_{}.csv'.format(file_counter)
     
-    df.iloc[:config_building['data_per_file']].to_csv(
-      path_to_saving, index=False)
+    if save:
+      path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+      
+      df.iloc[:config_building['data_per_file']].to_csv(
+        path_to_saving, index=False)
       
     df = df[config_building['data_per_file']:]
     

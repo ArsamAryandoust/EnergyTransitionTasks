@@ -9,7 +9,7 @@ import pandas as pd
 
         
 
-def config_BE(config: dict, subtask: str) -> dict:
+def config_BE(config: dict, subtask: str, save: bool) -> dict:
   """
   Augments configuration filefor processing Building Electricity dataset.
   """
@@ -78,21 +78,27 @@ def config_BE(config: dict, subtask: str) -> dict:
     'ood_quarter_hours': ood_quarter_hours}
   config_building['spatial_ood'] = {'ood_building_ids': ood_building_ids}
 
-  # create directory structure for saving results
-  if subtask == 'buildings_92' and os.path.isdir(config_building['path_to_data']):
-    shutil.rmtree(config_building['path_to_data'])
-  for path in [config_building['path_to_data'],
-    config_building['path_to_data_subtask'], config_building['path_to_data_add'],
-    config_building['path_to_data_train'], config_building['path_to_data_val'],
-    config_building['path_to_data_test']]:
-    check_create_dir(path)
+  # if chosen to save create directory structure for saving results
+  if save:
+  
+    if subtask == 'buildings_92' and os.path.isdir(
+      config_building['path_to_data']):
+      shutil.rmtree(config_building['path_to_data'])
+    
+    for path in [config_building['path_to_data'],
+      config_building['path_to_data_subtask'], 
+      config_building['path_to_data_add'],
+      config_building['path_to_data_train'], 
+      config_building['path_to_data_val'],
+      config_building['path_to_data_test']]:
+      check_create_dir(path)
       
   config_building['subtask'] = subtask
   config_building['seed'] = config['general']['seed']
   return config_building
   
     
-def config_WF(config: dict, subtask: str) -> dict:
+def config_WF(config: dict, subtask: str, save: bool) -> dict:
   """
   Augments configuration file for processing Wind Farm dataset.
   """
@@ -160,19 +166,22 @@ def config_WF(config: dict, subtask: str) -> dict:
   config_wind['spatial_ood'] = {'ood_turbine_ids': ood_turbine_ids}
   
   # create directory structure for saving results
-  if subtask == 'days_245' and os.path.isdir(config_wind['path_to_data']):
-    shutil.rmtree(config_wind['path_to_data'])
-  for path in [config_wind['path_to_data'],
-    config_wind['path_to_data_subtask'], config_wind['path_to_data_train'], 
-    config_wind['path_to_data_val'], config_wind['path_to_data_test']]:
-    check_create_dir(path)
+  if save:
+    
+    if subtask == 'days_245' and os.path.isdir(config_wind['path_to_data']):
+      shutil.rmtree(config_wind['path_to_data'])
+    
+    for path in [config_wind['path_to_data'],
+      config_wind['path_to_data_subtask'], config_wind['path_to_data_train'], 
+      config_wind['path_to_data_val'], config_wind['path_to_data_test']]:
+      check_create_dir(path)
       
   config_wind['subtask'] = subtask
   config_wind['seed'] = config['general']['seed']
   return config_wind
     
     
-def config_UM(config: dict, subtask: str) -> dict:
+def config_UM(config: dict, subtask: str, save=False) -> dict:
     """
     Augments configuration file for processing Uber Movement dataset.
     """
@@ -272,37 +281,45 @@ def config_UM(config: dict, subtask: str) -> dict:
         config_uber['city_id_mapping'][city] = city_id
     
     # create directory structure for saving results
-    if subtask == 'cities_10':
-        config_uber['list_of_cities'] = list_of_cities[:10]
-        if os.path.isdir(config_uber['path_to_data']):
-            shutil.rmtree(config_uber['path_to_data'])
-        for path in [config_uber['path_to_data'],
-            config_uber['path_to_data_subtask'], config_uber['path_to_data_add'],
-            config_uber['path_to_data_train'], config_uber['path_to_data_val'],
-            config_uber['path_to_data_test']]:
-            check_create_dir(path)
-            
-    elif subtask == 'cities_20':
-        config_uber['list_of_cities'] = list_of_cities[10:20]
-        # set full path to directory we want to copy
-        path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
-        # copy directory into current subtask
-        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
-        
-    elif subtask == 'cities_43':
-        config_uber['list_of_cities'] = list_of_cities[20:]
-        # set full path to directory we want to copy
-        path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
-        # copy directory into current subtask
-        shutil.copytree(path_to_copy_directory, config_uber['path_to_data_subtask'])
-        
-    # create dataframe from dictionary
-    df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], orient='index', 
-        columns=['city_id'])
+    if save:
     
-    # save file
-    saving_path = config_uber['path_to_data_add'] + 'city_to_id_mapping.csv'
-    df.to_csv(saving_path)
+      if subtask == 'cities_10':
+          config_uber['list_of_cities'] = list_of_cities[:10]
+          
+          if os.path.isdir(config_uber['path_to_data']):
+              shutil.rmtree(config_uber['path_to_data'])
+              
+          for path in [config_uber['path_to_data'],
+              config_uber['path_to_data_subtask'], 
+              config_uber['path_to_data_add'],
+              config_uber['path_to_data_train'], 
+              config_uber['path_to_data_val'],
+              config_uber['path_to_data_test']]:
+              check_create_dir(path)
+              
+      elif subtask == 'cities_20':
+          config_uber['list_of_cities'] = list_of_cities[10:20]
+          # set full path to directory we want to copy
+          path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
+          # copy directory into current subtask
+          shutil.copytree(path_to_copy_directory, 
+            config_uber['path_to_data_subtask'])
+          
+      elif subtask == 'cities_43':
+          config_uber['list_of_cities'] = list_of_cities[20:]
+          # set full path to directory we want to copy
+          path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
+          # copy directory into current subtask
+          shutil.copytree(path_to_copy_directory, 
+            config_uber['path_to_data_subtask'])
+        
+      # create dataframe from dictionary
+      df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], 
+        orient='index', columns=['city_id'])
+      
+      # save file
+      saving_path = config_uber['path_to_data_add'] + 'city_to_id_mapping.csv'
+      df.to_csv(saving_path)
     
     config_uber['subtask'] = subtask
     config_uber['seed'] = config['general']['seed']
