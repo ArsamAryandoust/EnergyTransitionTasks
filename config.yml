@@ -30,7 +30,7 @@ BuildingElectricity:
     data_per_file: 150_000
     
 WindFarm:
-    subtask_list: ['days_245', 'days_183']
+    subtask_list: ['days_245', 'days_177']
     prediction_window: 288
     historic_window: 288
     fseries_name_list: ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2',

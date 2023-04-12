@@ -30,7 +30,7 @@ def process_all_datasets(config: dict, save: bool):
     df_data = create_datapoints(config_wind, df_data)
     
     # split the loaded dataframe into training, validation and testing
-    split_train_val_test(config_wind, df_data, df_locations)
+    split_train_val_test(config_wind, df_data, df_locations, save)
         
         
 def import_all_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
@@ -47,8 +47,8 @@ def import_all_data(config_wind: dict) -> (pd.DataFrame, pd.DataFrame):
   if config_wind['subtask'] == 'days_245':
     df_data = pd.read_csv(config_wind['path_to_data_raw_file'])
   
-  # for days_183, data is in multiple files
-  elif config_wind['subtask'] == 'days_183':
+  # for days_177, data is in multiple files
+  elif config_wind['subtask'] == 'days_177':
     # get list of filenames for input and output of challenge
     list_of_files_in = os.listdir(
       config_wind['path_to_data_raw_infile_folder'])
@@ -211,7 +211,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   
   
 def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
-  df_locations: pd.DataFrame):
+  df_locations: pd.DataFrame, save: bool):
   """
   """
   # get total number of data points 
@@ -277,7 +277,8 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
     config_wind['path_to_data_test'] + 'testing_data', df_test)
   
     
-def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame):
+def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame,
+  save: bool):
   """
   Shuffles dataframe, then saves it in chunks with number of datapoints per 
   file defined by config such that each file takes less than about 1 GB size.
@@ -288,10 +289,11 @@ def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame):
     if len(df) == 0:
       break 
       
-    path_to_saving = saving_path + '_{}.csv'.format(file_counter)
-    df.iloc[:config_wind['data_per_file']].to_csv(
-      path_to_saving, index=False)
-    df = df[config_wind['data_per_file']:]
+    if save:
+      path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+      df.iloc[:config_wind['data_per_file']].to_csv(
+        path_to_saving, index=False)
+      df = df[config_wind['data_per_file']:]
   
     
     
