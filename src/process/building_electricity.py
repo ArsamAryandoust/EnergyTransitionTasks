@@ -171,15 +171,20 @@ def process_meteo_and_load_profiles(config_building: dict,
   # create a list of all building IDs
   building_id_list = list(df_consumption.columns.values[1:])
   
+  # set number of rows
+  n_rows = (len(building_id_list) * (
+    len(time_stamps) - config_building['historic_window'] 
+      - config_building['prediction_window']))
+      
+  # set number of columns
+  n_cols = (len(new_df_columns_base) + config_building['historic_window'] * (
+    len(config_building['meteo_name_list'])) 
+    + config_building['prediction_window'])
+  
   # decleare empty values array. Filling matrix pre-allocates memory and
   # decreases computational time significantly.
-  values_array = np.zeros((len(building_id_list) * (
-      len(time_stamps) - config_building['historic_window'] 
-        - config_building['prediction_window']),
-    (len(new_df_columns_base) + config_building['historic_window'] * (
-      len(config_building['meteo_name_list'])) 
-      + config_building['prediction_window'])))
-      
+  values_array = np.zeros((n_rows, n_cols)).astype('f8')
+  
   # create progress bar
   pbar = tqdm(total=len(building_id_list))
   
