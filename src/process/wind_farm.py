@@ -133,9 +133,9 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   n_1 = len(df_data.index)
   
   # tell us how much we cleaned
-  print('During cleaning process {} ({:.0%}) raw data points were removed'.format(
+  print(
+    'During cleaning process {} ({:.0%}) raw data points were removed'.format(
     n_0-n_1, 1-n_1/n_0))
-  
   
   return df_data
   
@@ -151,17 +151,25 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # set number of maximum days
   n_days = len(set(df_data['Day']))
   
+  # set number of rows
+  n_rows = (len(turbine_list) * n_days * 24 * 6 - config_wind['historic_window'] 
+    - config_wind['prediction_window'])
+  
+  # set number of columns
+  n_cols = (1 + 3 * config_wind['historic_window'] 
+    + len(config_wind['fseries_name_list']) * config_wind['historic_window']
+    + 3 * config_wind['prediction_window']
+    + 1 * config_wind['prediction_window'])
+  
   # create zero values array in maximum size it can fill given no sparsity
-  values_array = np.zeros((len(turbine_list) * n_days * 24 * 6 
-    - config_wind['historic_window'] - config_wind['prediction_window'],
-    len(config_wind['fseries_name_list']) * config_wind['historic_window']
-    + 4 + config_wind['prediction_window']))
+  values_array = np.zeros((n_rows, n_cols))
     
   # set a datapoint counter
   data_counter = 0
   
   # create progress bar
   pbar = tqdm(total=len(turbine_list))
+  
   
   # iterate over all turbine IDs
   for turbine_id in turbine_list:
@@ -173,35 +181,62 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     df_turbine.sort_values(by=['Day', 'hour', 'minute'], inplace=True,
       ignore_index=True)
       
+    
     # iterate over entries of df_turbine
     for i in range(config_wind['historic_window'], 
       len(df_turbine) - config_wind['prediction_window']):
       
-      # set spatial and temporal values
-      values_array[data_counter, 0] = turbine_id
-      values_array[data_counter, 1] = df_turbine['Day'][i]
-      values_array[data_counter, 2] = df_turbine['hour'][i]
-      values_array[data_counter, 3] = df_turbine['minute'][i]
-      col_counter = 4
+      # set column counter
+      col_counter = 0
       
-      # iterate over historic time window
+      # set spatial and temporal values
+      values_array[data_counter, col_counter] = turbine_id
+      # increment column counter
+      col_counter =+ 1
+      
+      # iterate over historic time window to add first time-variant features
+      for j in range(i-config_wind['historic_window'], i):
+        
+        # add time-variant features      
+        values_array[data_counter, col_counter] = (
+          df_turbine['Day'][j])
+        values_array[data_counter, col_counter+1] = (
+          df_turbine['hour'][j])
+        values_array[data_counter, col_counter+2] = (
+          df_turbine['minute'][j])
+        # increment column counter
+        col_counter += 3
+        
+      # iterate over historic time window to add space-time-variant features
       for j in range(i-config_wind['historic_window'], i):
       
         # iterate over time series feature names
         for colname in config_wind['fseries_name_list']:
-        
+          
+          # add space-time-variant features
           values_array[data_counter, col_counter] = (
             df_turbine[colname][j])
-            
           # increment column counter
           col_counter += 1
+          
+      # iterate over prediction window to add second time-variant features
+      for j in range(i, i+config_wind['prediction_window']):
+        
+        # add time-variant features      
+        values_array[data_counter, col_counter] = (
+          df_turbine['Day'][j])
+        values_array[data_counter, col_counter+1] = (
+          df_turbine['hour'][j])
+        values_array[data_counter, col_counter+2] = (
+          df_turbine['minute'][j])
+        # increment column counter
+        col_counter += 3
             
-      # iterate over prediction window
+      # iterate over prediction window to add labels
       for j in range(i, i+config_wind['prediction_window']):
       
         # set active power as label to be predicted
         values_array[data_counter, col_counter] = df_turbine['Patv'][j]
-        
         # increment column counter
         col_counter += 1
         
@@ -213,13 +248,26 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   
   ### Create column name list ###
   col_name_list = ['TurbID', 'day', 'hour', 'minute']
+  time_stamp_list = ['day', 'hour', 'minute']
   new_fseries_name_list = ['wind_speed', 'wind_direction', 'temperature_out',
   'temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
   'blade3_angle', 'reactive_power', 'active_power']
   
-  # add historic data columns
+  # add first time-variant column names
+  for i in range(1, config_wind['historic_window']+1):
+    for colname_base in time_stamp_list:
+      colname = colname_base + '_{}'.format(i)
+      col_name_list.append(colname)
+  
+  # add space-time-variant column names
   for i in range(1, config_wind['historic_window']+1):
     for colname_base in new_fseries_name_list:
+      colname = colname_base + '_{}'.format(i)
+      col_name_list.append(colname)
+      
+  # add second time-variant column names
+  for i in range(1, config_wind['prediction_window']+1):
+    for colname_base in time_stamp_list:
       colname = colname_base + '_{}'.format(i)
       col_name_list.append(colname)
       
@@ -231,9 +279,19 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # create dataframe and overwrite old one
   df_data = pd.DataFrame(values_array, columns=col_name_list)   
      
+  # get number of data points before dropping zero entries
+  n_0 = len(df_data.index)
+  
   # drop zero entries
   df_data = df_data.loc[~(df_data==0).all(axis=1)]
   
+  # get number of data points after dropping zero entries
+  n_1 = len(df_data.index)
+  
+  # tell us how much got dropped
+  print('\n{} data points where dropped ({:.2%} sparsity).'.format(
+    n_0-n_1, (n_0-n_1)/n_0))
+    
   return df_data
   
   
