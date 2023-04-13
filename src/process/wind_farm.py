@@ -367,17 +367,23 @@ def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame,
   Shuffles dataframe, then saves it in chunks with number of datapoints per 
   file defined by config such that each file takes less than about 1 GB size.
   """
-  df = df.sample(frac=1, random_state=config_wind['seed'])
+  # shuffle dataframe
+  df = df.sample(frac=1, random_state=config_wind['seed'], ignore_index=True)
   
   for file_counter in range(1, 312321321312):
     if len(df) == 0:
       break 
       
     if save:
+      # set saving path
       path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+      
+      # save as csv
       df.iloc[:config_wind['data_per_file']].to_csv(
         path_to_saving, index=False)
-      df = df[config_wind['data_per_file']:]
+      
+    # shorten dataframe
+    df = df[config_wind['data_per_file']:]
   
     
     
