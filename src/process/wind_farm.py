@@ -109,6 +109,9 @@ def expand_timestamp(df_data: pd.DataFrame) -> (pd.DataFrame):
 def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   """
   """
+  # get number of originally available raw data points
+  n_0 = len(df_data.index)
+  
   # measurement error
   df_data.drop(df_data[(df_data.Patv <= 0) & (df_data.Wspd >= 2.5)].index,
     inplace=True)
@@ -125,6 +128,13 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # anomaly 
   df_data.drop(df_data[(df_data.Wdir < -180) | (df_data.Wdir > 180)].index,
     inplace=True)
+  
+  # get number of raw data points after cleaning operations
+  n_1 = len(df_data.index)
+  
+  # tell us how much we cleaned
+  print('During cleaning process', n_0-n_1 ,'raw data points were removed')
+  
   
   return df_data
   
