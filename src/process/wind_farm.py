@@ -288,7 +288,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   n_1 = len(df_data.index)
   
   # tell us how much got dropped
-  print('\n{} data points where dropped ({:.2%} sparsity).'.format(
+  print('\n{} data points were dropped ({:.2%} sparsity).'.format(
     n_0-n_1, (n_0-n_1)/n_0))
     
   return df_data
