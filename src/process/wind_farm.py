@@ -158,7 +158,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # set number of columns
   n_cols = (1 + 3 * config_wind['historic_window'] 
     + len(config_wind['fseries_name_list']) * config_wind['historic_window']
-    + 3 * config_wind['prediction_window'])
+    + 3 * config_wind['prediction_window']
+    + 1 * config_wind['prediction_window'])
   
   # create zero values array in maximum size it can fill given no sparsity
   values_array = np.zeros((n_rows, n_cols))
