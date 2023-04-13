@@ -162,14 +162,13 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     + 1 * config_wind['prediction_window'])
   
   # create zero values array in maximum size it can fill given no sparsity
-  values_array = np.zeros((n_rows, n_cols))
+  values_array = np.zeros((n_rows, n_cols)).astype('f8')
     
   # set a datapoint counter
   data_counter = 0
   
   # create progress bar
   pbar = tqdm(total=len(turbine_list))
-  
   
   # iterate over all turbine IDs
   for turbine_id in turbine_list:
