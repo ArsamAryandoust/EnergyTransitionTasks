@@ -272,7 +272,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       
   # add future data columns
   for i in range(1, config_wind['prediction_window']+1):
-    colname = 'future_active_power_{}'.format(i)
+    colname = 'pred_active_power_{}'.format(i)
     col_name_list.append(colname)
   
   # create dataframe and overwrite old one
@@ -306,8 +306,8 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   
   # split of temporal ood and simply name df_test
   df_test = df_data.loc[
-    (df_data['day_1'].isin(temporal_ood['ood_days']))
-    | (df_data['hour_1'].isin(temporal_ood['ood_hours']))
+    (df_data['hist_day_1'].isin(temporal_ood['ood_days']))
+    | (df_data['hist_hour_1'].isin(temporal_ood['ood_hours']))
     | (df_data['minute_1'].isin(temporal_ood['ood_minutes']))]
     
   # drop separated indices
@@ -336,6 +336,14 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   df_data.drop(columns=['TurbID'], inplace=True)
   df_test.drop(columns=['TurbID'], inplace=True)
   
+  # rearrange columns: put x and y positions first 
+  col_list = df_data.columns.to_list()
+  col_list.remove('x')
+  col_list.remove('y')
+  col_list = ['x', 'y'] + col_list
+  df_data = df_data[col_list]
+  df_test = df_test[col_list]
+  
   # free up memory
   del df_locations
   gc.collect()
@@ -361,7 +369,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   if n_data_total != n_total:
     print("Error! Number of available data is {}".format(n_data_total),
       "and does not match number of resulting data {}.".format(n_total))
-
+      
   # save results in chunks
   save_in_chunks(config_wind,
     config_wind['path_to_data_train'] + 'training_data', df_data, save)
@@ -395,11 +403,6 @@ def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame,
     # shorten dataframe
     df = df[config_wind['data_per_file']:]
   
-    
-    
-    
-    
-    
-    
-    
-    
+  
+  
+  
