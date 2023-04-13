@@ -266,9 +266,19 @@ def process_meteo_and_load_profiles(config_building: dict,
   # create dataframe from filled matrix values
   df_dataset = pd.DataFrame(data=values_array, columns=new_df_columns)
   
+  # get number of data points before dropping zero entries
+  n_0 = len(df_dataset.index)
+  
   # drop zero entries
   df_dataset = df_dataset.loc[~(df_dataset==0).all(axis=1)]
   
+  # get number of data points after dropping zero entries
+  n_1 = len(df_dataset.index)
+  
+  # tell us how much got dropped
+  print('\n{} data points were dropped ({:.2%}).'.format(
+    n_0-n_1, (n_0-n_1)/n_0))
+    
   # free up memory
   del values_array
   gc.collect()
