@@ -229,7 +229,7 @@ def process_meteo_and_load_profiles(config_building: dict,
       meteo_dict = {}
       for meteo_name in config_building['meteo_name_list']:
         meteo_values = df_meteo[meteo_name].iloc[
-          list(range(i-config_building['historic_window'] *4, i, 4))
+          list(range(i, i-config_building['historic_window'] *4, -4))
         ].values
         meteo_dict[meteo_name] = meteo_values
         

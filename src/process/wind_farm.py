@@ -194,7 +194,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       col_counter =+ 1
       
       # iterate over historic time window to add first time-variant features
-      for j in range(i-config_wind['historic_window'], i):
+      for j in range(i, i-config_wind['historic_window'], -1):
         
         # add time-variant features      
         values_array[data_counter, col_counter] = (
@@ -207,7 +207,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         col_counter += 3
         
       # iterate over historic time window to add space-time-variant features
-      for j in range(i-config_wind['historic_window'], i):
+      for j in range(i, i-config_wind['historic_window'], -1):
       
         # iterate over time series feature names
         for colname in config_wind['fseries_name_list']:
@@ -255,7 +255,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # add first time-variant column names
   for i in range(1, config_wind['historic_window']+1):
     for colname_base in time_stamp_list:
-      colname = colname_base + '_{}'.format(i)
+      colname = colname_base + 'hist_{}'.format(i)
       col_name_list.append(colname)
   
   # add space-time-variant column names
@@ -267,7 +267,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # add second time-variant column names
   for i in range(1, config_wind['prediction_window']+1):
     for colname_base in time_stamp_list:
-      colname = colname_base + '_{}'.format(i)
+      colname = colname_base + 'pred_{}'.format(i)
       col_name_list.append(colname)
       
   # add future data columns
@@ -303,22 +303,29 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   
   # Split training and ood testing
   temporal_ood = config_wind['temporal_ood']
+  
   # split of temporal ood
   df_test = df_data.loc[
-    (df_data['day'].isin(temporal_ood['ood_days']))
-    | (df_data['hour'].isin(temporal_ood['ood_hours']))
-    | (df_data['minute'].isin(temporal_ood['ood_minutes']))]
+    (df_data['day_1'].isin(temporal_ood['ood_days']))
+    | (df_data['hour_1'].isin(temporal_ood['ood_hours']))
+    | (df_data['minute_1'].isin(temporal_ood['ood_minutes']))]
+    
   # drop separated indices
   df_data = df_data.drop(df_test.index)
+  
   # get spliting rules
   spatial_ood = config_wind['spatial_ood']
+  
   # split of temporal ood
   df_spatial_test = df_data.loc[
     df_data['TurbID'].isin(spatial_ood['ood_turbine_ids'])]
+    
   # drop separated indices
   df_data = df_data.drop(df_spatial_test.index)
+  
   # concat to test
   df_test = pd.concat([df_test, df_spatial_test], ignore_index=True)
+  
   # free up memory
   del df_spatial_test
   gc.collect()
@@ -328,6 +335,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
   df_data.drop(columns=['TurbID'], inplace=True)
   df_test.drop(columns=['TurbID'], inplace=True)
+  
   # free up memory
   del df_locations
   gc.collect()
@@ -335,6 +343,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   # Split ood validation and testing
   df_val = df_test.sample(frac=config_wind['val_test_split'], 
     random_state=config_wind['seed'])
+    
   # remove validation data split from testing dataset
   df_test.drop(df_val.index, inplace=True)
   
@@ -347,6 +356,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
       n_val/n_total),
     "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
       n_test/n_total))   
+      
   # small test if all indexes dropped correctly.
   if n_data_total != n_total:
     print("Error! Number of available data is {}".format(n_data_total),
@@ -360,7 +370,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   save_in_chunks(config_wind,
     config_wind['path_to_data_test'] + 'testing_data', df_test)
   
-    
+  
 def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame,
   save: bool):
   """
