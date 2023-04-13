@@ -304,7 +304,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   # Split training and ood testing
   temporal_ood = config_wind['temporal_ood']
   
-  # split of temporal ood
+  # split of temporal ood and simply name df_test
   df_test = df_data.loc[
     (df_data['day_1'].isin(temporal_ood['ood_days']))
     | (df_data['hour_1'].isin(temporal_ood['ood_hours']))
@@ -313,7 +313,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   # drop separated indices
   df_data = df_data.drop(df_test.index)
   
-  # get spliting rules
+  # get splitting rules
   spatial_ood = config_wind['spatial_ood']
   
   # split of temporal ood
@@ -330,7 +330,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   del df_spatial_test
   gc.collect()
   
-  # Augment dataframes with location data
+  # Augment dataframes with location data by mapping to ID and drop ID
   df_data = pd.merge(df_data, df_locations, on='TurbID', how='left')
   df_test = pd.merge(df_test, df_locations, on='TurbID', how='left')
   df_data.drop(columns=['TurbID'], inplace=True)
