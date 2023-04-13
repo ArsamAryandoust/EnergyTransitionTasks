@@ -14,7 +14,16 @@ dataverse:
     saving_path: 'datasets/BuildingElectricity/processed/'
   WindFarm_raw:
     persistentId: #'doi:10.7910/DVN/BCDE1C'
-    saving_path: 'datasets/BuildingElectricity/raw/'
+    saving_path: 'datasets/WindFarm/raw/'
+  WindFarm:
+    persistentId: 'doi:10.7910/DVN/LEGKGU'
+    saving_path: 'datasets/WindFarm/processed/'
+  UberMovement_raw:
+    persistentId: 'doi:10.7910/DVN/QRUZOU'
+    saving_path: 'datasets/UberMovement/raw/'
+  UberMovement:
+    persistentId: 'doi:10.7910/DVN/ONY86P'
+    saving_path: 'datasets/UberMovement/processed/'
     
 BuildingElectricity:
     subtask_list: ['buildings_92', 'buildings_451']
