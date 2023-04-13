@@ -3,8 +3,10 @@
 # 1X machine learning tasks and datasets for enhancing the global energy transition
 
 * [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
-<!--
+
 * [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
+
+<!--
 * [Generation Scheduling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/GenerationScheduling)
 * [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
 * [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
@@ -13,8 +15,8 @@
 * [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
 -->
 
-<!-- ## Citation -->
 
+## Citation
 
 
 ## Contributing
