@@ -255,19 +255,19 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # add first time-variant column names
   for i in range(1, config_wind['historic_window']+1):
     for colname_base in time_stamp_list:
-      colname = 'hist_' + colname_base + '_{}'.format(i)
+      colname = 'hist_{}_{}'.format(colname_base, i)
       col_name_list.append(colname)
   
   # add space-time-variant column names
   for i in range(1, config_wind['historic_window']+1):
     for colname_base in new_fseries_name_list:
-      colname = colname_base + '_{}'.format(i)
+      colname = '{}_{}'.format(colname_base, i)
       col_name_list.append(colname)
       
   # add second time-variant column names
   for i in range(1, config_wind['prediction_window']+1):
     for colname_base in time_stamp_list:
-      colname = 'pred_' + colname_base + '_{}'.format(i)
+      colname = 'pred_{}_{}'.format(colname_base, i)
       col_name_list.append(colname)
       
   # add future data columns
