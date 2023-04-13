@@ -16,7 +16,6 @@ dataverse:
     persistentId: #'doi:10.7910/DVN/BCDE1C'
     saving_path: 'datasets/BuildingElectricity/raw/'
     
-
 BuildingElectricity:
     subtask_list: ['buildings_92', 'buildings_451']
     prediction_window: 96 # in quarter hours (15-min)
@@ -31,15 +30,15 @@ BuildingElectricity:
     
 WindFarm:
     subtask_list: ['days_245', 'days_177']
-    prediction_window: 288
-    historic_window: 288
+    prediction_window: 288 # in 10-min
+    historic_window: 288 # in 10-min
     fseries_name_list: ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2',
     'Pab3', 'Prtv', 'Patv']
     temporal_test_split: 0.25
     spatial_test_split: 0.2
     val_test_split: 0.2
     subsample_frac: 0.05
-    data_per_file: 20_000
+    data_per_file: 10_000
     
 UberMovement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
