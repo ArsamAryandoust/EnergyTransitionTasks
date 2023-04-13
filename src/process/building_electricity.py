@@ -229,7 +229,7 @@ def process_meteo_and_load_profiles(config_building: dict,
       meteo_dict = {}
       for meteo_name in config_building['meteo_name_list']:
         meteo_values = df_meteo[meteo_name].iloc[
-          list(range(i-config_building['historic_window'] *4, i, 4))
+          list(range(i, i-config_building['historic_window'] *4, -4))
         ].values
         meteo_dict[meteo_name] = meteo_values
         
@@ -359,16 +359,23 @@ def save_in_chunks(config_building: dict, saving_path: str, df: pd.DataFrame,
   Shuffles dataframe, then saves it in chunks with number of datapoints per 
   file defined by config such that each file takes less than about 1 GB size.
   """
-  df = df.sample(frac=1, random_state=config_building['seed'])
+  # shuffle dataframe
+  df = df.sample(frac=1, random_state=config_building['seed'], 
+    ignore_index=True)
   
   for file_counter in range(1, 312321321312):
-    
+    if len(df) == 0:
+      break
+      
     if save:
+      # set saving path
       path_to_saving = saving_path + '_{}.csv'.format(file_counter)
       
+      # save as csv      
       df.iloc[:config_building['data_per_file']].to_csv(
         path_to_saving, index=False)
       
+    # shorten dataframe
     df = df[config_building['data_per_file']:]
     
     if len(df) == 0:
