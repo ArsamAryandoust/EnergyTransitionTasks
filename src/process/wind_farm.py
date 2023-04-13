@@ -109,6 +109,22 @@ def expand_timestamp(df_data: pd.DataFrame) -> (pd.DataFrame):
 def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   """
   """
+  # measurement error
+  df_data.drop(df_data[(df_data.Patv <= 0) & (df_data.Wspd >= 2.5)].index,
+    inplace=True)
+  
+  # measurement error
+  df_data.drop(df_data[
+    (df_data.Pab1 > 89) | (df_data.Pab2 > 89) | (df_data.Pab3 > 89)].index,
+    inplace=True)
+
+  # anomaly
+  df_data.drop(df_data[(df_data.Ndir < -720) | (df_data.Ndir > 720)].index,
+    inplace=True)
+  
+  # anomaly 
+  df_data.drop(df_data[(df_data.Wdir < -180) | (df_data.Wdir > 180)].index,
+    inplace=True)
   
   return df_data
   
