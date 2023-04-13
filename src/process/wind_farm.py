@@ -246,7 +246,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
     pbar.update(1)
   
   ### Create column name list ###
-  col_name_list = ['TurbID', 'day', 'hour', 'minute']
+  col_name_list = ['TurbID']
   time_stamp_list = ['day', 'hour', 'minute']
   new_fseries_name_list = ['wind_speed', 'wind_direction', 'temperature_out',
   'temperature_in', 'nacelle_angle', 'blade1_angle', 'blade2_angle',
