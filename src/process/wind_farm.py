@@ -308,7 +308,7 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
   df_test = df_data.loc[
     (df_data['hist_day_1'].isin(temporal_ood['ood_days']))
     | (df_data['hist_hour_1'].isin(temporal_ood['ood_hours']))
-    | (df_data['minute_1'].isin(temporal_ood['ood_minutes']))]
+    | (df_data['hist_minute_1'].isin(temporal_ood['ood_minutes']))]
     
   # drop separated indices
   df_data = df_data.drop(df_test.index)
