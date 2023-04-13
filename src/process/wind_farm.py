@@ -255,7 +255,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # add first time-variant column names
   for i in range(1, config_wind['historic_window']+1):
     for colname_base in time_stamp_list:
-      colname = colname_base + 'hist_{}'.format(i)
+      colname = 'hist_' + colname_base + '_{}'.format(i)
       col_name_list.append(colname)
   
   # add space-time-variant column names
@@ -267,7 +267,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
   # add second time-variant column names
   for i in range(1, config_wind['prediction_window']+1):
     for colname_base in time_stamp_list:
-      colname = colname_base + 'pred_{}'.format(i)
+      colname = 'pred_' + colname_base + '_{}'.format(i)
       col_name_list.append(colname)
       
   # add future data columns
@@ -364,11 +364,11 @@ def split_train_val_test(config_wind: dict, df_data: pd.DataFrame,
 
   # save results in chunks
   save_in_chunks(config_wind,
-    config_wind['path_to_data_train'] + 'training_data', df_data)
+    config_wind['path_to_data_train'] + 'training_data', df_data, save)
   save_in_chunks(config_wind,
-    config_wind['path_to_data_val'] + 'validation_data', df_val)
+    config_wind['path_to_data_val'] + 'validation_data', df_val, save)
   save_in_chunks(config_wind,
-    config_wind['path_to_data_test'] + 'testing_data', df_test)
+    config_wind['path_to_data_test'] + 'testing_data', df_test, save)
   
   
 def save_in_chunks(config_wind: dict, saving_path: str, df: pd.DataFrame,
