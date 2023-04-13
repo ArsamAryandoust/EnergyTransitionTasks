@@ -133,7 +133,8 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   n_1 = len(df_data.index)
   
   # tell us how much we cleaned
-  print('During cleaning process', n_0-n_1 ,'raw data points were removed')
+  print('During cleaning process {} ({:.0%}) raw data points were removed'.format(
+    n_0-n_1, 1-n_1/n_0))
   
   
   return df_data
