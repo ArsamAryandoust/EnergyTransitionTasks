@@ -46,7 +46,7 @@ WindFarm:
     temporal_test_split: 0.25
     spatial_test_split: 0.2
     val_test_split: 0.2
-    subsample_frac: 0.05
+    subsample_frac: 1
     data_per_file: 50_000
     
 UberMovement:
