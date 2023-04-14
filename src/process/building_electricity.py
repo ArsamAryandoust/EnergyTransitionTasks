@@ -284,8 +284,8 @@ def process_meteo_and_load_profiles(config_building: dict,
   gc.collect()
   
   return df_dataset
-    
-    
+  
+  
 def split_train_val_test(config_building: dict, df_dataset: pd.DataFrame, 
   save: bool):
   """
