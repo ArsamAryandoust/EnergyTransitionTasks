@@ -10,7 +10,7 @@ dataverse:
     persistentId: #'doi:10.7910/DVN/T3OK7E'
     saving_path: 'datasets/BuildingElectricity/raw/'
   BuildingElectricity:
-    persistentId: 'doi:10.7910/DVN/O2MDHX'
+    persistentId: #'doi:10.7910/DVN/O2MDHX'
     saving_path: 'datasets/BuildingElectricity/processed/'
   WindFarm_raw:
     persistentId: #'doi:10.7910/DVN/BCDE1C'
@@ -47,7 +47,7 @@ WindFarm:
     spatial_test_split: 0.2
     val_test_split: 0.2
     subsample_frac: 1
-    data_per_file: 50_000
+    data_per_file: 32_000
     
 UberMovement:
     subtask_list: ['cities_10', 'cities_20', 'cities_43']
