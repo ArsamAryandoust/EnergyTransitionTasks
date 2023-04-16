@@ -83,7 +83,7 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
     file_content = h5py.File(entry_path, 'r')
     
   elif '.npz' in entry_name:
-    file_content = np.load(entry_path)
+    file_content = np.load(entry_path, encoding='bytes')
     
   files = {'file': (entry_name, file_content)}
   path = entry_path[base_path_len:-len(entry_name)]
