@@ -84,7 +84,7 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
     
   elif '.npz' in entry_name:
     # load zipped file
-    npz = np.load(path_to_file)
+    npz = np.load(entry_path)
     
     # transform to dictionary
     dict_df = {}
