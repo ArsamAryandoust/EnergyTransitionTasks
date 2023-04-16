@@ -3,6 +3,8 @@ import json
 import requests
 import pandas as pd
 import time
+import h5py
+import numpy as np
 
 
 def upload(config: dict, dataset_name: str):
@@ -12,6 +14,7 @@ def upload(config: dict, dataset_name: str):
   dataverse_server = config['dataverse']['base_url']
   with open(config['dataverse']['path_to_token'], 'r') as token:
     api_key = token.read().replace('\n', '')
+    
   persistentId = config['dataverse'][dataset_name]['persistentId']
 
   # set full path to dataset root directory
@@ -34,18 +37,6 @@ def upload(config: dict, dataset_name: str):
   # iterate over all files in dataset directory
   upload_fail_record = recursive_call(path_to_data, dataverse_server, 
     persistentId, api_key, base_path_len, upload_fail_record, s)
-
-  """
-  # upload all failed files
-  for entry in upload_fail_record:
-    entry_path, entry_name = entry[0], entry[1]
-    try:
-      save_file(entry_name, entry_path, dataverse_server, persistentId, api_key,
-        base_path_len, s)
-      upload_fail_record.remove(entry)
-    except:
-      print("Caution: Exception occurred on repeated upload attempt!")
-  """
   
   # save upload fail record as json
   upload_fail_record = json.dumps(dict(upload_fail_record))
@@ -61,10 +52,11 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
   api_key: str, base_path_len: int, upload_fail_record: dict, s) -> dict:
   """
   """
+  
   for entry in os.scandir(path_to_dir):
     if entry.is_file():
-      save_file(entry.name, entry.path, dataverse_server, persistentId, api_key,
-        base_path_len, s)
+      upload_file(entry.name, entry.path, dataverse_server, persistentId,
+        api_key, base_path_len, s)
     elif entry.is_dir():
       try: 
         upload_fail_record = recursive_call(entry.path, dataverse_server, 
@@ -76,14 +68,23 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
   return upload_fail_record
 
 
-def save_file(entry_name: str, entry_path: str, dataverse_server: str, 
+def upload_file(entry_name: str, entry_path: str, dataverse_server: str, 
   persistentId: str, api_key: str, base_path_len: int, s):
   """
   """
-  if ('.csv' in entry_name or '.CSV' in entry_name) :
+  
+  if ('.csv' in entry_name or '.CSV' in entry_name):
     file_content = pd.read_csv(entry_path).to_csv(index=False)
+    
   elif '.json' in entry_name:
     file_content = json.dumps(json.load(entry_path))
+    
+  elif '.h5' in entry_name:
+    file_content = h5py.File(entry_path, 'r')
+    
+  elif '.npz' in entry_name:
+    file_content = np.load(entry_path)
+    
   files = {'file': (entry_name, file_content)}
   path = entry_path[base_path_len:-len(entry_name)]
   params = {
@@ -97,4 +98,6 @@ def save_file(entry_name: str, entry_path: str, dataverse_server: str,
     )
   )
   s.post(url_persistent_id, data=payload, files=files)
+
+
 
