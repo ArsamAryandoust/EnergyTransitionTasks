@@ -77,7 +77,8 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
     file_content = pd.read_csv(entry_path).to_csv(index=False)
     
   elif '.json' in entry_name:
-    file_content = json.dumps(json.load(entry_path))
+    #file_content = json.dumps(json.load(entry_path))
+    file_content = json.load(entry_path)
     
   elif '.h5' in entry_name:
     file_content = h5py.File(entry_path, 'r')
