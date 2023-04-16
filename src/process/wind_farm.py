@@ -115,6 +115,11 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # measurement error
   df_data.drop(df_data[(df_data.Patv <= 0) & (df_data.Wspd >= 2.5)].index,
     inplace=True)
+    
+  # set negative generation to zero
+  index_list = df_data[(df_data.Patv < 0)].index.to_list()
+  df_data.loc[index_list, 'Patv'] = 0
+  df_data.loc[index_list, 'Prtv'] = 0
   
   # measurement error
   df_data.drop(df_data[
