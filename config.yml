@@ -18,6 +18,9 @@ dataverse:
   WindFarm:
     persistentId: 'doi:10.7910/DVN/LEGKGU'
     saving_path: 'datasets/WindFarm/processed/'
+  ClimART_raw:
+    persistentId: 'doi:10.7910/DVN/0OUKSF'
+    saving_path: 'datasets/ClimART/processed/'
   UberMovement_raw:
     persistentId: 'doi:10.7910/DVN/QRUZOU'
     saving_path: 'datasets/UberMovement/raw/'
