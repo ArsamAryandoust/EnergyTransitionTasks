@@ -83,7 +83,26 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
     file_content = h5py.File(entry_path, 'r')
     
   elif '.npz' in entry_name:
-    file_content = np.load(entry_path, encoding='bytes')
+    # load zipped file
+    npz = np.load(path_to_file)
+    
+    # transform to dictionary
+    dict_df = {}
+    
+    # iterate over all keys
+    for item in npz.files:
+      
+      # transform scalar to list
+      if npz[item].size == 1:
+        dict_df[item] = [npz[item].item()]
+      
+      # transform array to list
+      else:
+        dict_df[item] = list(npz[item])
+    
+    # set file content
+    file_content = pd.DataFrame.from_dict(
+      dict_df, orient='index').to_csv(header=False)
     
   files = {'file': (entry_name, file_content)}
   path = entry_path[base_path_len:-len(entry_name)]
