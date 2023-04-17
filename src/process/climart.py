@@ -468,7 +468,7 @@ def save_chunk(config_climart: dict, df: pd.DataFrame, chunk_counter: int,
   """
   
   ### Save resulting data in chunks
-  while len(df.index) > config_climart['datapoints_per_file'] or last_iteration:
+  while len(df.index) > config_climart['data_per_file'] or last_iteration:
     # increment chunk counter 
     chunk_counter += 1
     
@@ -482,11 +482,11 @@ def save_chunk(config_climart: dict, df: pd.DataFrame, chunk_counter: int,
     if save:
     
       if len(df) > 0:
-        df.iloc[:config_climart['datapoints_per_file']].to_csv(path_to_saving, 
+        df.iloc[:config_climart['data_per_file']].to_csv(path_to_saving, 
           index=False)
             
     # delete saved chunk
-    df = df[config_climart['datapoints_per_file']:]
+    df = df[config_climart['data_per_file']:]
     
     # Must be set to exit loop on last iteration
     last_iteration = False
