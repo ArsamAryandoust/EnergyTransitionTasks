@@ -401,7 +401,7 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
       if os.path.isdir(config_climart['path_to_data']):
         shutil.rmtree(config_climart['path_to_data'])
           
-  elif ubtask == 'clear_sky':
+  elif subtask == 'clear_sky':
     config_climart['data_per_file'] = config_climart['data_per_file_clearsky']
    
   if save:   
