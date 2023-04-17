@@ -43,7 +43,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=3,
       for _ in range(n_iter_shuffle):
       
         # randomly sample n_samples from file list
-        random.seed(config['seed'])
+        random.seed(config['general']['seed'])
         sampled_files = random.sample(file_list, n_samples)
         
         # declare empty dataframe
@@ -72,14 +72,17 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=3,
         gc.collect()
         
         # shuffle
-        df = df.sample(frac=1, random_state=config['seed'])
+        df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # iterate over sampled files and n_data_points simultaneously
         for filename, n_data_points in zip(sampled_files, n_data_points_list):
+        
           # create path to iterated file
           path_to_csv = path_to_folder + filename
+          
           # save shuffled slice
           df[:n_data_points].to_csv(path_to_csv, index=False)
+          
           # remove saved slice
           df = df[n_data_points:]
             
