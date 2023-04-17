@@ -19,7 +19,7 @@ def process_all_datasets(config: dict, save: bool):
   print("Processing ClimArt dataset.")
   
   # iterate over all subtasks
-  for subtask in config['climart']['subtask_list']:
+  for subtask in config['ClimART']['subtask_list']:
     # augment conigurations with additional information
     config_climart = config_CA(config, subtask, save=save)
     
