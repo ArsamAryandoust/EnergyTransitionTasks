@@ -23,8 +23,10 @@ if __name__ == "__main__":
     # set a safety instance
     print('\nAre you sure you want to upload {}? \n'.format(args.upload))
     resp = input('Please enter "yes" or "no"! \n'.format(args.upload))
+    
     if resp == 'yes' or resp == 'y':
       upload_dataset.upload(config, args.upload)
+    
     else:
       print('\nYou chose "no". Process interrupted!')
       exit(1)
@@ -35,16 +37,25 @@ if __name__ == "__main__":
     
   # process passed dataset
   elif args.process is not None:
+    
     if args.process == 'BuildingElectricity':
       building_electricity.process_all_datasets(config, save=True)
+    
     elif args.process == 'WindFarm':
       wind_farm.process_all_datasets(config, save=True)
+    
     elif args.process == 'UberMovement':
       uber_movement.process_all_datasets(config, save=True)
-    elif args.process == 'Climart':
+    
+    elif args.process == 'ClimART':
       climart.process_all_datasets(config, save=True)
+    
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
+  
+  # shuffle files of passed dataset
+  elif args.shuffle is not None:
+    shuffle.shuffle_data_files(args.shuffle, config)
       
   # test passed dataset
   elif args.test is not None:
@@ -54,11 +65,6 @@ if __name__ == "__main__":
   elif args.analyse is not None:
     analyse_dataset.analyse(config, args.analyse[0], args.analyse[1])
     
-  # shuffle files of passed dataset
-  elif args.shuffle is not None:
-    print("Shuffling processed {} data.".format(args.shuffle))
-    config[args.shuffle]['seed'] = config['seed']
-    shuffle.shuffle_data_files(config[args.shuffle])
   
   
   print("Successfully executed all instructions!")
