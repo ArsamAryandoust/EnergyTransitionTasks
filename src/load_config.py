@@ -394,8 +394,7 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   # create directory structure for saving results
   
   if subtask == 'pristine':
-    config_climart['data_per_file'] = (
-      config_climart['data_per_file_pristine'])
+    config_climart['data_per_file'] = config_climart['data_per_file_pristine']
         
     if save:
     
@@ -403,20 +402,24 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
         shutil.rmtree(config_climart['path_to_data'])
           
   elif ubtask == 'clear_sky':
-    config_climart['data_per_file'] = (
-      config_climart['data_per_file_clearsky'])
+    config_climart['data_per_file'] = config_climart['data_per_file_clearsky']
    
   if save:   
     
+    # iterate over all directories
     for path in [config_climart['path_to_data'], 
       config_climart['path_to_data_subtask'],
       config_climart['path_to_data_subtask_train'],
       config_climart['path_to_data_subtask_val'],
       config_climart['path_to_data_subtask_test']]:
+      # create directory if not existent      
       check_create_dir(path)
   
+  # set subtask and return
   config_climart['subtask'] = subtask
   config_climart['seed'] = config['general']['seed']
+  
+  
   return config_climart
     
     
