@@ -41,7 +41,7 @@ if __name__ == "__main__":
       wind_farm.process_all_datasets(config, save=True)
     elif args.process == 'UberMovement':
       uber_movement.process_all_datasets(config, save=True)
-    elif args.process == 'Climart':
+    elif args.process == 'ClimART':
       climart.process_all_datasets(config, save=True)
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
