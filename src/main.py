@@ -55,7 +55,6 @@ if __name__ == "__main__":
   
   # shuffle files of passed dataset
   elif args.shuffle is not None:
-    print("Shuffling processed {} data.".format(args.shuffle))
     shuffle.shuffle_data_files(args.shuffle, config)
       
   # test passed dataset
