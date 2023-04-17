@@ -86,7 +86,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       random_state=config_climart['seed'])
         
     # check if this is a testing year data
-    if config_climart['temporal_dict']['year']==int(year):
+    if config_climart['temporal_ood']['year']==int(year):
       # append entire datasets to test dataframes
       df_test = pd.concat([df_test, df], ignore_index=True)
       
@@ -97,7 +97,7 @@ def process_split_all_data(config_climart: dict, save: bool):
     else:
       # extract the rows from dataframes with indices for test coordinates
       df_test_coordiantes = df[
-        df.index.isin(config_climart['spatial_dict']['coordinates'])]
+        df.index.isin(config_climart['spatial_ood']['coordinates'])]
           
       # append extracted rows to test dataframes
       df_test = pd.concat([df_test, df_test_coordiantes], ignore_index=True)
@@ -111,7 +111,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       
       # extract the rows from dataframes with matching hours of year
       df_test_hours_of_year = df.loc[df['hour_of_year'].isin(
-        config_climart['temporal_dict']['hours_of_year'])]
+        config_climart['temporal_ood']['hours_of_year'])]
               
       # append extracted rows to test dataframes
       df_test = pd.concat([df_test, df_test_hours_of_year], ignore_index=True)
