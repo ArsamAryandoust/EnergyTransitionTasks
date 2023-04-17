@@ -59,7 +59,6 @@ def process_split_all_data(config_climart: dict, save: bool):
   
   # iterate over all available years
   for year in list_of_years:
-    print('\n', year)
     
     # import inputs and outputs
     inputs, outputs = import_h5_data(config_climart, year)
