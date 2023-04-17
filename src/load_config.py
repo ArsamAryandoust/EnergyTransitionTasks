@@ -392,19 +392,22 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   }
   
   # create directory structure for saving results
-  if save:
   
-    if subtask == 'pristine':
-      config_climart['datapoints_per_file'] = (
-        config_climart['datapoints_per_file_pristine'])
-          
+  if subtask == 'pristine':
+    config_climart['datapoints_per_file'] = (
+      config_climart['datapoints_per_file_pristine'])
+        
+    if save:
+    
       if os.path.isdir(config_climart['path_to_data']):
         shutil.rmtree(config_climart['path_to_data'])
-            
-    else:
-      config_climart['datapoints_per_file'] = (
-        config_climart['datapoints_per_file_pristine'])
           
+  else:
+    config_climart['datapoints_per_file'] = (
+      config_climart['datapoints_per_file_pristine'])
+   
+  if save:   
+    
     for path in [config_climart['path_to_data'], 
       config_climart['path_to_data_subtask'],
       config_climart['path_to_data_subtask_train'],
