@@ -331,7 +331,7 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   Augments configuration file for processing ClimArt dataset.
   """
   # get base config
-  config_climart = config['climart'] 
+  config_climart = config['ClimART'] 
   
   # add data paths
   config_climart['path_to_data_raw'] = (
