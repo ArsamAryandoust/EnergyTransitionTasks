@@ -132,7 +132,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       
     # this condition guarantees validation splits at good moments
     if (len(df_test) * (1 - config_climart['val_test_split'])
-      > config_climart['datapoints_per_file']):
+      > config_climart['data_per_file']):
       
       # create training and validation datasets
       df_val_append = df_test.sample(
@@ -164,11 +164,11 @@ def process_split_all_data(config_climart: dict, save: bool):
     pbar.update(1)
       
   ### Tell us the ratios that result from our splitting rules
-  n_train = (train_chunk_counter * config_climart['datapoints_per_file'] 
+  n_train = (train_chunk_counter * config_climart['data_per_file'] 
     + len(df_train))
-  n_val = (val_chunk_counter * config_climart['datapoints_per_file'] 
+  n_val = (val_chunk_counter * config_climart['data_per_file'] 
     + len(df_val))
-  n_test = (test_chunk_counter * config_climart['datapoints_per_file'] 
+  n_test = (test_chunk_counter * config_climart['data_per_file'] 
     + len(df_test))
   n_total = n_train + n_val + n_test
   

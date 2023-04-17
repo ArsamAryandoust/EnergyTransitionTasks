@@ -394,17 +394,17 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   # create directory structure for saving results
   
   if subtask == 'pristine':
-    config_climart['datapoints_per_file'] = (
-      config_climart['datapoints_per_file_pristine'])
+    config_climart['data_per_file'] = (
+      config_climart['data_per_file_pristine'])
         
     if save:
     
       if os.path.isdir(config_climart['path_to_data']):
         shutil.rmtree(config_climart['path_to_data'])
           
-  else:
-    config_climart['datapoints_per_file'] = (
-      config_climart['datapoints_per_file_pristine'])
+  elif ubtask == 'clear_sky':
+    config_climart['data_per_file'] = (
+      config_climart['data_per_file_clearsky'])
    
   if save:   
     
