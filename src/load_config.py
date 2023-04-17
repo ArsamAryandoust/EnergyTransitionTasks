@@ -385,9 +385,11 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   # dictionary saving rules
   config_climart['temporal_ood'] = {
     'year': year_list_test,
-    'hours_of_year': hours_of_year_test},
+    'hours_of_year': hours_of_year_test
+  }
   config_climart['spatial_ood'] = {
-    'coordinates': coordinate_list}
+    'coordinates': coordinate_list
+  }
   
   # create directory structure for saving results
   if save:

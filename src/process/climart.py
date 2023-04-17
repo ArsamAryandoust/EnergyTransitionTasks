@@ -86,7 +86,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       random_state=config_climart['seed'])
         
     # check if this is a testing year data
-    if config_climart['temporal_ood']['year']==int(year):
+    if config_climart['temporal_ood']['year'] == int(year):
       # append entire datasets to test dataframes
       df_test = pd.concat([df_test, df], ignore_index=True)
       
