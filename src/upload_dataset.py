@@ -64,7 +64,7 @@ def recursive_call(path_to_dir: str, dataverse_server: str, persistentId: str,
       except:
         print("Exception occurred!\n", entry.path)
         upload_fail_record.append((entry.path, entry.name))
-
+        
   return upload_fail_record
 
 
@@ -85,7 +85,7 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
     
   elif '.npz' in entry_name:
     # load zipped file
-    npz = np.load(entry_path, allow_pickle=True)
+    npz = np.load(entry_path)
     
     # transform to dictionary
     dict_df = {}
@@ -100,6 +100,8 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
       # transform array to list
       else:
         dict_df[item] = list(npz[item])
+    
+    
     
     # set file content
     file_content = pd.DataFrame.from_dict(
