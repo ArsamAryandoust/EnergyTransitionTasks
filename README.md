@@ -1,4 +1,4 @@
-<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-processing-yellow"/> <img src="https://img.shields.io/badge/Uber_Movement-preparing-red"/>  <img src="https://img.shields.io/badge/Generation_Scheduling-preparing-red"/> <img src="https://img.shields.io/badge/ClimART-preparing-red"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/> <img src="https://img.shields.io/badge/Polianna-preparing-red"/>
+<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-processing-yellow"/> <img src="https://img.shields.io/badge/Uber_Movement-preparing-red"/>  <img src="https://img.shields.io/badge/Generation_Scheduling-preparing-red"/> <img src="https://img.shields.io/badge/ClimART-processing-yellow"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/> <img src="https://img.shields.io/badge/Polianna-preparing-red"/>
 
 # 1X machine learning tasks and datasets for enhancing the global energy transition
 
@@ -6,10 +6,11 @@
 
 * [Wind Farm](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/WindFarm)
 
+* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
+
 <!--
 * [Uber Movement](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/UberMovement)
 * [Generation Scheduling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/GenerationScheduling)
-* [ClimART](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimART)
 * [Climate Downscaling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimateDownscaling)
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 * [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
