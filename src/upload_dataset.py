@@ -101,8 +101,6 @@ def upload_file(entry_name: str, entry_path: str, dataverse_server: str,
       else:
         dict_df[item] = list(npz[item])
     
-    
-    
     # set file content
     file_content = pd.DataFrame.from_dict(
       dict_df, orient='index').to_csv(header=False)

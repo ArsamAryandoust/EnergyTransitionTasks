@@ -11,17 +11,20 @@ from load_config import config_CA
 
 
 def process_all_datasets(config: dict):
-    """
-    Loads ClimART datasets, processes them and saves resulting datasets. At 
-    the time of processing the original data, two years have been containing
-    errorneous files, that is 1995 (inputs) and 1851 (outputs).
-    """
-    print("Processing ClimArt dataset.")
-    for subtask in config['climart']['subtask_list']:
-        # augment conigurations with additional information
-        config_climart = config_CA(config, subtask)
-        # do all data processing
-        split_train_val_test(config_climart)
+  """
+  Loads ClimART datasets, processes them and saves resulting datasets. At 
+  the time of processing the original data, two years have been containing
+  errorneous files, that is 1995 (inputs) and 1851 (outputs).
+  """
+  print("Processing ClimArt dataset.")
+  
+  # iterate over all subtasks
+  for subtask in config['climart']['subtask_list']:
+      # augment conigurations with additional information
+      config_climart = config_CA(config, subtask)
+      
+      # do all data processing
+      split_train_val_test(config_climart)
         
         
 def split_train_val_test(config_climart: dict):

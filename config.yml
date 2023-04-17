@@ -6,27 +6,27 @@ general:
 dataverse:
   path_to_token: '../../.aa_secrets/dataverse_token'
   base_url: 'https://dataverse.harvard.edu'  
-  BuildingElectricity_raw:
-    persistentId: #'doi:10.7910/DVN/T3OK7E'
-    saving_path: 'datasets/BuildingElectricity/raw/'
   BuildingElectricity:
     persistentId: #'doi:10.7910/DVN/O2MDHX'
     saving_path: 'datasets/BuildingElectricity/processed/'
-  WindFarm_raw:
-    persistentId: #'doi:10.7910/DVN/BCDE1C'
-    saving_path: 'datasets/WindFarm/raw/'
   WindFarm:
     persistentId: 'doi:10.7910/DVN/LEGKGU'
     saving_path: 'datasets/WindFarm/processed/'
-  ClimART_raw:
-    persistentId: 'doi:10.7910/DVN/0OUKSF'
-    saving_path: 'datasets/ClimART/processed/'
-  UberMovement_raw:
-    persistentId: 'doi:10.7910/DVN/QRUZOU'
-    saving_path: 'datasets/UberMovement/raw/'
   UberMovement:
     persistentId: 'doi:10.7910/DVN/ONY86P'
     saving_path: 'datasets/UberMovement/processed/'
+  ClimART:
+    persistentId: 'doi:10.7910/DVN/0OUKSF'
+    saving_path: 'datasets/ClimART/processed/'
+  BuildingElectricity_raw:
+    persistentId: #'doi:10.7910/DVN/T3OK7E'
+    saving_path: 'datasets/BuildingElectricity/raw/'
+  WindFarm_raw:
+    persistentId: #'doi:10.7910/DVN/BCDE1C'
+    saving_path: 'datasets/WindFarm/raw/'
+  UberMovement_raw:
+    persistentId: 'doi:10.7910/DVN/QRUZOU'
+    saving_path: 'datasets/UberMovement/raw/'
     
 BuildingElectricity:
   subtask_list: ['buildings_92', 'buildings_451']
@@ -60,7 +60,7 @@ UberMovement:
   subsample_frac: 1
   data_per_file: 20_000_000
     
-Climart:
+ClimART:
   subtask_list: ['pristine', 'clear_sky']
   temporal_test_split: 0.2
   spatial_test_split: 0.35
