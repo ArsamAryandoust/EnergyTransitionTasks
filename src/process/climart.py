@@ -479,7 +479,7 @@ def clean_data(df: pd.DataFrame) -> (pd.DataFrame):
   bad_rows_index = bad_rows[bad_rows].index.values
 
   # drop bad rows from dataframe
-  df.drop(bad_rows_index)
+  df.drop(bad_rows_index, inplace=True)
   
   return df
   
