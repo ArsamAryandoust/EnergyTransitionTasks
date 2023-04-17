@@ -51,8 +51,8 @@ def process_split_all_data(config_climart: dict, save: bool):
   train_chunk_counter, val_chunk_counter, test_chunk_counter = 0, 0, 0
   
   # Files for these files are corrupted
-  list_of_years.remove('1995') # inputs
-  list_of_years.remove('1851') # outputs pristine
+  #list_of_years.remove('1995') # inputs
+  #list_of_years.remove('1851') # outputs pristine
   
   # create progress bar
   pbar = tqdm(total=len(list_of_years))
@@ -124,7 +124,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       gc.collect()
       
       # append training dataset
-      df_train= pd.concat([df_train, df], ignore_index=True)
+      df_train = pd.concat([df_train, df], ignore_index=True)
       
       # free up memory     
       del df
