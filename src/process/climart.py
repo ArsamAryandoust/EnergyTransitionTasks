@@ -81,6 +81,9 @@ def process_split_all_data(config_climart: dict, save: bool):
     del df_inputs, df_outputs 
     gc.collect()
     
+    # clean data
+    df = clean_data(df)
+    
     # subsample data
     df = df.sample(frac=config_climart['subsample_frac'],
       random_state=config_climart['seed'])
@@ -459,6 +462,28 @@ def augment_and_merge(year: str, df_inputs: pd.DataFrame,
   
   return df
     
+
+def clean_data(df: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
+  # set number of columns
+  n_cols = len(df.columns)
+
+  # set threshold we found for anomalies
+  threshold = 1e18
+
+  # get boolean series of bad rows
+  bad_rows = ((df < threshold) & (df > -threshold)).sum(axis=1) < n_cols
+
+  # get indices of bad rows
+  bad_rows_index = bad_rows[bad_rows].index.values
+
+  # drop bad rows from dataframe
+  df.drop(bad_rows_index)
+  
+  return df
+  
+  
     
 def save_chunk(config_climart: dict, df: pd.DataFrame, chunk_counter: int,
   saving_path: str, filename: str, save: bool, last_iteration=False):
