@@ -6,7 +6,7 @@ import gc
 
 
 def shuffle_data_files(name: str, config: dict, n_iter_shuffle=3, 
-  n_files_simultan=10):
+  n_files_simultan=100):
   """
   shuffles data for a passed dataset configuration. Assumes that data is 
   available on the standard paths.
