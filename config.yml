@@ -50,7 +50,7 @@ WindFarm:
   spatial_test_split: 0.2
   val_test_split: 0.2
   subsample_frac: 1
-  data_per_file: 32_000
+  data_per_file: 33_000
     
 UberMovement:
   subtask_list: ['cities_10', 'cities_20', 'cities_43']
