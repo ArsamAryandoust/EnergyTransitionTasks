@@ -9,6 +9,6 @@ RUN apt-get install python3-pip -y
 COPY requirements requirements
 RUN pip3 install -r requirements
 
-RUN pip3 install jupyter sklearn
+RUN pip3 install jupyter scikit-learn
 
 WORKDIR /EnergyTransitionTasks
