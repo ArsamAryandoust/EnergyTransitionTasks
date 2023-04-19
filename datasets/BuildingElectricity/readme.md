@@ -12,7 +12,7 @@ n := number of data points <br />
 
 | Additional data | Description | Format |
 | --- | ----------- | ----------- |
-| id_histo_map | A mapping of building IDs to RGB histogram data of a buildings aerial image. This can be used to dynamically, or statically, expand x_s into the recommended format of (n, 300) or (n, 100, 3). Each subtask has a different file with 92 and 451 buildings respectively. | (300, 92) (300, 451) |
+| x_s | A mapping of building IDs (92 or 451 buildings) to RGB histogram data of a buildings aerial image. This can be used to dynamically, or statically, expand x_s into the recommended format of (n, 300) or (n, 100, 3). Each subtask has a different file with 92 and 451 buildings respectively. | (92, 100, 3) (451, 100, 3) |
 
 
 
