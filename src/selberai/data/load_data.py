@@ -109,7 +109,7 @@ def load(name: str, subtask: str, sample_only=False, tabular=False,
   for f_name in test_cont:
     test = pd.concat((test, pd.read_csv(path_to_test+f_name)))
     pbar.update(1)
-  
+    
   
   ###
   # Convert to unified data representation and potentially load additional ###
@@ -117,21 +117,45 @@ def load(name: str, subtask: str, sample_only=False, tabular=False,
   
   # convert BuildingElectricity to unified representation
   if name == 'BuildingElectricity':
+    # set path to additional data
     path = path_to_data+'additional/id_histo_map.csv'
-    add = {'id_histo_map': pd.read_csv(path)}
+    
+    # read additional data
+    add = {'x_s': pd.read_csv(path)}
+    
     if not tabular:
+      # set some values
+      n_histo_bins = 100
+      n_channels = 3
+      
+      # transform additional data from tabular to numpy array 
+      add['x_s'] = add['x_s'].to_numpy()
+      
+      # transpose array
+      add['x_s'] = np.transpose(add['x_s'])
+      
+      # reshape array
+      add['x_s'] = np.reshape(add['x_s'], 
+        (len(add['x_s']), n_histo_bins, n_channels), order='C')
+      
+      # convert train, val test
       train, val, test = convert_be(train), convert_be(val), convert_be(test)
-  
+      
+      
   # convert WindFarm to unified representation
   elif name == 'WindFarm':
     add = None
+    
     if not tabular:
+      # convert train, val test
       train, val, test = convert_wf(train), convert_wf(val), convert_wf(test)
       
   # convert ClimART to unified representation
   elif name == 'ClimART':
     add = None
+    
     if not tabular:
+      # convert train, val test
       train = convert_ca(train, subtask)
       val = convert_ca(val, subtask)
       test = convert_ca(test, subtask)
@@ -151,8 +175,10 @@ def convert_ca(dataframe: pd.DataFrame, subtask: str) -> dict:
   n_levels = 50
   vars_global = 79 # 82 globals. 3 coordinates x,y,z extracted. are in x_s
   vars_levels = 4
+  
   if subtask == 'pristine':
     vars_layers = 14
+    
   elif subtask == 'clear_sky':
     vars_layers = 45
   
