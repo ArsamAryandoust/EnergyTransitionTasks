@@ -10,7 +10,7 @@ def process_all_datasets(config: dict, save: bool):
   print("Processing Polianna dataset.")
   
   # iterate over all subtasks
-  for subtask in config['Poliana']['subtask_list']:
+  for subtask in config['Polianna']['subtask_list']:
     
     # augment config with current subtask data
     config_polianna = config_PA(config, subtask, save)
