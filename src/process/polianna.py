@@ -1,13 +1,50 @@
+import pandas as pd
+import json
 
 from load_config import config_PA
 
+def process_all_datasets(config: dict, save: bool):
+  """
+  Process all datasets for Polianna task.
+  """
+  print("Processing Polianna dataset.")
+  
+  # iterate over all subtasks
+  for subtask in config['Polianna']['subtask_list']:
+    
+    # augment config with current subtask data
+    config_polianna = config_PA(config, subtask, save)
+    
+    # import all data
+    df_data, df_meta = import_all_data(config_polianna)
+    
+    # create coding scheme dictionary
+    _ = create_and_save_handmade_coding(config_polianna, save)
+    
 
-
-
-def create_handmade_coding_dict() -> (dict):
+def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
   """
   """
   
+  # set paths to data
+  path_to_meta_csv = (
+    config_polianna['path_to_data_raw_meta'] + 'EU_metadata.csv')
+  path_to_data_csv = (
+    config_polianna['path_to_data_raw_dataframe']+'preprocessed_dataframe.csv')
+  
+  # load dataframes from csv
+  df_meta = pd.read_csv(path_to_meta_csv)
+  df_data = pd.read_csv(path_to_data_csv)
+  
+  return df_data, df_meta
+  
+
+def create_and_save_handmade_coding(config_polianna: dict, save: bool
+  ) -> (dict):
+  """
+  """
+  
+  # manually set coding scheme as dictionary
   coding_dict = {
     "Instrumenttypes" : {
       "InstrumentType" : {
@@ -80,6 +117,17 @@ def create_handmade_coding_dict() -> (dict):
       }
     }
   }
+  
+  # save only if chosen so
+  if save:
+    
+    # set saving path
+    saving_path = (
+      config_polianna['path_to_data_subtask_add'] + 'coding_scheme.json')
+    
+    # save file
+    with open(saving_path, "w") as saving_file:
+      json.dump(coding_dict, saving_file) 
   
   return coding_dict
 

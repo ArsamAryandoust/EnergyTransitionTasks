@@ -2,7 +2,7 @@ import yaml
 import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
-
+from process import polianna
 
 if __name__ == "__main__":
   """
@@ -52,6 +52,9 @@ if __name__ == "__main__":
     
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
+      
+    elif args.process == 'Polianna':
+      polianna.process_all_datasets(config, save=True)
   
   # shuffle files of passed dataset
   elif args.shuffle is not None:
