@@ -26,7 +26,8 @@ def process_all_datasets(config: dict, save: bool):
     del df_meta
     gc.collect()
 
-
+    
+    
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
 
@@ -35,6 +36,14 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   df_meta: pd.DataFrame) -> (pd.DataFrame):
   """
   """
+  
+  ### Clean data ###
+  
+  # get the indices where curation is missing
+  index_list_miss = df_data[df_data['Curation'] == '[]'].index
+  
+  # drop rows by index
+  df_data.drop(index=index_list_miss, inplace=True)
   
   
   ### merge into df_data ###
@@ -53,6 +62,7 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   # free up memory
   del df_meta
   _ = gc.collect()
+  
   
   ### set chosen columns ###
   
@@ -80,7 +90,7 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   }
     
   # rename columns
-  df_data.rename(columns=rename_col_dict, inplace=True)
+  df_data = df_data.rename(columns=rename_col_dict)
   
   return df_data
 
