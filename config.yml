@@ -74,6 +74,10 @@ ClimART:
     
 Polianna:
   subtask_list : ['article_level', 'text_level']
+  data_col_list : ['Text', 'Curation']  
+  meta_col_list : ['Date created', 'Form', 'Subject matter', 'Treaty', 
+    'battery', 'biothermal_bioenergy', 'climat', 'distributed_generatio', 
+    'electric_vehicles_', 'genera', 'heat_and_coo', 'hydr', 'solar', 'win']
   temporal_test_split : 0.15
   spatial_test_split : 0.2
   val_test_split: 0.2

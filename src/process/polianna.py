@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import gc
 
 from load_config import config_PA
 
@@ -17,10 +18,82 @@ def process_all_datasets(config: dict, save: bool):
     
     # import all data
     df_data, df_meta = import_all_data(config_polianna)
+
+    # merge selected information from meta data and merge into cleaned data df    
+    df_data = merge_and_clean_dfs(config_polianna, df_data, df_meta)
+    
+    # free up memory
+    del df_meta
+    gc.collect()
+
+    
     
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
+
+
+def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame, 
+  df_meta: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
+  
+  ### Clean data ###
+  
+  # get the indices where curation is missing
+  index_list_miss = df_data[df_data['Curation'] == '[]'].index
+  
+  # drop rows by index
+  df_data.drop(index=index_list_miss, inplace=True)
+  
+  
+  ### merge into df_data ###
+
+  # transform filename column to match df_meta
+  df_data.rename(columns={'Unnamed: 0': 'Filename'}, inplace=True)
+
+  # shorten filename length to match df_meta
+  df_data['Filename'] = df_data['Filename'].apply(
+    lambda x: x[:len('EU_32009B0632')]
+  )
+
+  # merge
+  df_data = df_data.merge(df_meta, on='Filename')
+  
+  # free up memory
+  del df_meta
+  _ = gc.collect()
+  
+  
+  ### set chosen columns ###
+  
+  # select columns you want to keep
+  columns = config_polianna['data_col_list'] + config_polianna['meta_col_list']  
+  
+  # set new columns
+  df_data = df_data[columns]
+  
+  # set renaming dictionary
+  rename_col_dict = {
+    "Text" : "article",
+    "Curation" : "annotation",
+    "Date created" : 'date',
+    "Form" : 'form',
+    'Subject matter' : 'subject',
+    'Treaty' : 'treaty',
+    'climat' : 'climate',
+    'distributed_generatio': 'distributed_generation',
+    'electric_vehicles_': 'electric_vehicles',
+    'genera': 'generation',
+    'heat_and_coo': 'heating_cooling',
+    'hydr': 'hydrogen',
+    'win' : 'wind'
+  }
     
+  # rename columns
+  df_data = df_data.rename(columns=rename_col_dict)
+  
+  return df_data
+
 
 def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
   """
