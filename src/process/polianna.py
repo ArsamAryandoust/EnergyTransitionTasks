@@ -80,7 +80,7 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   }
     
   # rename columns
-  df_data.rename(columns=rename_col_dict}, inplace=True)
+  df_data.rename(columns=rename_col_dict, inplace=True)
   
   return df_data
 
