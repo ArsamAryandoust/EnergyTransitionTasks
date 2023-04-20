@@ -16,10 +16,10 @@ def process_all_datasets(config: dict, save: bool):
     config_polianna = config_PA(config, subtask, save)
     
     # import all data
-    df_data, df_meta = polianna.import_all_data(config_polianna)
+    df_data, df_meta = import_all_data(config_polianna)
     
     # create coding scheme dictionary
-    _ = polianna.create_and_save_handmade_coding(config_polianna, save)
+    _ = create_and_save_handmade_coding(config_polianna, save)
     
 
 def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
