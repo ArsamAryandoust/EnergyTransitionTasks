@@ -2,7 +2,7 @@ import yaml
 import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
-
+from process import polianna
 
 if __name__ == "__main__":
   """
