@@ -1,7 +1,26 @@
 import pandas as pd
+import json
 
 from load_config import config_PA
 
+def process_all_datasets(config: dict, save: bool):
+  """
+  Process all datasets for Polianna task.
+  """
+  print("Processing Polianna dataset.")
+  
+  # iterate over all subtasks
+  for subtask in config['Poliana']['subtask_list']:
+    
+    # augment config with current subtask data
+    config_polianna = config_PA(config, subtask, save)
+    
+    # import all data
+    df_data, df_meta = polianna.import_all_data(config_polianna)
+    
+    # create coding scheme dictionary
+    _ = polianna.create_and_save_handmade_coding(config_polianna, save)
+    
 
 def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
   """
@@ -20,10 +39,12 @@ def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
   return df_data, df_meta
   
 
-def create_handmade_coding_dict() -> (dict):
+def create_and_save_handmade_coding(config_polianna: dict, save: bool
+  ) -> (dict):
   """
   """
   
+  # manually set coding scheme as dictionary
   coding_dict = {
     "Instrumenttypes" : {
       "InstrumentType" : {
@@ -96,6 +117,17 @@ def create_handmade_coding_dict() -> (dict):
       }
     }
   }
+  
+  # save only if chosen so
+  if save:
+    
+    # set saving path
+    saving_path = (
+      config_polianna['path_to_data_subtask_add'] + 'coding_scheme.json')
+    
+    # save file
+    with open(saving_path, "w") as saving_file:
+      json.dump(coding_dict, saving_file) 
   
   return coding_dict
 

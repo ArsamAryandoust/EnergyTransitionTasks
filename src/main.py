@@ -52,6 +52,9 @@ if __name__ == "__main__":
     
     elif args.process == 'OpenCatalyst':
       print("To do: Implement Open Catalyst dataset processing.")
+      
+    elif args.process == 'Polianna':
+      polianna.process_all_datasets(config, save=True)
   
   # shuffle files of passed dataset
   elif args.shuffle is not None:

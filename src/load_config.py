@@ -442,6 +442,8 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
     config['general']['path_to_data'] + 'Polianna/')
   config_polianna['path_to_data_subtask'] = (
     config_polianna['path_to_data']+ '{}/'.format(subtask))
+  config_polianna['path_to_data_subtask_add'] = (
+    config_polianna['path_to_data_subtask'] + 'additional/')
   config_polianna['path_to_data_subtask_train'] = (
     config_polianna['path_to_data_subtask'] + 'training/')
   config_polianna['path_to_data_subtask_val'] = (
@@ -471,6 +473,7 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
     # iterate over all directories
     for path in [config_polianna['path_to_data'], 
       config_polianna['path_to_data_subtask'],
+      config_polianna['path_to_data_subtask_add'],
       config_polianna['path_to_data_subtask_train'],
       config_polianna['path_to_data_subtask_val'],
       config_polianna['path_to_data_subtask_test']]:
