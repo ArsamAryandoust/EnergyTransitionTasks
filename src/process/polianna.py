@@ -2,7 +2,22 @@
 from load_config import config_PA
 
 
-
+def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
+  """
+  """
+  
+  # set paths to data
+  path_to_meta_csv = (
+    config_polianna['path_to_data_raw_meta'] + 'EU_metadata.csv')
+  path_to_data_csv = (
+    config_polianna['path_to_data_raw_dataframe']+'preprocessed_dataframe.csv')
+  
+  # load dataframes from csv
+  df_meta = pd.read_csv(path_to_meta_csv)
+  df_data = pd.read_csv(path_to_data_csv)
+  
+  return df_data, df_meta
+  
 
 def create_handmade_coding_dict() -> (dict):
   """
