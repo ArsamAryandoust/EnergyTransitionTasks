@@ -8,10 +8,12 @@ def process_all_datasets(config: dict, save: bool):
   """
   Process all datasets for Polianna task.
   """
-  print("Processing Polianna dataset.")
   
   # iterate over all subtasks
   for subtask in config['Polianna']['subtask_list']:
+    
+    # show whats going on
+    print("Processing Polianna dataset {}.".format(subtask))
     
     # augment config with current subtask data
     config_polianna = config_PA(config, subtask, save)
@@ -19,8 +21,11 @@ def process_all_datasets(config: dict, save: bool):
     # import all data
     df_data, df_meta = import_all_data(config_polianna)
 
+    # clean data
+    df_data = clean_data(df_data)
+    
     # merge selected information from meta data and merge into cleaned data df    
-    df_data = merge_and_clean_dfs(config_polianna, df_data, df_meta)
+    df_data = merge_data(config_polianna, df_data, df_meta)
     
     # free up memory
     del df_meta
@@ -40,13 +45,10 @@ def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame,
   
   pass
   
-
-def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame, 
-  df_meta: pd.DataFrame) -> (pd.DataFrame):
-  """
-  """
   
-  ### Clean data ###
+def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
   
   # get the indices where curation is missing
   index_list_miss = df_data[df_data['Curation'] == '[]'].index
@@ -54,6 +56,13 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   # drop rows by index
   df_data.drop(index=index_list_miss, inplace=True)
   
+  return df_data
+
+
+def merge_data(config_polianna: dict, df_data: pd.DataFrame, 
+  df_meta: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
   
   ### merge into df_data ###
 
@@ -75,31 +84,11 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   
   ### set chosen columns ###
   
-  # select columns you want to keep
-  columns = config_polianna['data_col_list'] + config_polianna['meta_col_list']  
-  
   # set new columns
-  df_data = df_data[columns]
-  
-  # set renaming dictionary
-  rename_col_dict = {
-    "Text" : "article",
-    "Curation" : "annotation",
-    "Date created" : 'date',
-    "Form" : 'form',
-    'Subject matter' : 'subject',
-    'Treaty' : 'treaty',
-    'climat' : 'climate',
-    'distributed_generatio': 'distributed_generation',
-    'electric_vehicles_': 'electric_vehicles',
-    'genera': 'generation',
-    'heat_and_coo': 'heating_cooling',
-    'hydr': 'hydrogen',
-    'win' : 'wind'
-  }
+  df_data = df_data[config_polianna['data_col_list'] ]
     
   # rename columns
-  df_data = df_data.rename(columns=rename_col_dict)
+  df_data = df_data.rename(columns=config_polianna['rename_col_dict'])
   
   return df_data
 

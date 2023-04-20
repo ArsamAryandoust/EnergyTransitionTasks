@@ -441,7 +441,7 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
   config_polianna['path_to_data'] = (
     config['general']['path_to_data'] + 'Polianna/')
   config_polianna['path_to_data_subtask'] = (
-    config_polianna['path_to_data']+ '{}/'.format(subtask))
+    config_polianna['path_to_data'] + '{}/'.format(subtask))
   config_polianna['path_to_data_subtask_add'] = (
     config_polianna['path_to_data_subtask'] + 'additional/')
   config_polianna['path_to_data_subtask_train'] = (
@@ -467,8 +467,9 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
   # create directory structure for saving results
   if save:
     
-    if os.path.isdir(config_polianna['path_to_data']):
-      shutil.rmtree(config_polianna['path_to_data'])
+    if subtask == 'article_level':
+      if os.path.isdir(config_polianna['path_to_data']):
+        shutil.rmtree(config_polianna['path_to_data'])
     
     # iterate over all directories
     for path in [config_polianna['path_to_data'], 
