@@ -10,14 +10,17 @@ dataverse:
     persistentId: #'doi:10.7910/DVN/O2MDHX'
     saving_path: 'datasets/BuildingElectricity/processed/'
   WindFarm:
-    persistentId: 'doi:10.7910/DVN/LEGKGU'
+    persistentId: #'doi:10.7910/DVN/LEGKGU'
     saving_path: 'datasets/WindFarm/processed/'
   UberMovement:
     persistentId: 'doi:10.7910/DVN/ONY86P'
     saving_path: 'datasets/UberMovement/processed/'
   ClimART:
-    persistentId: 'doi:10.7910/DVN/0OUKSF'
+    persistentId: #'doi:10.7910/DVN/0OUKSF'
     saving_path: 'datasets/ClimART/processed/'
+  Polianna:
+    persistentId: 'doi:10.7910/DVN/ID2YXD'
+    saving_path: 'datasets/Polianna/processed/'
   BuildingElectricity_raw:
     persistentId: #'doi:10.7910/DVN/T3OK7E'
     saving_path: 'datasets/BuildingElectricity/raw/'
@@ -68,6 +71,14 @@ ClimART:
   subsample_frac: 1
   data_per_file_pristine: 80_000
   data_per_file_clearsky: 36_000
+    
+Polianna:
+  subtask_list : ['article_level', 'text_level']
+  temporal_test_split : 0.15
+  spatial_test_split : 0.2
+  val_test_split: 0.2
+  data_per_file: 500
+  
     
 OpenCatalyst:
   chunk_size_opencatalyst: 150_000
