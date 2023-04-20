@@ -39,11 +39,13 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   
   ### merge into df_data ###
 
-  # transform filename column
+  # transform filename column to match df_meta
   df_data.rename(columns={'Unnamed: 0': 'Filename'}, inplace=True)
 
   # shorten filename length to match df_meta
-  df_data['Filename'] = df_data['Filename'].apply(lambda x: x[:len('EU_32009B0632')])
+  df_data['Filename'] = df_data['Filename'].apply(
+    lambda x: x[:len('EU_32009B0632')]
+  )
 
   # merge
   df_data = df_data.merge(df_meta, on='Filename')
@@ -52,15 +54,34 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   del df_meta
   _ = gc.collect()
   
+  ### set chosen columns ###
   
+  # select columns you want to keep
+  columns = config_polianna['data_col_list'] + config_polianna['meta_col_list']  
   
-  # select chosen meta columns
+  # set new columns
+  df_data = df_data[columns]
   
-  # clean df_data
-  
-  # rename columns
-  
+  # set renaming dictionary
+  rename_col_dict = {
+    "Text" : "article",
+    "Curation" : "annotation",
+    "Date created" : 'date',
+    "Form" : 'form',
+    'Subject matter' : 'subject',
+    'Treaty' : 'treaty',
+    'climat' : 'climate',
+    'distributed_generatio': 'distributed_generation',
+    'electric_vehicles_': 'electric_vehicles',
+    'genera': 'generation',
+    'heat_and_coo': 'heating_cooling',
+    'hydr': 'hydrogen',
+    'win' : 'wind'
+  }
     
+  # rename columns
+  df_data.rename(columns=rename_col_dict}, inplace=True)
+  
   return df_data
 
 
