@@ -36,9 +36,25 @@ def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame,
   """
   """
   
-  # select chosen meta columns
   
-  # merge into df_data
+  ### merge into df_data ###
+
+  # transform filename column
+  df_data.rename(columns={'Unnamed: 0': 'Filename'}, inplace=True)
+
+  # shorten filename length to match df_meta
+  df_data['Filename'] = df_data['Filename'].apply(lambda x: x[:len('EU_32009B0632')])
+
+  # merge
+  df_data = df_data.merge(df_meta, on='Filename')
+  
+  # free up memory
+  del df_meta
+  _ = gc.collect()
+  
+  
+  
+  # select chosen meta columns
   
   # clean df_data
   
