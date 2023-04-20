@@ -31,12 +31,23 @@ def process_all_datasets(config: dict, save: bool):
     del df_meta
     gc.collect()
 
+    # create data points
+    df_data = expand_data(df_data)
+    
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
     
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
 
+
+def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
+  """
+  """
+  
+  
+  
+  return df_data
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
   save: bool):
