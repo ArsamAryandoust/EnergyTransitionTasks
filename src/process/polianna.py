@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import gc
 
 from load_config import config_PA
 
@@ -17,10 +18,35 @@ def process_all_datasets(config: dict, save: bool):
     
     # import all data
     df_data, df_meta = import_all_data(config_polianna)
+
+    # merge selected information from meta data and merge into cleaned data df    
+    df_data = merge_and_clean_dfs(config_polianna, df_data, df_meta)
     
+    # free up memory
+    del df_meta
+    gc.collect()
+
+
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
+
+
+def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame, 
+  df_meta: pd.DataFrame) -> (pd.DataFrame):
+  """
+  """
+  
+  # select chosen meta columns
+  
+  # merge into df_data
+  
+  # clean df_data
+  
+  # rename columns
+  
     
+  return df_data
+
 
 def import_all_data(config_polianna: dict) -> (pd.DataFrame, pd.DataFrame):
   """
