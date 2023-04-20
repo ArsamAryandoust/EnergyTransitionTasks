@@ -26,11 +26,20 @@ def process_all_datasets(config: dict, save: bool):
     del df_meta
     gc.collect()
 
-    
+    # split train, val, test
+    split_train_val_test(config_polianna, df_data, save)
     
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
 
+
+def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
+  save: bool):
+  """
+  """
+  
+  pass
+  
 
 def merge_and_clean_dfs(config_polianna: dict, df_data: pd.DataFrame, 
   df_meta: pd.DataFrame) -> (pd.DataFrame):
