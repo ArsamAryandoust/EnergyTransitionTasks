@@ -1,5 +1,8 @@
+import sys
+sys.path.append("/selberai")
 import yaml
 import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
+
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
 from process import polianna
@@ -33,7 +36,7 @@ if __name__ == "__main__":
       
   # download passed dataset
   elif args.download is not None:
-    download_dataset.download(config, args.download)
+    download_data.download(config, args.download)
     
   # process passed dataset
   elif args.process is not None:
