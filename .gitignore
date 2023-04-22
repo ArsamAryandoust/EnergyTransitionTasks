@@ -1,11 +1,12 @@
 src/__pycache__
 src/process/__pycache__
-src/selberai/__pycache__
-src/selberai/data/__pycache__
+
+src/selberai
 
 .upload_records/
 datasets/*/raw
 datasets/*/processed
+
 
 notebooks/.ipynb_checkpoints
 notebooks/
