@@ -35,7 +35,11 @@ def process_all_datasets(config: dict, save: bool):
     df_data = expand_data(df_data)
     
     # ordinally encode categorical features
-    df_data, _ = enc_feat_save_json(df_data, save)
+    df_data, _ = encode_features(df_data, save)
+    
+    # encode main article text
+    df_data, _ = encode_articles(df_data, save)
+    
     
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
@@ -44,8 +48,19 @@ def process_all_datasets(config: dict, save: bool):
     _ = create_and_save_handmade_coding(config_polianna, save)
 
 
+def encode_articles(df_data: pd.DataFrame, save: bool) -> (
+  pd.DataFrame, dict):
+  """
+  """
+  
+  # set empty dictionary for recording encoding scheme and saving as json
+  article_enc_dict = {}
+  
+  
 
-def enc_feat_save_json(df_data: pd.DataFrame, save: bool) -> (
+  return df_data, article_enc_dict
+
+def encode_features(df_data: pd.DataFrame, save: bool) -> (
   pd.DataFrame, dict):
   """
   """
@@ -80,7 +95,7 @@ def enc_feat_save_json(df_data: pd.DataFrame, save: bool) -> (
   
     # set saving path
     saving_path = (
-      config_polianna['path_to_data_meta'] + 'coding_scheme_features.json')
+      config_polianna['path_to_data_meta'] + 'encoding_features.json')
     
     # save file
     with open(saving_path, "w") as saving_file:
