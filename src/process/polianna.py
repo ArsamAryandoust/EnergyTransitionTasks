@@ -216,9 +216,6 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # drop rows by index
   df_data.drop(index=index_list_miss, inplace=True)
   
-  # drop rows where entry is missing
-  df_data.dropna(inplace=True)
-  
   return df_data
 
 
