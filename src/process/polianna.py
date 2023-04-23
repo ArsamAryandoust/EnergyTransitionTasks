@@ -91,20 +91,20 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
     art_enc_dict_text[art_index] = article_text
     art_enc_dict_token[art_index] = token_dict
   
-    # save
-    if save:
+  # save
+  if save:
+  
+    # set saving path
+    saving_path_text = (
+      config_polianna['path_to_data_subtask_add'] + 'encoding_art_text.json')
+    saving_path_token = (
+      config_polianna['path_to_data_subtask_add'] + 'encoding_art_token.json')
     
-      # set saving path
-      saving_path_text = (
-        config_polianna['path_to_data_subtask_add'] + 'encoding_art_text.json')
-      saving_path_token = (
-        config_polianna['path_to_data_subtask_add'] + 'encoding_art_token.json')
-      
-      # save file
-      with open(saving_path_text, "w") as saving_file:
-        json.dump(art_enc_dict_text, saving_file) 
-      with open(saving_path_token, "w") as saving_file:
-        json.dump(art_enc_dict_token, saving_file) 
+    # save file
+    with open(saving_path_text, "w") as saving_file:
+      json.dump(art_enc_dict_text, saving_file) 
+    with open(saving_path_token, "w") as saving_file:
+      json.dump(art_enc_dict_token, saving_file) 
 
   
   # drop old columns
