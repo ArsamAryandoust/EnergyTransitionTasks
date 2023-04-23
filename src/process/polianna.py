@@ -81,6 +81,17 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # set new dataframe
   df_data = df_data[cols]
     
+  ### rearrange 'form' ###
+
+  # get columns
+  cols = df_data.columns.to_list()
+
+  # remove 'form'
+  cols.remove('form')
+
+  # insert at beginning
+  cols.insert(3, 'form')
+    
   return df_data
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
