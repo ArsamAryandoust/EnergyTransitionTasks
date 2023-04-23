@@ -45,6 +45,21 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   """
   """
   
+  ### expand time features ###
+
+  # split time stamp
+  df_data[['year', 'month', 'day']] = df_data.date.str.split("-", expand = True)
+
+  # get columns
+  cols = df_data.columns.to_list()
+
+  # remove date and rearrange others to be first
+  cols.remove('date'), cols.remove('year')
+  cols.remove('month'), cols.remove('day')
+  cols = ['year', 'month', 'day'] + cols
+
+  # set new dataframe
+  df_data = df_data[cols]
   
   
   return df_data
