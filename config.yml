@@ -77,7 +77,7 @@ Polianna:
   data_col_list : ['Date created', 'Treaty', 'Text', 'Tokens', 'Curation', 
     'Form']
   rename_col_dict : {
-    'Text' : 'aricle_text',
+    'Text' : 'article_text',
     'Tokens' : 'article_token',
     'Curation' : 'annotation',
     'Date created' : 'date',
