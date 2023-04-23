@@ -4,6 +4,7 @@ import gc
 
 from load_config import config_PA
 
+
 def process_all_datasets(config: dict, save: bool):
   """
   Process all datasets for Polianna task.
@@ -35,10 +36,10 @@ def process_all_datasets(config: dict, save: bool):
     df_data = expand_data(df_data)
     
     # ordinally encode categorical features
-    df_data, _ = encode_features(df_data, save)
+    df_data, _ = encode_features(config_polianna, df_data, save)
     
     # encode main article text
-    df_data, _ = encode_articles(df_data, save)
+    df_data, _, _ = encode_articles(config_polianna, df_data, save)
     
     
     # split train, val, test
@@ -48,20 +49,75 @@ def process_all_datasets(config: dict, save: bool):
     _ = create_and_save_handmade_coding(config_polianna, save)
 
 
-def encode_articles(df_data: pd.DataFrame, save: bool) -> (
-  pd.DataFrame, dict):
+def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
+  ) -> (pd.DataFrame, dict):
   """
   """
   
   # set empty dictionary for recording encoding scheme and saving as json
-  article_enc_dict = {}
-  
-  
+  art_enc_dict_text = {}
+  art_enc_dict_token = {}
 
-  return df_data, article_enc_dict
+  # iterate over every data point's article
+  for art_index, (article_text, article_token) in enumerate(
+    zip(df_data['article_text'], df_data['article_token'])):
+      
+    # split the tokenized article content by comma into list
+    article = article_token.split(',')
+    
+    # remove all entries containing 'token'
+    article = [item for item in article if not 'token' in item]
+    
+    # remove two sets of irregular entries by following two conditions
+    article = [item for item in article if 'start' in item.split()[0]]
+    article = [item for item in article if not 'text' in item.split()[-1]]
+    
+    # set empty token dict to fill for each article
+    token_dict = {}
+    
+    # iterate over all tokens in article
+    for token_index, token in enumerate(article):
+        
+      # split token into start, stop, text and tag_count elements
+      token_split = token.split()
+      
+      # save token start, stop and text
+      token_dict[token_index] = {
+        'start' : token_split[0][6:],
+        'stop' : token_split[1][5:],
+        'text' : token_split[2][5:]
+      }
+    
+    art_enc_dict_text[art_index+1] = article_text
+    art_enc_dict_token[art_index+1] = token_dict
+  
+  # save
+  if save:
+  
+    # set saving path
+    saving_path_text = (
+      config_polianna['path_to_data_subtask_add'] + 'article_text.json')
+    saving_path_token = (
+      config_polianna['path_to_data_subtask_add'] + 'article_token.json')
+    
+    # save file
+    with open(saving_path_text, "w") as saving_file:
+      json.dump(art_enc_dict_text, saving_file) 
+    with open(saving_path_token, "w") as saving_file:
+      json.dump(art_enc_dict_token, saving_file) 
 
-def encode_features(df_data: pd.DataFrame, save: bool) -> (
-  pd.DataFrame, dict):
+  
+  # drop old columns
+  df_data.drop(columns=['article_text', 'article_token'], inplace=True)
+
+  # create new column
+  df_data['article'] = range(1, len(df_data) + 1)
+
+  return df_data, art_enc_dict_text, art_enc_dict_token
+
+
+def encode_features(config_polianna: dict, df_data: pd.DataFrame, save: bool
+  ) -> (pd.DataFrame, dict):
   """
   """
   
@@ -103,6 +159,7 @@ def encode_features(df_data: pd.DataFrame, save: bool) -> (
   
   return df_data, feat_enc_dict
 
+
 def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
   """
   """
@@ -139,6 +196,7 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   df_data = df_data[cols]
     
   return df_data
+
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
   save: bool):
@@ -191,6 +249,12 @@ def merge_data(config_polianna: dict, df_data: pd.DataFrame,
     
   # rename columns
   df_data = df_data.rename(columns=config_polianna['rename_col_dict'])
+  
+  
+  ### do some cleaning
+  
+  # drop rows where entry is missing
+  df_data.dropna(inplace=True, ignore_index=True)
   
   return df_data
 
