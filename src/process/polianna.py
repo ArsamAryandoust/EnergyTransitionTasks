@@ -270,7 +270,7 @@ def create_and_save_handmade_coding(config_polianna: dict, save: bool
     
     # set saving path
     saving_path = (
-      config_polianna['path_to_data_subtask_add'] + 'coding_scheme.json')
+      config_polianna['path_to_data_meta'] + 'coding_scheme.json')
     
     # save file
     with open(saving_path, "w") as saving_file:
