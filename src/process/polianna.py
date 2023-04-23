@@ -250,6 +250,12 @@ def merge_data(config_polianna: dict, df_data: pd.DataFrame,
   # rename columns
   df_data = df_data.rename(columns=config_polianna['rename_col_dict'])
   
+  
+  ### do some cleaning
+  
+  # drop rows where entry is missing
+  df_data.dropna(inplace=True)
+  
   return df_data
 
 
