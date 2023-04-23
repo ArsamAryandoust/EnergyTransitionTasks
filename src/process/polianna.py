@@ -4,6 +4,7 @@ import gc
 
 from load_config import config_PA
 
+
 def process_all_datasets(config: dict, save: bool):
   """
   Process all datasets for Polianna task.
@@ -56,12 +57,12 @@ def encode_articles(df_data: pd.DataFrame, save: bool) -> (
   # set empty dictionary for recording encoding scheme and saving as json
   article_enc_dict = {}
   
-  
 
   return df_data, article_enc_dict
 
-def encode_features(df_data: pd.DataFrame, save: bool) -> (
-  pd.DataFrame, dict):
+
+def encode_features(config_polianna: dict, df_data: pd.DataFrame, save: bool
+  ) -> (pd.DataFrame, dict):
   """
   """
   
@@ -103,6 +104,7 @@ def encode_features(df_data: pd.DataFrame, save: bool) -> (
   
   return df_data, feat_enc_dict
 
+
 def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
   """
   """
@@ -139,6 +141,7 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   df_data = df_data[cols]
     
   return df_data
+
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
   save: bool):
