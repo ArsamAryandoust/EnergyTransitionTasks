@@ -88,8 +88,8 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
         'text' : token_split[2][5:]
       }
     
-    art_enc_dict_text[art_index] = article_text
-    art_enc_dict_token[art_index] = token_dict
+    art_enc_dict_text[art_index+1] = article_text
+    art_enc_dict_token[art_index+1] = token_dict
   
   # save
   if save:
