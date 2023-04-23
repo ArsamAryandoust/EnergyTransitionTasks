@@ -41,6 +41,8 @@ def process_all_datasets(config: dict, save: bool):
     # encode main article text
     df_data, _, _ = encode_articles(config_polianna, df_data, save)
     
+    # encode labels
+    df_data, _, _, _ = encode_labels(config_polianna, df_data, save)
     
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
@@ -49,8 +51,133 @@ def process_all_datasets(config: dict, save: bool):
     _ = create_and_save_handmade_coding(config_polianna, save)
 
 
+def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
+  ) -> (pd.DataFrame):
+  """
+  """
+  
+  # create empty dict to save all annotation labels
+  label_dict = {}
+  label_set = set()
+  label_tag_list_dict = {}
+
+  ### Gather detailed annotation information
+
+  # iterate over all annotation data points
+  for index_data, annotation_point in enumerate(df_data['annotation']):
+      
+      # split into single annotations
+      annotation_list = annotation_point.split(',')
+
+      # create empty annotation dict and tag list for saving labels
+      anno_dict = {}
+      tag_list = []
+      
+      # iterate over each annotation
+      for index_anno, anno in enumerate(annotation_list):
+          
+          # split single annotation again
+          anno_split = anno.split()
+          
+          # iterate over each part of split annotation list
+          for anno_part in anno_split:
+              
+              # get start, stop and tag only for labels
+              if 'start:' in anno_part:
+                  start = anno_part[6:]
+              elif 'stop:'in anno_part:
+                  stop = anno_part[5:]
+              elif 'tag:' in anno_part:
+                  tag = anno_part[4:]
+          
+          # set annotation dictionary
+          anno_dict[index_anno] = {
+              'start' : start,
+              'stop' : stop,
+              'tag' : tag
+          }
+          
+          # add to tags list
+          tag_list.append(tag)
+          
+      # save records
+      label_set = label_set.union(set(tag_list)) 
+      label_dict[index_data+1] = anno_dict
+      label_tag_list_dict[index_data+1] = tag_list
+      
+  # drop annotation column
+  df_data.drop(columns=['annotation'], inplace=True)
+
+  # transform set to list
+  label_set = list(label_set)
+
+  # sort list
+  label_set.sort()
+
+  # create a label encoding
+  label_enc_dict = {}
+  for index_elem, label in enumerate(label_set):
+      label_enc_dict[label] = index_elem
+      
+
+  # if subtask is article level, create histogram over labels
+  if config_polianna['subtask'] == 'article_level':
+      # set empty dictionary to save labels
+      labels = {}
+
+      # iterate over all label list elements
+      for key_data, value_data in label_tag_list_dict.items():
+
+          # label distribution dict
+          label_dist_dict = {}
+
+          # iterate over all possible labels
+          for key_enc, value_enc in label_enc_dict.items():
+
+              # count number of labels in list
+              n_labels = value_data.count(key_enc)
+
+              # save 
+              label_dist_dict[key_enc] = n_labels
+
+          # save labels record
+          labels[key_data] = label_dist_dict
+          
+      # create a dataframe from dictionary
+      df_labels = pd.DataFrame.from_dict(labels, orient='index').reset_index(drop=True)
+      
+      # concatenate into features dictionary
+      df_data = pd.concat([df_data, df_labels], axis=1)
+          
+  # if subtask is text level, keep detailed annotations as labels
+  elif config_polianna['subtask'] == 'text_level':
+      
+      # transform tag entries into corresponding encodings
+      for key, value in label_dict.items():
+          for key_1, value_1 in value.items():
+              value_1['tag'] = label_enc_dict[value_1['tag']]
+      
+      # set labels to transformed label dict
+      labels = label_dict
+      
+      # save labels
+      if save:
+          
+          # set saving paths
+          saving_path_annotation = (
+              config_polianna['path_to_data_subtask_add'] + 'annotation_labels.json')
+          saving_path_encoding = (
+              config_polianna['path_to_data_subtask_add'] + 'encoding_labels.json')
+          
+          # save file
+          with open(saving_path_annotation, "w") as saving_file:
+              json.dump(labels, saving_file) 
+          with open(saving_path_encoding, "w") as saving_file:
+              json.dump(label_enc_dict, saving_file) 
+  return df_data, label_dict, label_tag_list_dict, label_set
+
 def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
-  ) -> (pd.DataFrame, dict):
+  ) -> (pd.DataFrame, dict, dict):
   """
   """
   
