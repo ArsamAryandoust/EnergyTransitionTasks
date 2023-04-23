@@ -108,7 +108,7 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
 
   
   # drop old columns
-  df_data.drop(columns=['article_text', 'article_token'])
+  df_data.drop(columns=['article_text', 'article_token'], inplace=True)
 
   # create new column
   df_data['article'] = range(1, len(df_data) + 1)
