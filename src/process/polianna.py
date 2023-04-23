@@ -35,7 +35,7 @@ def process_all_datasets(config: dict, save: bool):
     df_data = expand_data(df_data)
     
     # ordinally encode categorical features
-    df_data, enc_scheme = ord_enc_features(df_data)
+    df_data, _ = enc_feat_save_json(df_data, save)
     
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
@@ -45,7 +45,8 @@ def process_all_datasets(config: dict, save: bool):
 
 
 
-def ord_enc_features(df_data: pd.DataFrame) -> (pd.DataFrame, dict):
+def enc_feat_save_json(df_data: pd.DataFrame, save: bool) -> (
+  pd.DataFrame, dict):
   """
   """
   
@@ -53,7 +54,7 @@ def ord_enc_features(df_data: pd.DataFrame) -> (pd.DataFrame, dict):
   enc_cols = ['form', 'treaty']
 
   # set empty dictionary for recording encoding scheme and saving as json
-  enc_scheme = {}
+  feat_enc_dict = {}
 
   # iterate over all requested columns
   for col in enc_cols:
@@ -72,10 +73,20 @@ def ord_enc_features(df_data: pd.DataFrame) -> (pd.DataFrame, dict):
     df_data = df_data.replace({col: enc_dict})
     
     # save encoding scheme
-    enc_scheme[col] = enc_dict
+    feat_enc_dict[col] = enc_dict
   
+  # save results
+  if save:
   
-  return df_data, enc_scheme
+    # set saving path
+    saving_path = (
+      config_polianna['path_to_data_meta'] + 'coding_scheme_features.json')
+    
+    # save file
+    with open(saving_path, "w") as saving_file:
+      json.dump(feat_enc_dict, saving_file) 
+  
+  return df_data, feat_enc_dict
 
 def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
   """
