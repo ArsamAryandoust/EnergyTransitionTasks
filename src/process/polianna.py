@@ -325,8 +325,8 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   df_data = df_data[cols]
     
   return df_data
-
-
+  
+  
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
   save: bool):
   """
