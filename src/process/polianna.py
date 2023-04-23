@@ -96,9 +96,9 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   
     # set saving path
     saving_path_text = (
-      config_polianna['path_to_data_subtask_add'] + 'encoding_art_text.json')
+      config_polianna['path_to_data_subtask_add'] + 'article_text.json')
     saving_path_token = (
-      config_polianna['path_to_data_subtask_add'] + 'encoding_art_token.json')
+      config_polianna['path_to_data_subtask_add'] + 'article_token.json')
     
     # save file
     with open(saving_path_text, "w") as saving_file:
@@ -215,6 +215,9 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   
   # drop rows by index
   df_data.drop(index=index_list_miss, inplace=True)
+  
+  # drop rows where entry is missing
+  df_data.dropna(inplace=True)
   
   return df_data
 
