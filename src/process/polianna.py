@@ -39,7 +39,7 @@ def process_all_datasets(config: dict, save: bool):
     df_data, _ = encode_features(config_polianna, df_data, save)
     
     # encode main article text
-    df_data, _ = encode_articles(config_polianna, df_data, save)
+    df_data, _, _ = encode_articles(config_polianna, df_data, save)
     
     
     # split train, val, test
@@ -55,10 +55,65 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   """
   
   # set empty dictionary for recording encoding scheme and saving as json
-  article_enc_dict = {}
-  
+  art_enc_dict_text = {}
+  art_enc_dict_token = {}
 
-  return df_data, article_enc_dict
+  # iterate over every data point's article
+  for art_index, (article_text, article_token) in enumerate(
+    zip(df_data['article_text'], df_data['article_token'])):
+      
+    # split the tokenized article content by comma into list
+    article = article_token.split(',')
+    
+    # remove all entries containing 'token'
+    article = [item for item in article if not 'token' in item]
+    
+    # remove two sets of irregular entries by following two conditions
+    article = [item for item in article if 'start' in item.split()[0]]
+    article = [item for item in article if not 'text' in item.split()[-1]]
+    
+    # set empty token dict to fill for each article
+    token_dict = {}
+    
+    # iterate over all tokens in article
+    for token_index, token in enumerate(article):
+        
+      # split token into start, stop, text and tag_count elements
+      token_split = token.split()
+      
+      # save token start, stop and text
+      token_dict[token_index] = {
+        'start' : token_split[0][6:],
+        'stop' : token_split[1][5:],
+        'text' : token_split[2][5:]
+      }
+    
+    art_enc_dict_text[art_index] = article_text
+    art_enc_dict_token[art_index] = token_dict
+  
+    # save
+    if save:
+    
+      # set saving path
+      saving_path_text = (
+        config_polianna['path_to_data_subtask_add'] + 'encoding_art_text.json')
+      saving_path_token = (
+        config_polianna['path_to_data_subtask_add'] + 'encoding_art_token.json')
+      
+      # save file
+      with open(saving_path_text, "w") as saving_file:
+        json.dump(art_enc_dict_text, saving_file) 
+      with open(saving_path_token, "w") as saving_file:
+        json.dump(art_enc_dict_token, saving_file) 
+
+  
+  # drop old columns
+  df_data.drop(columns=['article_text', 'article_token'])
+
+  # create new column
+  df_data['article'] = range(1, len(df_data) + 1)
+
+  return df_data, art_enc_dict_text, art_enc_dict_token
 
 
 def encode_features(config_polianna: dict, df_data: pd.DataFrame, save: bool
