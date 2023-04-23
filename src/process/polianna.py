@@ -36,10 +36,10 @@ def process_all_datasets(config: dict, save: bool):
     df_data = expand_data(df_data)
     
     # ordinally encode categorical features
-    df_data, _ = encode_features(df_data, save)
+    df_data, _ = encode_features(config_polianna, df_data, save)
     
     # encode main article text
-    df_data, _ = encode_articles(df_data, save)
+    df_data, _ = encode_articles(config_polianna, df_data, save)
     
     
     # split train, val, test
@@ -49,8 +49,8 @@ def process_all_datasets(config: dict, save: bool):
     _ = create_and_save_handmade_coding(config_polianna, save)
 
 
-def encode_articles(df_data: pd.DataFrame, save: bool) -> (
-  pd.DataFrame, dict):
+def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
+  ) -> (pd.DataFrame, dict):
   """
   """
   
