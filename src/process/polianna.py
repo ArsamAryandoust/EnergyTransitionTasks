@@ -81,6 +81,7 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # set new dataframe
   df_data = df_data[cols]
     
+    
   ### rearrange 'form' ###
 
   # get columns
@@ -91,6 +92,9 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
 
   # insert at beginning
   cols.insert(3, 'form')
+  
+  # set new dataframe
+  df_data = df_data[cols]
     
   return df_data
 
