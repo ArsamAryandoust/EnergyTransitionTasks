@@ -74,12 +74,14 @@ ClimART:
     
 Polianna:
   subtask_list : ['article_level', 'text_level']
-  data_col_list : ['Date created', 'Treaty', 'Tokens', 'Curation', 'Form']
+  data_col_list : ['Date created', 'Treaty', 'Text', 'Tokens', 'Curation', 
+    'Form']
   rename_col_dict : {
-    "Tokens" : "article",
-    "Curation" : "annotation",
-    "Date created" : 'date',
-    "Form" : 'form',
+    'Text' : 'article_text',
+    'Tokens' : 'article_token',
+    'Curation' : 'annotation',
+    'Date created' : 'date',
+    'Form' : 'form',
     'Treaty' : 'treaty'
   }
   temporal_test_split : 0.15
