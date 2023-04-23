@@ -78,7 +78,8 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   cols.insert(3, 'subject_1'), cols.insert(4, 'subject_2')
   cols.insert(5, 'subject_3'), cols.insert(6, 'subject_4')
     
-    
+  # set new dataframe
+  df_data = df_data[cols]
     
   return df_data
 
