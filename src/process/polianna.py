@@ -34,12 +34,48 @@ def process_all_datasets(config: dict, save: bool):
     # create data points
     df_data = expand_data(df_data)
     
+    # ordinally encode categorical features
+    df_data, enc_scheme = ord_enc_features(df_data)
+    
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
     
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
 
+
+
+def ord_enc_features(df_data: pd.DataFrame) -> (pd.DataFrame, dict):
+  """
+  """
+  
+  # set list of columns we want to ordinally encode
+  enc_cols = ['form', 'treaty']
+
+  # set empty dictionary for recording encoding scheme and saving as json
+  enc_scheme = {}
+
+  # iterate over all requested columns
+  for col in enc_cols:
+      
+    # get set of values in column
+    enc_set = set(df_data[col])
+    
+    # set empty encoding dictionary to save values
+    enc_dict = {}
+    
+    # iterate over set to be encoded
+    for entry_index, entry_set in enumerate(enc_set):
+        enc_dict[entry_set] = entry_index
+    
+    # transform dataframe
+    df_data = df_data.replace({col: enc_dict})
+    
+    # save encoding scheme
+    enc_scheme[col] = enc_dict
+  
+  
+  return df_data, enc_scheme
 
 def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
   """
