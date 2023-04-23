@@ -62,6 +62,24 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   df_data = df_data[cols]
   
   
+  ### expand subject features ###
+  
+  # split by subjects
+  df_data[
+    ['subject_1', 'subject_2', 'subject_3', 'subject_4']
+  ] = df_data['subject'].str.split(',', expand=True)
+  
+  # get columns
+  cols = df_data.columns.to_list()
+
+  # remove date and rearrange others to be first
+  cols.remove('subject'), cols.remove('subject_1'), cols.remove('subject_2')
+  cols.remove('subject_3'), cols.remove('subject_4')
+  cols.insert(3, 'subject_1'), cols.insert(4, 'subject_2')
+  cols.insert(5, 'subject_3'), cols.insert(6, 'subject_4')
+    
+    
+    
   return df_data
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
