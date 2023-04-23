@@ -254,7 +254,7 @@ def merge_data(config_polianna: dict, df_data: pd.DataFrame,
   ### do some cleaning
   
   # drop rows where entry is missing
-  df_data.dropna(inplace=True)
+  df_data.dropna(inplace=True, ignore_index=True)
   
   return df_data
 
