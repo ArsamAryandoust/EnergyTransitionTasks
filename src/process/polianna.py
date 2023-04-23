@@ -34,12 +34,74 @@ def process_all_datasets(config: dict, save: bool):
     # create data points
     df_data = expand_data(df_data)
     
+    # ordinally encode categorical features
+    df_data, _ = encode_features(df_data, save)
+    
+    # encode main article text
+    df_data, _ = encode_articles(df_data, save)
+    
+    
     # split train, val, test
     split_train_val_test(config_polianna, df_data, save)
     
     # create coding scheme dictionary
     _ = create_and_save_handmade_coding(config_polianna, save)
 
+
+def encode_articles(df_data: pd.DataFrame, save: bool) -> (
+  pd.DataFrame, dict):
+  """
+  """
+  
+  # set empty dictionary for recording encoding scheme and saving as json
+  article_enc_dict = {}
+  
+  
+
+  return df_data, article_enc_dict
+
+def encode_features(df_data: pd.DataFrame, save: bool) -> (
+  pd.DataFrame, dict):
+  """
+  """
+  
+  # set list of columns we want to ordinally encode
+  enc_cols = ['form', 'treaty']
+
+  # set empty dictionary for recording encoding scheme and saving as json
+  feat_enc_dict = {}
+
+  # iterate over all requested columns
+  for col in enc_cols:
+      
+    # get set of values in column
+    enc_set = set(df_data[col])
+    
+    # set empty encoding dictionary to save values
+    enc_dict = {}
+    
+    # iterate over set to be encoded
+    for entry_index, entry_set in enumerate(enc_set):
+        enc_dict[entry_set] = entry_index
+    
+    # transform dataframe
+    df_data = df_data.replace({col: enc_dict})
+    
+    # save encoding scheme
+    feat_enc_dict[col] = enc_dict
+  
+  # save results
+  if save:
+  
+    # set saving path
+    saving_path = (
+      config_polianna['path_to_data_meta'] + 'encoding_features.json')
+    
+    # save file
+    with open(saving_path, "w") as saving_file:
+      json.dump(feat_enc_dict, saving_file) 
+  
+  return df_data, feat_enc_dict
 
 def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame): 
   """
@@ -61,7 +123,21 @@ def expand_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   # set new dataframe
   df_data = df_data[cols]
   
+    
+  ### rearrange 'form' ###
+
+  # get columns
+  cols = df_data.columns.to_list()
+
+  # remove 'form'
+  cols.remove('form')
+
+  # insert at beginning
+  cols.insert(3, 'form')
   
+  # set new dataframe
+  df_data = df_data[cols]
+    
   return df_data
 
 def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame, 
@@ -220,7 +296,7 @@ def create_and_save_handmade_coding(config_polianna: dict, save: bool
     
     # set saving path
     saving_path = (
-      config_polianna['path_to_data_subtask_add'] + 'coding_scheme.json')
+      config_polianna['path_to_data_meta'] + 'coding_scheme.json')
     
     # save file
     with open(saving_path, "w") as saving_file:

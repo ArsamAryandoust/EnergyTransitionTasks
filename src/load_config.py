@@ -440,6 +440,8 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
   
   config_polianna['path_to_data'] = (
     config['general']['path_to_data'] + 'Polianna/')
+  config_polianna['path_to_data_meta'] = (
+    config_polianna['path_to_data'] + 'metadata/') 
   config_polianna['path_to_data_subtask'] = (
     config_polianna['path_to_data'] + '{}/'.format(subtask))
   config_polianna['path_to_data_subtask_add'] = (
@@ -472,7 +474,8 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
         shutil.rmtree(config_polianna['path_to_data'])
     
     # iterate over all directories
-    for path in [config_polianna['path_to_data'], 
+    for path in [config_polianna['path_to_data'],
+      config_polianna['path_to_data_meta'],
       config_polianna['path_to_data_subtask'],
       config_polianna['path_to_data_subtask_add'],
       config_polianna['path_to_data_subtask_train'],
