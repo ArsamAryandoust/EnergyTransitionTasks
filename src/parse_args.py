@@ -44,7 +44,11 @@ def parse_arguments() -> argparse.Namespace:
   parser.add_argument(
     "-shuffle",
     help="Pass dataset name you want to shuffle!")
-  
+  parser.add_argument(
+    "-baseline",
+    nargs='+',
+    help="Train the baseline RF model for the passed task"
+  )
   # parse arguments
   args = parser.parse_args()
   
@@ -59,7 +63,9 @@ def parse_arguments() -> argparse.Namespace:
           print("\nNo dataset has been requested to be analyzed!")
           if args.shuffle is None:
             print("\nNo data shuffling operation is requested!")
-            print("Must select one of these instructions!")
-            exit(1)
+            if args.baseline is None:
+              print("No baseline training is requested!")
+              print("Must select one of these instructions!")
+              exit(1)
   
   return args

@@ -10,5 +10,6 @@ COPY requirements requirements
 RUN pip3 install -r requirements
 
 RUN pip3 install jupyter requests scikit-learn 
+RUN pip3 install pyJoules
 
 WORKDIR /EnergyTransitionTasks
