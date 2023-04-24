@@ -178,6 +178,7 @@ def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
   
   return df_data
 
+
 def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   ) -> (pd.DataFrame, dict, dict):
   """
@@ -187,6 +188,9 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   art_enc_dict_text = {}
   art_enc_dict_token = {}
 
+  max_len = 0
+  min_len = 10e10
+  
   # iterate over every data point's article
   for art_index, (article_text, article_token) in enumerate(
     zip(df_data['article_text'], df_data['article_token'])):
@@ -217,8 +221,20 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
         'text' : token_split[2][5:]
       }
     
+    # keep track of shortest and longest articles
+    n_tokens = len(token_dict)
+    if n_tokens < min_len:
+      min_len = n_tokens
+    if n_tokens > max_len:
+      max_len = n_tokens
+      
+      
     art_enc_dict_text[art_index+1] = article_text
     art_enc_dict_token[art_index+1] = token_dict
+  
+  # show us minimum and maximum length of articles
+  print("Minimum article length is:", min_len)
+  print("Maximum article length is:", max_len)
   
   # save
   if save:
@@ -332,7 +348,77 @@ def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame,
   """
   """
   
-  pass
+  # get total number of data points 
+  n_data_total = len(df_data)
+
+  # sample testing
+  df_testing = df_data.sample(frac=config_polianna['train_test_split'], 
+    random_state=config_polianna['seed'])
+
+  # drop and keep rest as training
+  df_training = df_data.drop(df_testing.index)
+
+  # sample validation from testing
+  df_validation = df_testing.sample(frac=config_polianna['val_test_split'], 
+    random_state=config_polianna['seed'])
+
+  # drop and leave rest as testing
+  df_testing = df_testing.drop(df_validation.index)
+
+  # calculate and analyze dataset properties
+  n_train, n_val, n_test = len(df_training), len(df_validation), len(df_testing)
+  n_total = n_train + n_val + n_test
+
+  # print
+  print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+      n_train/n_total),
+    "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+      n_val/n_total),
+    "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+      n_test/n_total))
+
+  # test if all indexes dropped correctly.
+  if n_data_total != n_total:
+    print("Error! Number of available data is {}".format(n_data_total),
+      "and does not match number of resulting data {}.".format(n_total))
+      
+  # save results in chunks
+  save_in_chunks(config_polianna,
+    config_polianna['path_to_data_subtask_train'] + 'training_data', 
+    df_training, save=save)
+  save_in_chunks(config_polianna,
+    config_polianna['path_to_data_subtask_val'] + 'validation_data', 
+    df_validation, save=save)
+  save_in_chunks(config_polianna,
+    config_polianna['path_to_data_subtask_test'] + 'testing_data', 
+    df_testing, save=save)
+  
+  
+def save_in_chunks(config_polianna: dict, saving_path: str, df: pd.DataFrame,
+  save: bool):
+  """
+  """
+  # shuffle dataframe
+  df = df.sample(frac=1, random_state=config_polianna['seed'], 
+    ignore_index=True)
+
+  for file_counter in range(1, 312321321312):
+    if len(df) == 0:
+      break
+
+    if save:
+      # set saving path
+      path_to_saving = saving_path + '_{}.csv'.format(file_counter)
+
+      # save as csv      
+      df.iloc[:config_polianna['data_per_file']].to_csv(
+        path_to_saving, index=False)
+
+    # shorten dataframe
+    df = df[config_polianna['data_per_file']:]
+
+    if len(df) == 0:
+      break
   
   
 def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
