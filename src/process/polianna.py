@@ -178,6 +178,7 @@ def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
   
   return df_data
 
+
 def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   ) -> (pd.DataFrame, dict, dict):
   """
@@ -187,6 +188,9 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
   art_enc_dict_text = {}
   art_enc_dict_token = {}
 
+  max_len = 0
+  min_len = 10e10
+  
   # iterate over every data point's article
   for art_index, (article_text, article_token) in enumerate(
     zip(df_data['article_text'], df_data['article_token'])):
@@ -217,8 +221,20 @@ def encode_articles(config_polianna: dict, df_data: pd.DataFrame, save: bool
         'text' : token_split[2][5:]
       }
     
+    # keep track of shortest and longest articles
+    n_tokens = len(token_dict)
+    if n_tokens < min_len:
+      min_len = n_tokens
+    if n_tokens > max_len:
+      max_len = n_tokens
+      
+      
     art_enc_dict_text[art_index+1] = article_text
     art_enc_dict_token[art_index+1] = token_dict
+  
+  # show us minimum and maximum length of articles
+  print("Minimum article length is:", min_len)
+  print("Maximum article length is:", max_len)
   
   # save
   if save:
@@ -403,6 +419,7 @@ def save_in_chunks(config_polianna: dict, saving_path: str, df: pd.DataFrame,
 
     if len(df) == 0:
       break
+  
   
 def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   """
