@@ -61,6 +61,10 @@ def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
   label_set = set()
   label_tag_list_dict = {}
 
+  # save minimum and max of label tags
+  max_len = 0
+  min_len = 10e10
+  
   ### Gather detailed annotation information
 
   # iterate over all annotation data points
@@ -100,11 +104,22 @@ def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
       # add to tags list
       tag_list.append(tag)
         
+    # save record of min and max len
+    n_tags = len(tag_list)
+    if n_tags < min_len:
+      min_len = n_tags
+    if n_tags > max_len:
+      max_len = n_tags
+    
     # save records
     label_set = label_set.union(set(tag_list)) 
     label_dict[index_data+1] = anno_dict
     label_tag_list_dict[index_data+1] = tag_list
       
+  # tell us the numbers
+  print('Minimum number of tags is:', min_len)
+  print('Maximum number of tags is:', max_len)
+  
   # drop annotation column
   df_data.drop(columns=['annotation'], inplace=True)
 

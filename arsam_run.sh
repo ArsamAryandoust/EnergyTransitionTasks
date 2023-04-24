@@ -15,7 +15,7 @@ if [ $update -eq 1 ]; then
 
   # Clone code from selberai branch latest_release
   sudo rm -r src/selberai
-  git clone -b latest_release https://github.com/Selber-AI/selberai
+  git clone -b lead_contributions https://github.com/Selber-AI/selberai
   mv selberai/selberai src/
   sudo rm -r selberai
 fi
