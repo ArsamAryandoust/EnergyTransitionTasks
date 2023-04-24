@@ -12,8 +12,8 @@ n := number of data points <br />
 
 | Additional data | Description | Format |
 | --- | ----------- | ----------- |
-| x_st | A mapping of article IDs (430 articles) to their text. This must be used to dynamically, or statically, expand x_st.  | (n, *)|
-| y_st | A mapping of article IDs (430 articles) to their precise annotations. This must be used to dynamically, or statically, expand y_st. | (n, *)|
+| x_st | A mapping of article IDs (430 articles) to their text. This must be used to dynamically, or statically, expand x_st. These consist of 12 - 4'958 words. | (n, 12 - 4'958)|
+| y_st | A mapping of article IDs (430 articles) to their precise annotations. This must be used to dynamically, or statically, expand y_st. These consist of 1 - 736 annotations which in total are 3 - 2'208 single values for labels. | (n, 3 - 2'208)|
 
 
 
