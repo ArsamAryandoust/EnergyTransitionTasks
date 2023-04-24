@@ -2,10 +2,13 @@ import sys
 sys.path.append("/selberai")
 import yaml
 import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
+import baseline
 
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
 from process import polianna
+
+from baseline import train_RF_baseline
 
 if __name__ == "__main__":
   """
@@ -71,7 +74,8 @@ if __name__ == "__main__":
   elif args.analyse is not None:
     analyse_dataset.analyse(config, args.analyse[0], args.analyse[1])
     
-  
+  elif args.baseline is not None:
+    baseline.run_baseline(config, args.baseline[0], args.baseline[1])
   
   print("Successfully executed all instructions!")
 
