@@ -93,6 +93,10 @@ def encode_labels(config_polianna: dict, df_data: pd.DataFrame, save: bool
             stop = anno_part[5:]
           elif 'tag:' in anno_part:
             tag = anno_part[4:]
+            
+            # introduce uncertain tag
+            if tag = ' ':
+              tag = 'uncertain'
       
       # set annotation dictionary
       anno_dict[index_anno] = {
