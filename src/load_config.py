@@ -193,10 +193,10 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
     + 'UberMovement/')
   config_uber['path_to_data'] = (config['general']['path_to_data'] 
     + 'UberMovement/')
+  config_uber['path_to_data_meta'] = (config_uber['path_to_data']
+    + 'metadata/')
   config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
     + '{}/'.format(subtask))
-  config_uber['path_to_data_add'] = (config_uber['path_to_data_subtask']
-    + 'additional/')
   config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
     + 'training/')
   config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
@@ -299,13 +299,14 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
           
       for path in [config_uber['path_to_data'],
         config_uber['path_to_data_subtask'], 
-        config_uber['path_to_data_add'],
+        config_uber['path_to_data_meta'],
         config_uber['path_to_data_train'], 
         config_uber['path_to_data_val'],
         config_uber['path_to_data_test']]:
         check_create_dir(path)
             
     elif subtask == 'cities_20':
+
       # set full path to directory we want to copy
       path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
       
@@ -326,7 +327,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
       orient='index', columns=['city_id'])
     
     # save file
-    saving_path = config_uber['path_to_data_add'] + 'city_to_id_mapping.csv'
+    saving_path = config_uber['path_to_data_meta'] + 'id_mapping_{}.csv'.format(
+      subtask)
     df.to_csv(saving_path)
   
   config_uber['list_of_cities'] = list_of_cities
