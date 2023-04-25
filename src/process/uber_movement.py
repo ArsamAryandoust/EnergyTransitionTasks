@@ -9,17 +9,21 @@ from tqdm import tqdm
 from load_config import config_UM
 
 
-def process_all_datasets(config: dict):
+def process_all_datasets(config: dict, save:bool):
     """
     Processes all datasets for Uber Movement prediction task.
     """
     print("\nProcessing Uber Movement dataset.")
+    
     # iterated over all subtasks
     for subtask in config['uber_movement']['subtask_list']:
+    
         # augment conigurations with additional information
-        config_uber = config_UM(config, subtask)
+        config_uber = config_UM(config, subtask, save)
+        
         # process geographic information
         city_zone_shift_dict = process_geographic_information(config_uber)
+        
         # split training validation testing
         split_train_val_test(config_uber, city_zone_shift_dict)
 
