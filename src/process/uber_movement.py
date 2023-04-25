@@ -144,48 +144,56 @@ def import_geojson(config_uber: dict, city: str) -> dict:
 
 
 def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
-    """ Maps Uber Movement city zone IDs to a flattened list of latitude and 
-    longitude coordinates in the format of two dictionaries. Uses the recursive 
-    function called foster_coordinates_recursive to flatten the differently 
-    nested data.
-    """
-    df_geojson.pop('type')
-    df_geojson = df_geojson['features']
-    # create a mapping of json entries to uber movement city zone ids
-    map_json_entry_to_movement_id = dict()
-    for json_id, json_entry in enumerate(df_geojson):
-        map_json_entry_to_movement_id[json_id] = int(
-          json_entry['properties']['MOVEMENT_ID'])
-    # create a mappings of movement ids to empty list for lat and long coordinates
-    map_movement_id_to_latitude_coordinates = dict()
-    map_movement_id_to_longitude_coordinates = dict()
-    for k, v in map_json_entry_to_movement_id.items():
-        map_movement_id_to_latitude_coordinates[v] = []
-        map_movement_id_to_longitude_coordinates[v] = []
-    # iterate over all movement IDs and json IDs to get coordinates and flatten
-    for json_id, movement_id in map_json_entry_to_movement_id.items():
-        coordinates = df_geojson[json_id]['geometry']['coordinates']
-        (map_movement_id_to_latitude_coordinates, 
-            map_movement_id_to_longitude_coordinates
-        ) = foster_coordinates_recursive(movement_id, 
-            map_movement_id_to_latitude_coordinates,
-            map_movement_id_to_longitude_coordinates, coordinates)
-    # calculate centroids of city zone polygons
-    (map_movement_id_to_centroid_lat, map_movement_id_to_centroid_long
-    ) = calc_centroids(map_movement_id_to_latitude_coordinates,
-        map_movement_id_to_longitude_coordinates)
-    # add centroid coordinates to beginning of dictionary lists
-    for k, v in map_json_entry_to_movement_id.items():
-        map_movement_id_to_latitude_coordinates[v].insert(0, 
-            map_movement_id_to_centroid_lat[v])
-        map_movement_id_to_longitude_coordinates[v].insert(0, 
-            map_movement_id_to_centroid_long[v])
-    # create dataframes for lats and longs of each city zone
-    df_latitudes = pd.DataFrame.from_dict(
-        map_movement_id_to_latitude_coordinates, orient='index').transpose()
-    df_longitudes = pd.DataFrame.from_dict(
-        map_movement_id_to_longitude_coordinates, orient='index').transpose()
-    return df_latitudes, df_longitudes
+  """ Maps Uber Movement city zone IDs to a flattened list of latitude and 
+  longitude coordinates in the format of two dictionaries. Uses the recursive 
+  function called foster_coordinates_recursive to flatten the differently 
+  nested data.
+  """
+  
+  df_geojson.pop('type')
+  df_geojson = df_geojson['features']
+  
+  # create a mapping of json entries to uber movement city zone ids
+  map_json_entry_to_movement_id = dict()
+  for json_id, json_entry in enumerate(df_geojson):
+    map_json_entry_to_movement_id[json_id] = int(
+      json_entry['properties']['MOVEMENT_ID'])
+      
+  # create a mappings of movement ids to empty list for lat and long coordinates
+  map_movement_id_to_latitude_coordinates = dict()
+  map_movement_id_to_longitude_coordinates = dict()
+  for k, v in map_json_entry_to_movement_id.items():
+    map_movement_id_to_latitude_coordinates[v] = []
+    map_movement_id_to_longitude_coordinates[v] = []
+    
+  # iterate over all movement IDs and json IDs to get coordinates and flatten
+  for json_id, movement_id in map_json_entry_to_movement_id.items():
+    coordinates = df_geojson[json_id]['geometry']['coordinates']
+    (map_movement_id_to_latitude_coordinates, 
+      map_movement_id_to_longitude_coordinates
+    ) = foster_coordinates_recursive(movement_id, 
+      map_movement_id_to_latitude_coordinates,
+      map_movement_id_to_longitude_coordinates, coordinates)
+      
+  # calculate centroids of city zone polygons
+  (map_movement_id_to_centroid_lat, map_movement_id_to_centroid_long
+  ) = calc_centroids(map_movement_id_to_latitude_coordinates,
+    map_movement_id_to_longitude_coordinates)
+    
+  # add centroid coordinates to beginning of dictionary lists
+  for k, v in map_json_entry_to_movement_id.items():
+    map_movement_id_to_latitude_coordinates[v].insert(0, 
+      map_movement_id_to_centroid_lat[v])
+    map_movement_id_to_longitude_coordinates[v].insert(0, 
+      map_movement_id_to_centroid_long[v])
+      
+  # create dataframes for lats and longs of each city zone
+  df_latitudes = pd.DataFrame.from_dict(
+    map_movement_id_to_latitude_coordinates, orient='index').transpose()
+  df_longitudes = pd.DataFrame.from_dict(
+    map_movement_id_to_longitude_coordinates, orient='index').transpose()
+    
+  return df_latitudes, df_longitudes
   
   
 def foster_coordinates_recursive(movement_id: int,
