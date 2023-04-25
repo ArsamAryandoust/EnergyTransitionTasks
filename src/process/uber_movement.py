@@ -92,7 +92,7 @@ def augment_csv(config_uber: dict, df_csv_dict: dict,
   df_augmented = df_augmented.merge(centroid_dict_new, on='destination_id')
   
   # rearrange column names
-  cols = df_augmented.columns.to_list()
+  col_list = df_augmented.columns.to_list()
   col_list.remove('x_source'), col_list.remove('y_source') 
   col_list.remove('z_source'), col_list.remove('x_dest'), 
   col_list.remove('y_dest'), col_list.remove('z_dest')
@@ -100,6 +100,8 @@ def augment_csv(config_uber: dict, df_csv_dict: dict,
   col_list.insert(1, 'x_source'), col_list.insert(2, 'y_source')
   col_list.insert(3, 'z_source'), col_list.insert(4, 'x_dest')
   col_list.insert(5, 'y_dest'), col_list.insert(6, 'z_dest')
+  
+  df_augmented = df_augmented[col_list]
   
   return df_augmented    
     
