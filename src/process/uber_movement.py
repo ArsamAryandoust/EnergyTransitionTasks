@@ -36,9 +36,222 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
   save: bool):
   """
   """
+  
   # create new dataframes and chunk counters here
   (df_train, df_val, df_test, train_file_count, val_file_count, 
-    test_file_count) = load_df_and_file_counters(config_uber)
+      test_file_count) = load_df_and_file_counters(config_uber)
+
+  # iterate over all available cities
+  for city in config_uber['list_of_cities']:
+    print('\nProcessing data for:', city)
+    
+    # check if city is in testing city list
+    if city in config_uber['spatial_ood']['ood_cities']:
+      testing_city = True
+    else:
+      testing_city = False
+        
+    # import all csv files for currently iterated city
+    df_csv_dict_list = import_csvdata(config_uber, city)
+    
+    # create progress bar
+    pbar = tqdm(total=len(df_csv_dict_list))
+    
+    # set this for saving
+    first_iteration = True
+    
+    # iterate over all imported csv files for this city
+    for df_csv_dict in df_csv_dict_list:
+      
+      # check if testing year
+      if df_csv_dict['year'] in config_uber['temporal_ood']['ood_years']:
+        testing_year = True
+      
+      else:
+        testing_year = False
+      
+      # check if testing quarter of year
+      if df_csv_dict['quarter_of_year'] in (
+        config_uber['temporal_ood']['ood_quarters_of_year']):
+        testing_quarter = True
+      
+      else:
+        testing_quarter = False
+      
+      # augment csv
+      df_augmented = augment_csv(config_uber, df_csv_dict, 
+        cityzone_centroid_df_dict, city)
+      
+      # free up memory     
+      del df_csv_dict['df']
+      gc.collect()
+      
+      # get the subset of city zones for test splits once per city
+      if first_iteration:
+        n_city_zones = max(df_augmented['source_id'].max(),
+          df_augmented['destination_id'].max())
+        
+        # get number of test city zones you want to split
+        n_test_city_zones = round(
+          n_city_zones * config_uber['spatial_test_split'])
+        
+        # randomly sample test city zones
+        random.seed(config_uber['seed'])
+        test_city_zone_list = random.sample(range(n_city_zones), 
+          n_test_city_zones)
+        
+        # set false so as to not enter branch anymore
+        first_iteration= False
+          
+      if testing_city or testing_year or testing_quarter:
+        
+        # drop source_id and destination_id
+        df_augmented = df_augmented.drop(columns=['source_id', 'destination_id'])
+        
+        # append all data to test dataframe
+        df_test = pd.concat([df_test, df_augmented], ignore_index=True)
+        
+        # free up memory     
+        del df_augmented   
+        gc.collect()
+          
+      else:
+        # extract rows from dataframe with matching city zones
+        df_test_city_zones = df_augmented.loc[
+          (df_augmented['source_id'].isin(test_city_zone_list)) 
+          | (df_augmented['destination_id'].isin(test_city_zone_list))]
+        
+        # drop source_id and destination_id
+        df_augmented = df_augmented.drop(columns=['source_id', 'destination_id'])
+        df_test_city_zones = df_test_city_zones.drop(columns=['source_id', 'destination_id'])
+        
+        # set the remaining rows for training and validation
+        df_augmented = df_augmented.drop(df_test_city_zones.index)
+        
+        # append to test dataframe
+        df_test = pd.concat([df_test, df_test_city_zones], ignore_index=True)
+        
+        # free up memory
+        del df_test_city_zones
+        gc.collect()
+        
+        # extract the rows from dataframe with matching hours of day for test
+        df_test_hours_of_day = df_augmented.loc[
+          df_augmented['hour_of_day'].isin(
+            config_uber['temporal_ood']['ood_hours'])]
+        
+        # set the remaining rows for training and validation
+        df_augmented = df_augmented.drop(df_test_hours_of_day.index)
+        
+        # append to test dataframe
+        df_test = pd.concat([df_test, df_test_hours_of_day], ignore_index=True)
+        
+        # free up memory
+        del df_test_hours_of_day
+        gc.collect()
+        
+        # append remaining data to training dataset
+        df_train = pd.concat([df_train, df_augmented], ignore_index=True)
+        
+        # free up memory     
+        del df_augmented   
+        gc.collect()
+          
+      # this condition guarantees validation splits at good moments
+      if (len(df_test) * (1 - config_uber['val_test_split'])
+        > config_uber['data_per_file']):
+        
+        # split off validation data from ood testing data
+        df_val_append = df_test.sample(
+          frac=config_uber['val_test_split'], 
+          random_state=config_uber['seed'])
+        
+        # remove validation data from test
+        df_test = df_test.drop(df_val_append.index)
+        
+        # append to validation dataframe
+        df_val = pd.concat([df_val, df_val_append], ignore_index=True)
+        
+        # free up memory     
+        del df_val_append   
+        gc.collect()
+        
+        # save testing and validation data chunks
+        df_test, test_file_count = save_chunk(config_uber, df_test, 
+          test_file_count, config_uber['path_to_data_test'], 
+          'testing_data', save=save)
+        
+        df_val, val_file_count = save_chunk(config_uber, df_val,
+          val_file_count, config_uber['path_to_data_val'], 
+          'validation_data', save=save)
+      
+      # save training data chunks
+      df_train, train_file_count = save_chunk(config_uber, df_train,
+        train_file_count, config_uber['path_to_data_train'], 
+        'training_data', save=save)
+      
+      # update progress bar
+      pbar.update(1)
+          
+  ### Tell us the ratios that result from our splitting rules
+  n_train = (train_file_count * config_uber['data_per_file'] 
+    + len(df_train))
+  n_val = (val_file_count * config_uber['data_per_file'] 
+    + len(df_val))
+  n_test = (test_file_count * config_uber['data_per_file'] 
+    + len(df_test))
+  n_total = n_train + n_val + n_test
+  print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+      n_train/n_total),
+    "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+      n_val/n_total),
+    "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+      n_test/n_total))
+
+  ### Save results of last iteration
+  df_train, train_file_count = save_chunk(config_uber, df_train, 
+    train_file_count, config_uber['path_to_data_train'], 'training_data', 
+    save=save, last_iteration=True)
+  df_val, val_file_count = save_chunk(config_uber, df_val, val_file_count,
+    config_uber['path_to_data_val'], 'validation_data', save=save, 
+    last_iteration=True)
+  df_test, test_file_count = save_chunk(config_uber, df_test, test_file_count,
+    config_uber['path_to_data_test'], 'testing_data', save=save, 
+    last_iteration=True)
+    
+    
+    
+def save_chunk(config_uber: dict, df: pd.DataFrame, chunk_counter: int, 
+  saving_path: str, filename: str, save: bool, last_iteration=False) -> (
+  pd.DataFrame, int):
+  """ 
+  Save a chunk of data and return remaining with chunk counter 
+  """
+  
+  while (len(df) > config_uber['data_per_file'] or last_iteration):
+    
+    if save:
+      # create path to saving
+      path_to_saving = saving_path + filename + '_{}.csv'.format(chunk_counter)
+      
+      # shuffle dataframe
+      df = df.sample(frac=1, random_state=config_uber['seed'])
+  
+      # save chunk
+      if len(df) > 0:
+        df.iloc[:config_uber['data_per_file']].to_csv(path_to_saving, 
+          index=False)
+      
+    # delete saved chunk
+    df = df[config_uber['data_per_file']:]
+    
+    # Must be set to exit loop on last iteration
+    last_iteration = False
+    
+    # increment chunk counter 
+    chunk_counter += 1
+      
+  return df, chunk_counter
     
     
 def augment_csv(config_uber: dict, df_csv_dict: dict, 
