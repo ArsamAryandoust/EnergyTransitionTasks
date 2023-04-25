@@ -195,6 +195,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
     + 'UberMovement/')
   config_uber['path_to_data_subtask'] = (config_uber['path_to_data']
     + '{}/'.format(subtask))
+  config_uber['path_to_data_add'] = (config_uber['path_to_data_subtask']
+    + 'additional/')
   config_uber['path_to_data_train'] = (config_uber['path_to_data_subtask']
     + 'training/')
   config_uber['path_to_data_val'] = (config_uber['path_to_data_subtask']
@@ -202,7 +204,7 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
   config_uber['path_to_data_test'] = (config_uber['path_to_data_subtask']
     + 'testing/')
   
-  # create list of cities and save to configuration dictionary
+  # create list of citites and save to configuration dictionary
   random.seed(config['general']['seed'])
   list_of_cities = os.listdir(config_uber['path_to_data_raw'])
   random.shuffle(list_of_cities)
@@ -297,12 +299,14 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
           
       for path in [config_uber['path_to_data'],
         config_uber['path_to_data_subtask'], 
+        config_uber['path_to_data_add'],
         config_uber['path_to_data_train'], 
         config_uber['path_to_data_val'],
         config_uber['path_to_data_test']]:
         check_create_dir(path)
             
     elif subtask == 'cities_20':
+
       # set full path to directory we want to copy
       path_to_copy_directory = config_uber['path_to_data'] + 'cities_10/'
       
