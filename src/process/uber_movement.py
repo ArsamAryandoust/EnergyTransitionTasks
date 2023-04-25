@@ -29,6 +29,7 @@ def process_all_datasets(config: dict, save:bool):
 def process_geographic_information(config_uber: dict):
   """
   """
+  print("Processing geographic information.")
   
   # create progress bar
   pbar = tqdm(total=len(config_uber['list_of_cities']))
@@ -42,6 +43,55 @@ def process_geographic_information(config_uber: dict):
     # import geojson for iterated city
     geojson_dict = import_geojson(config_uber, city)
   
+    # get only features entry
+    geojson_dict = geojson_dict['features']
+
+    # create a mapping of json entries to uber movement city zone ids
+    map_json_entry_to_movement_id = dict()
+    for json_id, json_entry in enumerate(geojson_dict):
+      map_json_entry_to_movement_id[json_id] = int(
+        json_entry['properties']['MOVEMENT_ID'])
+      
+    # create mappings of movement ids to empty list for lat/long coordinates
+    map_movement_id_to_latitude_coordinates = dict()
+    map_movement_id_to_longitude_coordinates = dict()
+    for k, v in map_json_entry_to_movement_id.items():
+        map_movement_id_to_latitude_coordinates[v] = []
+        map_movement_id_to_longitude_coordinates[v] = []
+      
+    # iterate over all movement IDs and json IDs to get coordinates and flatten
+    for json_id, movement_id in map_json_entry_to_movement_id.items():
+      coordinates = geojson_dict[json_id]['geometry']['coordinates']
+      (map_movement_id_to_latitude_coordinates, 
+        map_movement_id_to_longitude_coordinates
+      ) = foster_coordinates_recursive(movement_id, 
+        map_movement_id_to_latitude_coordinates,
+        map_movement_id_to_longitude_coordinates, coordinates)
+      
+    # calculate centroids of city zone polygons
+    (map_movement_id_to_centroid_lat, map_movement_id_to_centroid_long
+    ) = calc_centroids(map_movement_id_to_latitude_coordinates,
+      map_movement_id_to_longitude_coordinates)
+    
+    
+    # create dataframes for lats and longs of each city zone
+    df_latitudes = pd.DataFrame.from_dict(
+      map_movement_id_to_centroid_lat, orient='index', columns=['lat'])
+    df_longitudes = pd.DataFrame.from_dict(
+      map_movement_id_to_centroid_long, orient='index', columns=['lon'])
+
+    # merge dataframes
+    df_centroids = pd.concat([df_latitudes, df_longitudes], axis=1)
+
+    # index is city zone. Add these as their own column
+    df_centroids['city_zone'] = df_centroids.index
+    
+    # add to results dictionary
+    cityzone_centroid_df_dict[city] = df_centroids
+    
+    # update progress bar
+    pbar.update(1)
+    
   return cityzone_centroid_df_dict    
 
 
@@ -65,4 +115,118 @@ def import_geojson(config_uber: dict, city: str) -> dict:
 
 
     
+def foster_coordinates_recursive(movement_id: int,
+  map_movement_id_to_latitude_coordinates: dict,
+  map_movement_id_to_longitude_coordinates: dict,
+  coordinates: pd.Series) -> (dict, dict):
+  """ Flattens the coordinates of a passed city zone id (movement_id)
+  and coordiates list recursively and saves their numeric values
+  in the dictionaries that map movement ids to a list of latitude and 
+  longitude coordinates.
+  """
+  
+  dummy = 0
+  for j in coordinates:
+  
+    if type(j) != list and dummy == 0:
+      map_movement_id_to_longitude_coordinates[movement_id].append(j)
+      dummy = 1
+      continue
+      
+    elif type(j) != list and dummy == 1:
+      map_movement_id_to_latitude_coordinates[movement_id].append(j)
+      break
+      
+    else:
+      dummy = 0
+      coordinates = j
+      (map_movement_id_to_latitude_coordinates,
+          map_movement_id_to_longitude_coordinates
+      ) = foster_coordinates_recursive(movement_id,
+        map_movement_id_to_latitude_coordinates,
+        map_movement_id_to_longitude_coordinates, coordinates)
+
+  map_movement_id_to_coordinates = (
+    map_movement_id_to_latitude_coordinates,
+    map_movement_id_to_longitude_coordinates)
     
+  return map_movement_id_to_coordinates
+
+
+def calc_centroids(map_movement_id_to_latitude_coordinates: dict,
+  map_movement_id_to_longitude_coordinates: dict) -> (dict, dict):
+  """ Calculates the centroid of passed city zone polygons. Should a city
+  zone consist of unregularities or multiple polygons, this is identified
+  by centroid coordinates that are not within the bound of minimum and 
+  maximum values of all coordinates of that city zone. In this case, the
+  centroids are replaced with the mean of lat and long coordinates.
+  """
+  
+  # create empty dictionary for mapping Uber Movement IDs to city zone areas
+  map_movement_id_to_cityzone_area = dict()
+  
+  # iterate over all movement IDs and latitude coordinates
+  for movement_id, lat_coordinates in (
+    map_movement_id_to_latitude_coordinates.items()):
+    # get also the longitude coordinates
+    long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
+    # calculate currently iterated city zone area
+    area_cityzone = 0
+    for i in range(len(lat_coordinates)-1):
+      area_cityzone = (area_cityzone
+        + long_coordinates[i] * lat_coordinates[i+1]
+        - long_coordinates[i+1] * lat_coordinates[i])
+    area_cityzone = (area_cityzone
+      + long_coordinates[i+1] * lat_coordinates[0]
+      - long_coordinates[0] * lat_coordinates[i+1])
+    area_cityzone *= 0.5
+    map_movement_id_to_cityzone_area[movement_id] = area_cityzone
+      
+  # create empty dictionaries for mapping Uber Movement IDs to city zone centroids
+  map_movement_id_to_centroid_lat = dict()
+  map_movement_id_to_centroid_long = dict()
+  
+  # iterate over all movement IDs and latitude coordinates
+  for movement_id, lat_coordinates in (
+    map_movement_id_to_latitude_coordinates.items()):
+    # get also the longitude coordinates
+    long_coordinates = map_movement_id_to_longitude_coordinates[movement_id]
+    
+    # calculate currently iterated city zone area
+    centroid_lat = 0
+    centroid_long = 0
+    
+    for i in range(len(lat_coordinates)-1):
+      centroid_long += (long_coordinates[i]+ long_coordinates[i+1]) * (
+        long_coordinates[i] * lat_coordinates[i+1]
+        - long_coordinates[i+1] * lat_coordinates[i])
+      centroid_lat += (lat_coordinates[i] + lat_coordinates[i+1]) * (
+        long_coordinates[i] * lat_coordinates[i+1]
+        - long_coordinates[i+1] * lat_coordinates[i])
+        
+    centroid_long += (long_coordinates[i+1] + long_coordinates[0]) * (
+      long_coordinates[i+1] * lat_coordinates[0]
+      - long_coordinates[0] * lat_coordinates[i+1])
+    centroid_lat += (lat_coordinates[i+1] + lat_coordinates[0]) * (
+      long_coordinates[i+1] * lat_coordinates[0]
+      - long_coordinates[0] * lat_coordinates[i+1])
+            
+    centroid_lat /= 6 * map_movement_id_to_cityzone_area[movement_id]
+    centroid_long /=  6 * map_movement_id_to_cityzone_area[movement_id]
+ 
+    # Uber Movement city zones sometimes consist of multiple distinct polygons
+    if (centroid_lat < min(lat_coordinates)
+      or centroid_lat > max(lat_coordinates)
+      or centroid_long < min(long_coordinates)
+      or centroid_long > max(long_coordinates)):
+      # in this case we calculate the mean instead of centroid
+      centroid_lat = np.mean(lat_coordinates)
+      centroid_long = np.mean(long_coordinates)  
+                
+    map_movement_id_to_centroid_lat[movement_id] = centroid_lat
+    map_movement_id_to_centroid_long[movement_id] = centroid_long
+    
+  map_movement_id_to_centroid_coordinates = (map_movement_id_to_centroid_lat,
+    map_movement_id_to_centroid_long)
+      
+  return map_movement_id_to_centroid_coordinates
