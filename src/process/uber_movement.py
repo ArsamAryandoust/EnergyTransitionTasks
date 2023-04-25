@@ -28,7 +28,153 @@ def process_all_datasets(config: dict, save:bool):
     # transform coordinates
     cityzone_centroid_df_dict = transform_coordinates(cityzone_centroid_df_dict)
     
+    # create and save train, val and test datasets
+    create_train_val_test(config_uber, cityzone_centroid_df_dict, save)
+    
+    
+def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict, 
+  save: bool):
+  """
+  """
+  # create new dataframes and chunk counters here
+  (df_train, df_val, df_test, train_file_count, val_file_count, 
+    test_file_count) = load_df_and_file_counters(config_uber)
+    
+    
+def augment_csv(config_uber: dict, df_csv_dict: dict, 
+  cityzone_centroid_df_dict: dict, city: str):
+  """ 
+  Augments data points of df with city id, year, quarter of yeear and daytype
+  information.
+  """
+  
+  # copy centroid dict
+  centroid_dict = cityzone_centroid_df_dict[city]
+  
+  # copy raw dataframe
+  df_augmented = df_csv_dict['df']
+  
+  # subsample or shuffle data (for frac=1)    
+  df_augmented = df_augmented.sample(frac=config_uber['subsample_frac'],
+    random_state=config_uber['seed'])
+  
+  # augment raw dataframe
+  df_augmented.insert(0, 'city_id', config_uber['city_id_mapping'][city])
+  df_augmented.insert(3, 'year', df_csv_dict['year'])
+  df_augmented.insert(4, 'quarter_of_year', df_csv_dict['quarter_of_year'])
+  df_augmented.insert(6, 'daytype', df_csv_dict['daytype'])
+  
+  # rename some columns with better names
+  df_augmented.rename(columns={'hod':'hour_of_day', 'sourceid':'source_id', 
+    'dstid':'destination_id'}, inplace=True)
+  
+  # remove any rows with nan entry
+  df_augmented = df_augmented[df_augmented.isnull().sum(axis=1) < 1]
 
+  ### Map source ID coordinates ###
+  # rename columns
+  centroid_dict_new = centroid_dict.rename(
+    columns={'city_zone': 'source_id', 'x': 'x_source', 'y': 'y_source', 
+    'z': 'z_source'}
+  )
+  
+  # merge columns
+  df_augmented = df_augmented.merge(centroid_dict_new, on='source_id')
+  
+  ### Map source ID coordinates ###
+  # rename columns
+  centroid_dict_new = centroid_dict.rename(
+    columns={'city_zone': 'destination_id', 'x': 'x_dest', 'y': 'y_dest', 
+    'z': 'z_dest'}
+  )
+  
+  # map columns
+  df_augmented = df_augmented.merge(centroid_dict_new, on='destination_id')
+  
+  return df_augmented    
+    
+    
+def import_csvdata(config_uber: dict, city: str):
+    """ 
+    Imports the Uber Movement data for a passed city 
+    """
+    
+    # get the files dictionary and create an empty list to fill dataframes of csv
+    df_csv_dict_list = []
+    
+    # iterate over all csv files of current city
+    for csv_file_dict in config_uber['csv_file_dict_list'][city]:
+        
+        # set the path to currently iterated csv file of city
+        path_to_csv = (config_uber['path_to_data_raw'] + city + '/' 
+            + csv_file_dict['filename'])
+        
+        # import csv data as pandas dataframe
+        df_csv = pd.read_csv(path_to_csv)
+        
+        # create a copy of csv dataframe dict and append new csv dataframe as df
+        csv_df_dict = csv_file_dict.copy()
+        csv_df_dict['df'] = df_csv
+        df_csv_dict_list.append(csv_df_dict)
+        
+    return df_csv_dict_list
+  
+  
+  
+def load_df_and_file_counters(config_uber: dict) -> (pd.DataFrame, pd.DataFrame, 
+  pd.DataFrame, int, int, int):
+  """
+  Loads the last file that was saved from previous subtask as dataframe and
+  sets the file counters accordingly.
+  """
+  
+  # decleare empty dataframes for trainining validation and testing
+  df_train = pd.DataFrame()
+  df_val = pd.DataFrame()
+  df_test = pd.DataFrame()
+  
+  if config_uber['subtask'] == 'cities_10':
+    # declare data point counters as zero
+    train_file_count, val_file_count, test_file_count = 1, 1, 1
+    
+  else:
+    # declare data point counters
+    train_file_count = len(os.listdir(config_uber['path_to_data_train']))
+    val_file_count = len(os.listdir(config_uber['path_to_data_val']))
+    test_file_count = len(os.listdir(config_uber['path_to_data_test']))
+    
+    # load last datframes
+    if train_file_count == 0:
+        train_file_count = 1
+        
+    else:
+        loading_path = (config_uber['path_to_data_train'] + 
+            'training_data_{}.csv'.format(train_file_count))
+        df_train = pd.read_csv(loading_path)
+        
+    if val_file_count == 0:
+        val_file_count = 1
+        
+    else:
+        loading_path = (config_uber['path_to_data_val'] + 
+            'validation_data_{}.csv'.format(val_file_count))
+        df_val = pd.read_csv(loading_path)
+        
+    if test_file_count == 0:
+        test_file_count = 1
+        
+    else:
+        loading_path = (config_uber['path_to_data_test'] + 
+            'testing_data_{}.csv'.format(test_file_count))
+        df_test = pd.read_csv(loading_path)
+  
+  # set return values
+  return_values = (df_train, df_val, df_test, train_file_count, val_file_count, 
+    test_file_count)
+  
+  return return_values  
+  
+  
 def transform_coordinates(cityzone_centroid_df_dict: dict) -> (dict):
   """
   """
