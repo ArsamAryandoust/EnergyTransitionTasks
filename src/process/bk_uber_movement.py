@@ -471,6 +471,7 @@ def split_train_val_test(config_uber: dict, city_zone_shift_dict: dict):
                 'training_data')
             # update progress bar
             pbar.update(1)
+            
     ### Tell us the ratios that result from our splitting rules
     n_train = (train_file_count * config_uber['data_per_file'] 
         + len(df_train))
