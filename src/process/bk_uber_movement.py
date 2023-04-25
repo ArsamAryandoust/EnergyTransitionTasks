@@ -123,23 +123,17 @@ def process_geographic_information(config_uber: dict) -> dict:
   return city_zone_shift_dict
 
 
-def import_geojson(config_uber: dict, city: str) -> dict:
+def import_geojson(config_uber: dict, city: str) -> pd.DataFrame:
   """ 
   Uses the city to file mapping of city to load the geo-json file and returns
-  it as a dicitonary.
+  it as a dataframe.
   """
   
-  # set filename
   filename = config_uber['json'][city]
-  
-  # set path
   path_to_json = config_uber['path_to_data_raw'] + city + '/' + filename
+  df_geojson = pd.read_json(path_to_json)
   
-  # load data
-  with open(path_to_json, 'r') as json_file:
-    geojson_dict = json.load(json_file)
-  
-  return geojson_dict
+  return df_geojson
 
 
 def process_geojson(df_geojson: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
