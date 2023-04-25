@@ -25,6 +25,69 @@ def process_all_datasets(config: dict, save:bool):
     # process geographic information
     cityzone_centroid_df_dict = process_geographic_information(config_uber)
     
+    # transform coordinates
+    cityzone_centroid_df_dict = transform_coordinates(cityzone_centroid_df_dict)
+    
+
+def transform_coordinates(cityzone_centroid_df_dict: dict) -> (dict):
+  """
+  """
+  
+  # iterate over all city, dataframe pairs
+  for city, dataframe in cityzone_centroid_df_dict.items():
+  
+    # calculate values you need for 
+    df_sin_lon = dataframe.lon.map(sin_transform)
+    df_sin_lat = dataframe.lat.map(sin_transform)
+    df_cos_lat = dataframe.lat.map(cos_transform)
+    df_cos_lon = dataframe.lon.map(cos_transform)
+    
+    # calculate coordaintes
+    df_x_cord = df_cos_lat.mul(df_cos_lon)
+    df_y_cord = df_cos_lat.mul(df_sin_lon)
+    df_z_cord = df_sin_lat
+    
+    # get city zone column
+    cityzone = dataframe.city_zone
+    
+    # reaplce old dataframe with a new dataframe
+    cityzone_centroid_df_dict[city] = pd.concat(
+      [cityzone, df_x_cord, df_y_cord, df_z_cord], axis=1)
+    
+    # set desired column names
+    cityzone_centroid_df_dict[city].columns = ['city_zone','x', 'y', 'z']
+    
+    
+  return cityzone_centroid_df_dict
+    
+    
+def degree_to_phi(degree_latlon: float):
+  """ 
+  transform degrees into radiants 
+  """
+  
+  return degree_latlon / 180 * math.pi
+
+
+def cos_transform(degree_latlon: float):
+  """ 
+  Transform degrees into radiants and return cosine value. 
+  """
+  
+  phi_latlon = degree_to_phi(degree_latlon)
+  
+  return np.cos(phi_latlon)
+
+
+def sin_transform(degree_latlon: float):
+  """
+  Transform degrees into radiants and return sine value. 
+  """
+  
+  phi_latlon = degree_to_phi(degree_latlon)
+  
+  return np.sin(phi_latlon)
+    
     
 def process_geographic_information(config_uber: dict):
   """
