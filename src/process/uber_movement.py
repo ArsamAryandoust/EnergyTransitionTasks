@@ -2,6 +2,7 @@ import math
 import os
 import gc
 import random
+import json
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -49,10 +50,10 @@ def process_geographic_information(config_uber: dict) -> dict:
   for city in config_uber['list_of_cities']:
   
     # import geojson for iterated city
-    df_geojson = import_geojson(config_uber, city)
+    geojson_dict = import_geojson(config_uber, city)
     
     # extract geojson information of city zones as latitude and longitude df
-    df_latitudes, df_longitudes = process_geojson(df_geojson)
+    df_latitudes, df_longitudes = process_geojson(geojson_dict)
     
     # do the shifting here
     shift_factor_add = 1 - min(df_latitudes.columns)
