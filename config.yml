@@ -20,7 +20,7 @@ dataverse:
     persistentId: #'doi:10.7910/DVN/0OUKSF'
     saving_path: 'datasets/ClimART/processed/'
   Polianna:
-    persistentId: 'doi:10.7910/DVN/ID2YXD'
+    persistentId: #'doi:10.7910/DVN/ID2YXD'
     saving_path: 'datasets/Polianna/processed/'
   BuildingElectricity_raw:
     persistentId: #'doi:10.7910/DVN/T3OK7E'
@@ -31,6 +31,9 @@ dataverse:
   UberMovement_raw:
     persistentId: 'doi:10.7910/DVN/QRUZOU'
     saving_path: 'datasets/UberMovement/raw/'
+  Polianna_raw:
+    persistentId: ''
+    saving_path: 'datasets/Polianna/raw/'
     
 BuildingElectricity:
   subtask_list: ['buildings_92', 'buildings_451']
@@ -62,7 +65,7 @@ UberMovement:
   spatial_test_split: 0.2
   val_test_split: 0.18
   subsample_frac: 1
-  data_per_file: 20_000_000
+  data_per_file: 6_500_000
     
 ClimART:
   subtask_list: ['pristine', 'clear_sky']
