@@ -6,7 +6,7 @@ src/selberai
 .upload_records/
 datasets/*/raw
 datasets/*/processed
-datasets/*/notebooks.ipynb
+datasets/*/notebook.ipynb
 datasets/*/.ipynb_checkpoints
 
 notebooks/.ipynb_checkpoints
