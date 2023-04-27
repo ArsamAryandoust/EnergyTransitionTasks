@@ -1,4 +1,4 @@
-<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Uber_Movement-processing-yellow"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Climate_Downscaling-preparing-red"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/> <img src="https://img.shields.io/badge/Polianna-ready-blue"/>
+<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Uber_Movement-processing-yellow"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Open_Catalyst-preparing-red"/> <img src="https://img.shields.io/badge/Polianna-ready-blue"/>
 
 # Unified machine learning tasks and datasets for enhancing the global energy transition
 
@@ -12,9 +12,8 @@
 
 * [Polianna](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/Polianna)
 
+
 <!--
-* [Generation Scheduling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/GenerationScheduling)
-* [Climate Downscaling](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/ClimateDownscaling)
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 -->
 
