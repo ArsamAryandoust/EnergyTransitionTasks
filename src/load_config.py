@@ -206,7 +206,7 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
   
   # create list of citites and save to configuration dictionary
   random.seed(config['general']['seed'])
-  list_of_cities = os.listdir(config_uber['path_to_data_raw'])
+  list_of_cities = ['Madrid'] #list_of_cities = os.listdir(config_uber['path_to_data_raw'])
   random.shuffle(list_of_cities)
   if subtask == 'cities_10':
     list_of_cities = list_of_cities[:10]
