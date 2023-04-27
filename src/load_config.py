@@ -91,6 +91,8 @@ def config_BE(config: dict, subtask: str, save: bool) -> dict:
       config_building['path_to_data_train'], 
       config_building['path_to_data_val'],
       config_building['path_to_data_test']]:
+      
+      # create path
       check_create_dir(path)
       
   config_building['subtask'] = subtask
@@ -174,6 +176,8 @@ def config_WF(config: dict, subtask: str, save: bool) -> dict:
     for path in [config_wind['path_to_data'],
       config_wind['path_to_data_subtask'], config_wind['path_to_data_train'], 
       config_wind['path_to_data_val'], config_wind['path_to_data_test']]:
+      
+      # create path
       check_create_dir(path)
       
   config_wind['subtask'] = subtask
@@ -206,7 +210,7 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
   
   # create list of citites and save to configuration dictionary
   random.seed(config['general']['seed'])
-  list_of_cities = os.listdir(config_uber['path_to_data_raw'])
+  list_of_cities = list_of_cities = os.listdir(config_uber['path_to_data_raw'])
   random.shuffle(list_of_cities)
   if subtask == 'cities_10':
     list_of_cities = list_of_cities[:10]
@@ -303,6 +307,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
         config_uber['path_to_data_train'], 
         config_uber['path_to_data_val'],
         config_uber['path_to_data_test']]:
+        
+        # create path
         check_create_dir(path)
             
     elif subtask == 'cities_20':
