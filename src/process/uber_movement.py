@@ -42,7 +42,7 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
       test_file_count) = load_df_and_file_counters(config_uber)
 
   # iterate over all available cities
-  for city in ['Madrid']: #config_uber['list_of_cities']:
+  for city in config_uber['list_of_cities']:
     print('\nProcessing data for:', city)
     
     # check if city is in testing city list
