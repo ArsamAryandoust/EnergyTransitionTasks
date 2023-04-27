@@ -60,7 +60,7 @@ WindFarm:
   data_per_file: 33_000
     
 UberMovement:
-  subtask_list: ['cities_43'] #['cities_10', 'cities_20', 'cities_43']
+  subtask_list: ['cities_10', 'cities_20', 'cities_43']
   temporal_test_split: 0.22
   spatial_test_split: 0.2
   val_test_split: 0.18
