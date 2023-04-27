@@ -91,6 +91,8 @@ def config_BE(config: dict, subtask: str, save: bool) -> dict:
       config_building['path_to_data_train'], 
       config_building['path_to_data_val'],
       config_building['path_to_data_test']]:
+      
+      # create path
       check_create_dir(path)
       
   config_building['subtask'] = subtask
@@ -174,6 +176,8 @@ def config_WF(config: dict, subtask: str, save: bool) -> dict:
     for path in [config_wind['path_to_data'],
       config_wind['path_to_data_subtask'], config_wind['path_to_data_train'], 
       config_wind['path_to_data_val'], config_wind['path_to_data_test']]:
+      
+      # create path
       check_create_dir(path)
       
   config_wind['subtask'] = subtask
@@ -303,6 +307,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
         config_uber['path_to_data_train'], 
         config_uber['path_to_data_val'],
         config_uber['path_to_data_test']]:
+        
+        # create path
         check_create_dir(path)
             
     elif subtask == 'cities_20':
@@ -319,8 +325,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
       path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
       
       # copy directory into current subtask
-      #shutil.copytree(path_to_copy_directory, 
-        #config_uber['path_to_data_subtask'])
+      shutil.copytree(path_to_copy_directory, 
+        config_uber['path_to_data_subtask'])
       
     # create dataframe from dictionary
     df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], 

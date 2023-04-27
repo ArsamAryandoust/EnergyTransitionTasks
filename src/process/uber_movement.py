@@ -62,8 +62,6 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
     
     # iterate over all imported csv files for this city
     for df_csv_dict in df_csv_dict_list:
-      
-      print(df_csv_dict['year'], df_csv_dict['quarter_of_year'], df_csv_dict['daytype'])
        
       # check if testing year
       if df_csv_dict['year'] in config_uber['temporal_ood']['ood_years']:
