@@ -319,8 +319,8 @@ def config_UM(config: dict, subtask: str, save=False) -> dict:
       path_to_copy_directory = config_uber['path_to_data'] + 'cities_20/'
       
       # copy directory into current subtask
-      shutil.copytree(path_to_copy_directory, 
-        config_uber['path_to_data_subtask'])
+      #shutil.copytree(path_to_copy_directory, 
+        #config_uber['path_to_data_subtask'])
       
     # create dataframe from dictionary
     df = pd.DataFrame.from_dict(config_uber['city_id_mapping'], 
