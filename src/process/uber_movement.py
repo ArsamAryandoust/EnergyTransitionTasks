@@ -291,10 +291,6 @@ def augment_csv(config_uber: dict, df_csv_dict: dict,
     'z': 'z_source'}
   )
   
-  # remove any rows with nan entry
-  centroid_dict_new = centroid_dict_new[
-    centroid_dict_new.isnull().sum(axis=1) < 1]
-  
   # merge columns
   df_augmented = df_augmented.merge(centroid_dict_new, on='source_id')
   
@@ -304,7 +300,6 @@ def augment_csv(config_uber: dict, df_csv_dict: dict,
     columns={'city_zone': 'destination_id', 'x': 'x_dest', 'y': 'y_dest', 
     'z': 'z_dest'}
   )
-  
   
   # merge columns
   df_augmented = df_augmented.merge(centroid_dict_new, on='destination_id')
