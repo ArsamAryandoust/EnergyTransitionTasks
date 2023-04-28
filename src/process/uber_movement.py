@@ -337,6 +337,11 @@ def import_csvdata(config_uber: dict, city: str):
         # import csv data as pandas dataframe
         df_csv = pd.read_csv(path_to_csv)
         
+        # clean csv: drops rows with non-numeric entries
+        df_csv = df_csv[pd.to_numeric(
+          df_csv['geometric_standard_deviation_travel_time'], 
+          errors='coerce').notnull()]
+        
         # create a copy of csv dataframe dict and append new csv dataframe as df
         csv_df_dict = csv_file_dict.copy()
         csv_df_dict['df'] = df_csv
