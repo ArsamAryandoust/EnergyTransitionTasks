@@ -42,7 +42,7 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
       test_file_count) = load_df_and_file_counters(config_uber)
 
   # iterate over all available cities
-  for city in ['Cairo']: #config_uber['list_of_cities']:
+  for city in config_uber['list_of_cities']:
     print('\nProcessing data for:', city)
     
     # check if city is in testing city list
@@ -280,9 +280,6 @@ def augment_csv(config_uber: dict, df_csv_dict: dict,
   # rename some columns with better names
   df_augmented.rename(columns={'hod':'hour_of_day', 'sourceid':'source_id', 
     'dstid':'destination_id'}, inplace=True)
-  
-  # remove any rows with nan entry
-  df_augmented = df_augmented[df_augmented.isnull().sum(axis=1) < 1]
 
   ### Map source ID coordinates ###
   # rename columns
@@ -336,6 +333,9 @@ def import_csvdata(config_uber: dict, city: str):
         
         # import csv data as pandas dataframe
         df_csv = pd.read_csv(path_to_csv)
+        
+        # remove any rows with nan entry
+        df_csv = df_csv[df_csv.isnull().sum(axis=1) < 1]
         
         # clean csv: drops rows with non-numeric entries
         df_csv = df_csv[pd.to_numeric(
