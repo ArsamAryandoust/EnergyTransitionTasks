@@ -14,7 +14,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
   print("Shuffling processed {} data.".format(name))
   
   # iterate over all subtasks
-  for subtask in config[name]['subtask_list'][2:3]: #config[name]['subtask_list']:
+  for subtask in config[name]['subtask_list']:
     
     # set some paths
     path_to_train = (config['general']['path_to_data'] 
