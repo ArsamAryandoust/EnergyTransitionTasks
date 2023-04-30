@@ -438,8 +438,8 @@ def config_CA(config: dict, subtask: str, save: bool) -> dict:
   
   
   return config_climart
-    
-    
+  
+  
 def config_PA(config: dict, subtask: str, save: bool) -> dict:
   """
   Augments configuration file for processing ClimArt dataset.
