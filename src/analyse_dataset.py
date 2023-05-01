@@ -21,12 +21,7 @@ def analyse(config: dict, name: str, subtask: str):
     # Analyse st-ood score
     ###
     
+    
     ###
     # Analyse 
     ###
-    
-    
-    # 1) JS DIVERGENCE
-    # 2) PCA -> POIT2POINT DERIVATIVE (shifting the features and labels) -> MEAN
-
-    # 3) OOD SCORE -> JS DIVERGENCE BTW train and val/test

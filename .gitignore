@@ -10,3 +10,4 @@ datasets/*/processed
 notebooks/.ipynb_checkpoints
 notebooks/
 
+run_local.sh
