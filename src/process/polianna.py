@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import gc
 
-from load_config import config_PA
+from config.load_pa import config_PA
 
 
 def process_all_datasets(config: dict, save: bool):

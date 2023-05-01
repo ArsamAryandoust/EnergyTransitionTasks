@@ -40,8 +40,8 @@ BuildingElectricity:
   prediction_window: 96 # in quarter hours (15-min)
   historic_window: 24 # in hours
   meteo_name_list: ['air_density', 'cloud_cover', 'precipitation', 
-  'radiation_surface','radiation_toa', 'snow_mass', 'snowfall', 'temperature',
-  'wind_speed']
+    'radiation_surface','radiation_toa', 'snow_mass', 'snowfall', 
+    'temperature', 'wind_speed']
   temporal_test_split: 0.15
   spatial_test_split: 0.2
   val_test_split: 0.2
@@ -52,7 +52,7 @@ WindFarm:
   prediction_window: 288 # in 10-min
   historic_window: 288 # in 10-min
   fseries_name_list: ['Wspd', 'Wdir', 'Etmp', 'Itmp', 'Ndir', 'Pab1', 'Pab2',
-  'Pab3', 'Prtv', 'Patv']
+    'Pab3', 'Prtv', 'Patv']
   temporal_test_split: 0.25
   spatial_test_split: 0.2
   val_test_split: 0.2
@@ -76,6 +76,13 @@ ClimART:
   data_per_file_pristine: 80_000
   data_per_file_clearsky: 36_000
     
+OpenCatalyst:
+  subtask_list : ['oc20_s2ef', 'oc20_is2rs', 'oc20_is2re', 'oc22_s2ef', 
+    oc22_is2rs, 'oc22_is2re']
+  chunk_size_opencatalyst: 20_000
+  subsample_opencatalyst: 0.2
+  
+  
 Polianna:
   subtask_list : ['article_level', 'text_level']
   data_col_list : ['Date created', 'Treaty', 'Text', 'Tokens', 'Curation', 
@@ -93,8 +100,5 @@ Polianna:
   data_per_file: 500
   
     
-OpenCatalyst:
-  chunk_size_opencatalyst: 150_000
-  subsample_opencatalyst: 0.2
     
     

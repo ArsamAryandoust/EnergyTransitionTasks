@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-from load_config import config_WF
+from config.load_wf import config_WF
 
 def process_all_datasets(config: dict, save: bool):
   """

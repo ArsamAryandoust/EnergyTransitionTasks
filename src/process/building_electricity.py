@@ -5,7 +5,8 @@ import gc
 from tqdm import tqdm
 import math
 
-from load_config import config_BE
+from config.load_be import config_BE
+
 
 def process_all_datasets(config: dict, save: bool):
   """
