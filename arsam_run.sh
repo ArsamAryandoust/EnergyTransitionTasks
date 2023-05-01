@@ -18,6 +18,12 @@ if [ $update -eq 1 ]; then
   git clone -b lead_contributions https://github.com/Selber-AI/selberai
   mv selberai/selberai src/
   sudo rm -r selberai
+
+  # Clonde code from open catalyst project
+  sudo rm -r src/ocpmodels
+  git clone https://github.com/Open-Catalyst-Project/ocp
+  mv ocp/ocpmodels src/
+  sudo rm -r ocp
 fi
  
 

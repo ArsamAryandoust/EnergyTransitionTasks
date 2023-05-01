@@ -134,6 +134,11 @@ def clean_data(df_data: pd.DataFrame) -> (pd.DataFrame):
   df_data.drop(df_data[(df_data.Wdir < -180) | (df_data.Wdir > 180)].index,
     inplace=True)
   
+  # drop NaN rows
+  df_data.drop(df_data[df_data.isnull().any(axis=1)].index,
+    inplace=True)
+    
+  
   # get number of raw data points after cleaning operations
   n_1 = len(df_data.index)
   
@@ -202,12 +207,10 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       for j in range(i, i-config_wind['historic_window'], -1):
         
         # add time-variant features      
-        values_array[data_counter, col_counter] = (
-          df_turbine['Day'][j])
-        values_array[data_counter, col_counter+1] = (
-          df_turbine['hour'][j])
-        values_array[data_counter, col_counter+2] = (
-          df_turbine['minute'][j])
+        values_array[data_counter, col_counter] = df_turbine['Day'][j]
+        values_array[data_counter, col_counter+1] = df_turbine['hour'][j]
+        values_array[data_counter, col_counter+2] = df_turbine['minute'][j]
+        
         # increment column counter
         col_counter += 3
         
@@ -218,8 +221,8 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
         for colname in config_wind['fseries_name_list']:
           
           # add space-time-variant features
-          values_array[data_counter, col_counter] = (
-            df_turbine[colname][j])
+          values_array[data_counter, col_counter] = df_turbine[colname][j]
+          
           # increment column counter
           col_counter += 1
           
@@ -227,12 +230,10 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       for j in range(i, i+config_wind['prediction_window']):
         
         # add time-variant features      
-        values_array[data_counter, col_counter] = (
-          df_turbine['Day'][j])
-        values_array[data_counter, col_counter+1] = (
-          df_turbine['hour'][j])
-        values_array[data_counter, col_counter+2] = (
-          df_turbine['minute'][j])
+        values_array[data_counter, col_counter] = df_turbine['Day'][j]
+        values_array[data_counter, col_counter+1] = df_turbine['hour'][j]
+        values_array[data_counter, col_counter+2] = df_turbine['minute'][j]
+        
         # increment column counter
         col_counter += 3
             
@@ -241,6 +242,7 @@ def create_datapoints(config_wind: dict, df_data: pd.DataFrame) -> pd.DataFrame:
       
         # set active power as label to be predicted
         values_array[data_counter, col_counter] = df_turbine['Patv'][j]
+        
         # increment column counter
         col_counter += 1
         
