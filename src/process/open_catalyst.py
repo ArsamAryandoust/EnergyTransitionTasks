@@ -1,6 +1,6 @@
 
 
 
-from load_config import config_OC
+from config.load_oc import config_OC
 
 
