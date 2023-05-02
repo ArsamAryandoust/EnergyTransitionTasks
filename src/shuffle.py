@@ -51,9 +51,8 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         # shuffle
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
-                
         # write csv fast
-        write_csv_fast(df, sampled_files, n_data_points_list, path_to_folder)
+        write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
         
         
 """        
@@ -103,13 +102,13 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
 """
         
 
-def write_csv_fast(df: pd.DataFrame, sampled_files: list[str], 
-  n_data_points_list: list[int], path_to_folder: str):
+def write_csv_fast(path_to_folder: str, df: pd.DataFrame, 
+  sampled_files: list[str], n_data_points_list: list[int]):
   """
   """
 
   # define function to parallelize
-  def write_csv(path_to_csv, df_slice, start, end):
+  def write_csv(path_to_csv, df_slice):
     
     # save df slice
     df_slice.to_csv(path_to_csv, index=False)
@@ -125,7 +124,7 @@ def write_csv_fast(df: pd.DataFrame, sampled_files: list[str],
       path_to_csv = path_to_folder + fname
       
       # execute
-      executor.submit(write_csv, df[:n_samples], path_to_csv, start, end)
+      executor.submit(write_csv, path_to_csv, df[:n_samples])
       
       # shorten df
       df = df[n_samples:]
