@@ -3,6 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 import random
 import gc
+from concurrent.futures import ThreadPoolExecutor
 
 
 def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1, 
@@ -14,7 +15,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
   print("Shuffling processed {} data.".format(name))
   
   # iterate over all subtasks
-  for subtask in config[name]['subtask_list']:
+  for subtask in ['cities_43']: #config[name]['subtask_list']:
     
     # set some paths
     path_to_train = (config['general']['path_to_data'] 
@@ -28,7 +29,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
     pbar = tqdm(total=n_iter_shuffle*3)
     
     # do this for train, val and test datasets separately
-    for path_to_folder in [path_to_train, path_to_val, path_to_test]:
+    for path_to_folder in [path_to_test]: #[path_to_train, path_to_val, path_to_test]:
     
       # get a list of files in currently iterated dataset (train,val, or test)
       file_list = os.listdir(path_to_folder)
@@ -47,11 +48,30 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         random.seed(config['general']['seed'])
         sampled_files = random.sample(file_list, n_samples)
         
+        ###
+        # NEW
+        ### 
+        
+        # load csv fast
+        df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
+        
+        # shuffle
+        df = df.sample(frac=1, random_state=config['general']['seed'])
+        
+        # write csv fast
+        write_csv_fast(df, n_data_points_list, sampled_files)
+        
+        ###
+        # NEW
+        ###        
+        
+"""        
         # declare empty dataframe
         df = pd.DataFrame()
         
         # declare empty list to save number of data points of each file
         n_data_points_list = []
+        
         
         # iterate over all sampled files
         for filename in sampled_files:
@@ -74,6 +94,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         
         # shuffle
         df = df.sample(frac=1, random_state=config['general']['seed'])
+"""
         
         # iterate over sampled files and n_data_points simultaneously
         for filename, n_data_points in zip(sampled_files, n_data_points_list):
@@ -92,9 +113,27 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
 
 
 
+def load_csv_fast(dir: str, filenames: list[str]) -> pd.DataFrame:
+  """
+  """
+  
+  def load_csv(path):
+    return pd.read_csv(path)
 
+  with ThreadPoolExecutor() as executor:
+    futures = [executor.submit(load_csv, dir + fname) for fname in filenames]
+    dfs = []
+    n_data_points_list = []
+    
+    for f in tqdm(futures):
+      n_data_points_list.append(len(f.result().index))
+      dfs.append(f.result())
 
-
+      
+  ret = pd.concat(dfs, ignore_index=True, copy=False)
+  
+  
+  return ret, n_data_points_list
 
 
 
