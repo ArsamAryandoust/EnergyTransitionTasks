@@ -24,8 +24,6 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
     path_to_test = (config['general']['path_to_data'] 
       + name + '/' + subtask + '/testing/')
     
-    # create progress bar
-    pbar = tqdm(total=n_iter_shuffle*3)
     
     # do this for train, val and test datasets separately
     for path_to_folder in [path_to_test]: #[path_to_train, path_to_val, path_to_test]:
@@ -111,17 +109,14 @@ def write_csv_fast(df: pd.DataFrame, sampled_files: list[str],
   """
 
   # define function to parallelize
-  def write_csv(path_to_csv, start, end):
+  def write_csv(path_to_csv, df_slice, start, end):
     
-    # save from start to end as csv
-    df[start:end].to_csv(path_to_csv, index=False)
+    # save df slice
+    df_slice.to_csv(path_to_csv, index=False)
   
   
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
-    
-    # set start and end indices of 
-    start, end = 0, 0
     
     # iterate over lists and add to execution pool
     for fname, n_samples in zip(sampled_files, n_data_points_list):
@@ -129,14 +124,12 @@ def write_csv_fast(df: pd.DataFrame, sampled_files: list[str],
       # set full saving path argument 1
       path_to_csv = path_to_folder + fname
       
-      # set and index argument 3
-      end += n_samples
-      
       # execute
-      executor.submit(write_csv, path_to_csv, start, end)
+      executor.submit(write_csv, df[:n_samples], path_to_csv, start, end)
       
-      # update ending 
-      start = end
+      # shorten df
+      df = df[n_samples:]
+      
       
   
 def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
@@ -149,7 +142,7 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
     # read csv
     df = pd.read_csv(path_to_csv)
     
-    # remove csv
+    # remove csv. This makes writing faster
     os.remove(path_to_csv)
     
     return df
