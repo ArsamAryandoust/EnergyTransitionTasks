@@ -2,6 +2,7 @@ import math
 import torch
 import torch.distributions as distributions
 import seaborn as sns
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 LOG_EPSILON = 1e-39
@@ -13,7 +14,7 @@ def remove_outliers(x):
     x = x[~outlier_indices]
     return x
 
-def create_distribution(x, min, max, n_bins=10):
+def create_distribution(x, min, max, n_bins=10000):
     histogram = torch.histc(x, bins=n_bins, min=min, max=max)
     distribution = histogram / torch.sum(histogram)
     return distribution
@@ -48,7 +49,7 @@ def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
     js_divergences = []
     uniform_distribution = torch.ones(n_bins).to(device) / n_bins
 
-    for feature in range(n_features):
+    for feature in tqdm(range(n_features)):
         if feature in features_to_skip:
             continue
         dataset_slice = dataset[:, feature]
@@ -66,7 +67,7 @@ def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_s
     n_features = train_set.shape[1]
     js_divergences_validation, js_divergences_test = [], []
 
-    for feature in range(n_features):
+    for feature in tqdm(range(n_features)):
         if feature in features_to_skip:
             continue
         train_slice = train_set[:, feature]
@@ -102,7 +103,7 @@ def ios_score(features, labels, features_to_skip=[], device='cpu'):
     n_labels = labels.shape[1]
     mean_deltas = torch.zeros(n_features - len(features_to_skip), n_labels).to(device)
 
-    for feature in range(n_features):
+    for feature in tqdm(range(n_features)):
         slice = torch.hstack((features[:, feature].unsqueeze(1), labels))
         sorted_indices = slice[:, 0].sort()[1]
         slice = slice[sorted_indices]
