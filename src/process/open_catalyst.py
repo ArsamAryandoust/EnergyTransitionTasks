@@ -144,9 +144,9 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   # load all datasets
   train_dataset = load_dataset(train_path, single_point_lmdb=True)
   val_id_dataset = load_dataset(val_id_path, single_point_lmdb=True)
-  val_ood_dataset = load_dataset(val_ood_both_path, single_point_lmdb=True)
+  val_ood_dataset = load_dataset(val_ood_path, single_point_lmdb=True)
   test_id_dataset = load_dataset(test_id_path, single_point_lmdb=True)
-  test_ood_dataset = load_dataset(test_ood_both_path, single_point_lmdb=True)
+  test_ood_dataset = load_dataset(test_ood_path, single_point_lmdb=True)
   
   
   
