@@ -5,6 +5,7 @@ from config.load_oc import config_OC
 import ocpmodels
 from ocpmodels.datasets import TrajectoryLmdbDataset, SinglePointLmdbDataset
 
+
 def process_all_datasets(config: dict, save: bool):
   """
   """
@@ -29,7 +30,6 @@ def process_all_datasets(config: dict, save: bool):
     elif subtask == 'oc22_is2res':
       process_oc22_is2res(config_opencat, save)
       
-    
 
 
 def load_dataset(path:str, single_point_lmdb:bool=False) -> (
@@ -47,6 +47,8 @@ def load_dataset(path:str, single_point_lmdb:bool=False) -> (
     dataset = TrajectoryLmdbDataset({"src": path})
       
   return dataset    
+  
+  
   
 def process_oc20_s2ef(config_opencat: dict, save: bool):
   """
@@ -108,32 +110,24 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
   
   
   
-  
 def process_oc22_s2ef(config_opencat: dict, save: bool):
   """
   """
   
   train_path = config_opencat['path_to_data_raw_oc22_s2ef_train']
   val_id_path = config_opencat['path_to_data_raw_oc22_s2ef_val_id']
-  val_ood_ads_path = config_opencat['path_to_data_raw_oc22_s2ef_val_ood_ads']
-  val_ood_cat_path = config_opencat['path_to_data_raw_oc22_s2ef_val_ood_cat']
-  val_ood_both_path = config_opencat['path_to_data_raw_oc22_s2ef_val_ood_both']
+  val_ood_path = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
   test_id_path = config_opencat['path_to_data_raw_oc22_s2ef_test_id']
-  test_ood_ads_path = config_opencat['path_to_data_raw_oc22_s2ef_test_ood_ads']
-  test_ood_cat_path = config_opencat['path_to_data_raw_oc22_s2ef_test_ood_cat']
-  test_ood_both_path = config_opencat['path_to_data_raw_oc22_s2ef_test_ood_both']
+  test_ood_path = config_opencat['path_to_data_raw_oc22_s2ef_test_ood']
 
 
   # load all datasets
   train_dataset = load_dataset(train_path)
   val_id_dataset = load_dataset(val_id_path)
-  val_ood_ads_dataset = load_dataset(val_ood_ads_path)
-  val_ood_cat_dataset = load_dataset(val_ood_cat_path)
-  val_ood_both_dataset = load_dataset(val_ood_both_path)
+  val_ood_dataset = load_dataset(val_ood_path)
   test_id_dataset = load_dataset(test_id_path)
-  test_ood_ads_dataset = load_dataset(test_ood_ads_path)
-  test_ood_cat_dataset = load_dataset(test_ood_cat_path)
-  test_ood_both_dataset = load_dataset(test_ood_both_path)
+  test_ood_dataset = load_dataset(test_ood_path)
+  
   
   
 def process_oc22_is2res(config_opencat: dict, save: bool):
