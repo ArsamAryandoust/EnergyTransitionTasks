@@ -54,14 +54,11 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
     # import all csv files for currently iterated city
     df_csv_dict_list = import_csvdata(config_uber, city)
     
-    # create progress bar
-    pbar = tqdm(total=len(df_csv_dict_list))
-    
     # set this for saving
     first_iteration = True
     
     # iterate over all imported csv files for this city
-    for df_csv_dict in df_csv_dict_list:
+    for df_csv_dict in tqdm(df_csv_dict_list):
        
       # check if testing year
       if df_csv_dict['year'] in config_uber['temporal_ood']['ood_years']:
@@ -190,8 +187,6 @@ def create_train_val_test(config_uber: dict, cityzone_centroid_df_dict: dict,
         train_file_count, config_uber['path_to_data_train'], 
         'training_data', save=save)
       
-      # update progress bar
-      pbar.update(1)
           
   ### Tell us the ratios that result from our splitting rules
   n_train = (train_file_count * config_uber['data_per_file'] 
@@ -470,14 +465,11 @@ def process_geographic_information(config_uber: dict):
   """
   print("Processing geographic information.")
   
-  # create progress bar
-  pbar = tqdm(total=len(config_uber['list_of_cities']))
-  
   # declare results dict we want to return
   cityzone_centroid_df_dict = {}
   
   # iterate over list of cities in current subtask
-  for city in config_uber['list_of_cities']:
+  for city in tqdm(config_uber['list_of_cities']):
   
     # import geojson for iterated city
     geojson_dict = import_geojson(config_uber, city)
@@ -526,8 +518,6 @@ def process_geographic_information(config_uber: dict):
     # add to results dictionary
     cityzone_centroid_df_dict[city] = df_centroids
     
-    # update progress bar
-    pbar.update(1)
     
   return cityzone_centroid_df_dict    
 
