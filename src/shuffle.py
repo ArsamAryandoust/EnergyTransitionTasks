@@ -65,6 +65,21 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         # NEW
         ###        
         
+        # iterate over sampled files and n_data_points simultaneously
+        for filename, n_data_points in zip(sampled_files, n_data_points_list):
+        
+          # create path to iterated file
+          path_to_csv = path_to_folder + filename
+          
+          # save shuffled slice
+          df[:n_data_points].to_csv(path_to_csv, index=False)
+          
+          # remove saved slice
+          df = df[n_data_points:]
+            
+        # update progress bar
+        pbar.update(1) 
+        
 """        
         # declare empty dataframe
         df = pd.DataFrame()
@@ -96,20 +111,6 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         df = df.sample(frac=1, random_state=config['general']['seed'])
 """
         
-        # iterate over sampled files and n_data_points simultaneously
-        for filename, n_data_points in zip(sampled_files, n_data_points_list):
-        
-          # create path to iterated file
-          path_to_csv = path_to_folder + filename
-          
-          # save shuffled slice
-          df[:n_data_points].to_csv(path_to_csv, index=False)
-          
-          # remove saved slice
-          df = df[n_data_points:]
-            
-        # update progress bar
-        pbar.update(1) 
 
 
 
