@@ -30,6 +30,8 @@ def process_all_datasets(config: dict, save: bool):
       process_oc22_is2res(config_opencat, save)
       
     
+
+
 def load_dataset(path:str, single_point_lmdb:bool=False) -> (
   ocpmodels.datasets.lmdb_dataset.SinglePointLmdbDataset | 
   ocpmodels.datasets.lmdb_dataset.TrajectoryLmdbDataset):
@@ -39,13 +41,12 @@ def load_dataset(path:str, single_point_lmdb:bool=False) -> (
   if single_point_lmdb:
     filename = os.listdir(path)[1]
     path += filename
-    dataset = SinglePointLmdbDataset({"src": path_to_file})
+    dataset = SinglePointLmdbDataset({"src": path})
     
   else:
     dataset = TrajectoryLmdbDataset({"src": path})
       
   return dataset    
-  
   
 def process_oc20_s2ef(config_opencat: dict, save: bool):
   """
