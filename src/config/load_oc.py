@@ -51,7 +51,7 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   
   # test challenge data 2021
   config_opencat['path_to_data_raw_oc20_is2res_test_challenge'] = (
-    config_opencat['path_to_data_raw_oc20'] + 'is2re_challenge/')  
+    config_opencat['path_to_data_raw_oc20'] + 'is2re_test_challenge_2021/')  
     
   
   ### Set paths to S2EF for oc20 ###
