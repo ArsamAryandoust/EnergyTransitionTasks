@@ -5,7 +5,6 @@ import random
 import gc
 from concurrent.futures import ThreadPoolExecutor
 
-
 def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1, 
   n_files_simultan=600):
   """
@@ -48,37 +47,16 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         random.seed(config['general']['seed'])
         sampled_files = random.sample(file_list, n_samples)
         
-        ###
-        # NEW
-        ### 
-        
         # load csv fast
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
+                
         # write csv fast
-        write_csv_fast(df, n_data_points_list, sampled_files)
+        write_csv_fast(df, sampled_files, n_data_points_list)
         
-        ###
-        # NEW
-        ###        
-        
-        # iterate over sampled files and n_data_points simultaneously
-        for filename, n_data_points in zip(sampled_files, n_data_points_list):
-        
-          # create path to iterated file
-          path_to_csv = path_to_folder + filename
-          
-          # save shuffled slice
-          df[:n_data_points].to_csv(path_to_csv, index=False)
-          
-          # remove saved slice
-          df = df[n_data_points:]
-            
-        # update progress bar
-        pbar.update(1) 
         
 """        
         # declare empty dataframe
@@ -109,32 +87,98 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         
         # shuffle
         df = df.sample(frac=1, random_state=config['general']['seed'])
+        
+        # iterate over sampled files and n_data_points simultaneously
+        for filename, n_data_points in zip(sampled_files, n_data_points_list):
+        
+          # create path to iterated file
+          path_to_csv = path_to_folder + filename
+          
+          # save shuffled slice
+          df[:n_data_points].to_csv(path_to_csv, index=False)
+          
+          # remove saved slice
+          df = df[n_data_points:]
+            
+        # update progress bar
+        pbar.update(1) 
 """
         
 
+def write_csv_fast(df: pd.DataFrame, sampled_files: list[str], 
+  n_data_points_list: list[int], path_to_folder: str):
+  """
+  """
 
-
-def load_csv_fast(dir: str, filenames: list[str]) -> pd.DataFrame:
+  # define function to parallelize
+  def write_csv(path_to_csv, start, end):
+    
+    # save from start to end as csv
+    df[start:end].to_csv(path_to_csv, index=False)
+  
+  
+  # open parall execution thread pool
+  with ThreadPoolExecutor() as executor:
+    
+    # set start and end indices of 
+    start, end = 0, 0
+    
+    # iterate over lists and add to execution pool
+    for fname, n_samples in zip(sampled_files, n_data_points_list):
+      
+      # set full saving path argument 1
+      path_to_csv = path_to_folder + fname
+      
+      # set and index argument 3
+      end += n_samples
+      
+      # execute
+      executor.submit(write_csv, path_to_csv, start, end)
+      
+      # update ending 
+      start = end
+      
+  
+def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   """
   """
   
-  def load_csv(path):
-    return pd.read_csv(path)
+  # define function to parallelize
+  def load_csv(path_to_csv):
+    
+    # read csv
+    df = pd.read_csv(path_to_csv)
+    
+    # remove csv
+    os.remove(path_to_csv)
+    
+    return df
 
+  # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
-    futures = [executor.submit(load_csv, dir + fname) for fname in filenames]
+    
+    futures = []
+    for fname in filenames:
+      
+      # add to executor and save future results in list
+      path_to_csv = path_to_folder + fname
+      futures.append(executor.submit(load_csv, path_to_csv))
+    
+    # create empty lists to read results
     dfs = []
     n_data_points_list = []
     
+    # iterate over all parallelzed execution results
     for f in tqdm(futures):
+      
+      # create lists from results
       n_data_points_list.append(len(f.result().index))
       dfs.append(f.result())
-
-      
-  ret = pd.concat(dfs, ignore_index=True, copy=False)
   
+  # concatenate dataframes
+  df_result = pd.concat(dfs, ignore_index=True, copy=False)
   
-  return ret, n_data_points_list
+  return df_result, n_data_points_list
 
 
 
