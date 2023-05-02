@@ -4,9 +4,9 @@ ase
 tqdm
 pyyaml
 jupyter
+torch
 torch_geometric
 lmdb
-
 
 requests
 scikit-learn 
