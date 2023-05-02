@@ -122,8 +122,8 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_raw_OC20'] + 'oc20_bader_data/bader/')  
       
   # meta data for IS2RE/S test challenge in OC20
-  config_opencat['path_to_data_raw_OC20_is2re_test_challenge_meta'] = (
-    config_opencat['path_to_data_raw_OC20_is2re_test_challenge'] + 
+  config_opencat['path_to_data_raw_OC20_is2res_test_challenge_meta'] = (
+    config_opencat['path_to_data_raw_OC20_is2res_test_challenge'] + 
     'metadata.npz')    
   
   # meta data for OC20
