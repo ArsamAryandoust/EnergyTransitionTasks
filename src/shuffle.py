@@ -53,7 +53,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         
                 
         # write csv fast
-        write_csv_fast(df, sampled_files, n_data_points_list)
+        write_csv_fast(df, sampled_files, n_data_points_list, path_to_folder)
         
         
 """        
