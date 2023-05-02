@@ -17,7 +17,7 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   
   
   
-  config_opencat['seed'] = config['seed']
+  config_opencat['seed'] = config['general']['seed']
   config_opencat['subtask'] = subtask
   
   
