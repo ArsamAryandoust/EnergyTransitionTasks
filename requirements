@@ -3,3 +3,13 @@ h5py
 ase
 tqdm
 pyyaml
+jupyter
+lmdb
+torch
+torch_geometric
+
+requests
+scikit-learn 
+pyJoules 
+scipy 
+
