@@ -77,8 +77,7 @@ ClimART:
   data_per_file_clearsky: 36_000
     
 OpenCatalyst:
-  subtask_list : ['oc20_s2ef', 'oc20_is2rs', 'oc20_is2re', 'oc22_s2ef', 
-    oc22_is2rs, 'oc22_is2re']
+  subtask_list : ['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
   chunk_size_opencatalyst: 20_000
   subsample_opencatalyst: 0.2
   

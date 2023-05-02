@@ -6,7 +6,7 @@ import baseline
 
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
-from process import polianna
+from process import polianna, open_catalyst
 
 from baseline import train_RF_baseline
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
       climart.process_all_datasets(config, save=True)
     
     elif args.process == 'OpenCatalyst':
-      print("To do: Implement Open Catalyst dataset processing.")
+      open_catalyst.process_all_datasets(config, save=True)
       
     elif args.process == 'Polianna':
       polianna.process_all_datasets(config, save=True)
