@@ -47,16 +47,30 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         sampled_files = random.sample(file_list, n_samples)
         
         # load csv fast
-        print("\nLoading .csv files now!")
+        print("\nLoading .csv files now:")
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
         print("\nShuffling dataframe now!")
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
-        # write csv fast
-        print("\nWriting dataframe to .csv again now!")
-        write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
+        # iterate over lists and write to csv
+        print("\nWriting dataframe to .csv again now:")
+        for fname, n_samples in zip(sampled_files, n_data_points_list):
+          
+          # set full saving path argument 1
+          path_to_csv = path_to_folder + fname 
+          
+          # save df slice
+          df[:n_samples].to_csv(path_to_csv, index=False)
+        
+          # shorten df
+          df = df[n_samples:]
+        
+        
+        
+        
+        #write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
         
         
         
@@ -76,7 +90,7 @@ def write_csv_fast(path_to_folder: str, df: pd.DataFrame,
   with ThreadPoolExecutor() as executor:
     
     # iterate over lists and add to execution pool
-    for fname, n_samples in zip(sampled_files, n_data_points_list):
+    for fname, n_samples in tqdm(zip(sampled_files, n_data_points_list)):
       
       # set full saving path argument 1
       path_to_csv = path_to_folder + fname
