@@ -116,24 +116,17 @@ def write_csv_fast(path_to_folder: str, df: pd.DataFrame,
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
     
-    # declare these
-    start, end = 0, 0
-    
     # iterate over lists and add to execution pool
     for fname, n_samples in zip(sampled_files, n_data_points_list):
       
       # set full saving path argument 1
       path_to_csv = path_to_folder + fname
       
-      end += n_samples
-      
       # execute
-      executor.submit(write_csv, path_to_csv, df[start:end])
-      
-      start = end
+      executor.submit(write_csv, path_to_csv, df[:n_samples])
       
       # shorten df
-      #df = df[n_samples:]
+      df = df[n_samples:]
       
       
       
