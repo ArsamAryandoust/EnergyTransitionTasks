@@ -57,7 +57,7 @@ if __name__ == "__main__":
       climart.process_all_datasets(config, save=True)
     
     elif args.process == 'OpenCatalyst':
-      print("To do: Implement Open Catalyst dataset processing.")
+      open_catalyst.process_all_datasets(config, save=True)
       
     elif args.process == 'Polianna':
       polianna.process_all_datasets(config, save=True)
