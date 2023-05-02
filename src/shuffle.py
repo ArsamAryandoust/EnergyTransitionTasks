@@ -15,7 +15,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
   print("Shuffling processed {} data.".format(name))
   
   # iterate over all subtasks
-  for subtask in config[name]['subtask_list']:
+  for subtask in ['cities_43']: #config[name]['subtask_list']:
     
     # set some paths
     path_to_train = (config['general']['path_to_data'] 
@@ -27,7 +27,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
     
     
     # do this for train, val and test datasets separately
-    for path_to_folder in [path_to_train, path_to_val, path_to_test]:
+    for path_to_folder in [path_to_test]: #[path_to_train, path_to_val, path_to_test]:
     
       # get a list of files in currently iterated dataset (train,val, or test)
       file_list = os.listdir(path_to_folder)
@@ -57,6 +57,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         # write csv fast
         print("\nWriting dataframe to .csv again now!")
         write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
+        
         
         
 
