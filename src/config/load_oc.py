@@ -24,11 +24,8 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   return config_opencat
     
     
-    
+"""    
 def config_OC(config: dict) -> dict:
-    """
-    Augments configuration file for processing Open Catalyst dataset.
-    """
     
     # get base config
     dictionary = config['open_catalyst']
@@ -105,7 +102,7 @@ def config_OC(config: dict) -> dict:
     
     config['open_catalyst'] = dictionary
     return config
-    
+"""    
     
 def check_create_dir(path: str):
   """
