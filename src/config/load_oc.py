@@ -28,29 +28,29 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_raw'] + 'OC22/')
   
   ### Set paths to IS2RE/S for OC20 ###
-  config_opencat['path_to_data_raw_OC20_is2re'] = (
+  config_opencat['path_to_data_raw_OC20_is2res'] = (
     config_opencat['path_to_data_raw_OC20'] + 'is2re/all/')
-  config_opencat['path_to_data_raw_OC20_is2re_train'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'train/')
-  config_opencat['path_to_data_raw_OC20_is2re_val_id'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'val_id/')
-  config_opencat['path_to_data_raw_OC20_is2re_val_ood_ads'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'val_ood_ads/')  
-  config_opencat['path_to_data_raw_OC20_is2re_val_ood_cat'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'val_ood_cat/')  
-  config_opencat['path_to_data_raw_OC20_is2re_val_ood_both'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'val_ood_both/') 
-  config_opencat['path_to_data_raw_OC20_is2re_test_id'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'test_id/')
-  config_opencat['path_to_data_raw_OC20_is2re_test_ood_ads'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'test_ood_ads/')  
-  config_opencat['path_to_data_raw_OC20_is2re_test_ood_cat'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'test_ood_cat/')  
-  config_opencat['path_to_data_raw_OC20_is2re_test_ood_both'] = (
-    config_opencat['path_to_data_raw_OC20_is2re'] + 'test_ood_both/') 
+  config_opencat['path_to_data_raw_OC20_is2res_train'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'train/')
+  config_opencat['path_to_data_raw_OC20_is2res_val_id'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'val_id/')
+  config_opencat['path_to_data_raw_OC20_is2res_val_ood_ads'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'val_ood_ads/')  
+  config_opencat['path_to_data_raw_OC20_is2res_val_ood_cat'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'val_ood_cat/')  
+  config_opencat['path_to_data_raw_OC20_is2res_val_ood_both'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'val_ood_both/') 
+  config_opencat['path_to_data_raw_OC20_is2res_test_id'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'test_id/')
+  config_opencat['path_to_data_raw_OC20_is2res_test_ood_ads'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'test_ood_ads/')  
+  config_opencat['path_to_data_raw_OC20_is2res_test_ood_cat'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'test_ood_cat/')  
+  config_opencat['path_to_data_raw_OC20_is2res_test_ood_both'] = (
+    config_opencat['path_to_data_raw_OC20_is2res'] + 'test_ood_both/') 
   
   # test challenge data 2021
-  config_opencat['path_to_data_raw_OC20_is2re_test_challenge'] = (
+  config_opencat['path_to_data_raw_OC20_is2res_test_challenge'] = (
     config_opencat['path_to_data_raw_OC20'] + 'is2re_challenge/')  
     
   
@@ -139,94 +139,59 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_raw_OC22'] + 'oc20_ref.pkl')
   
   
+  ### Set paths to results ###
+  
+  config_opencat['path_to_data'] = (
+    config['general']['path_to_data'] + 'OpenCatalyst/')
+  config_opencat['path_to_data_subtask'] = (
+    config_opencat['path_to_data'] + '{}/'.format(subtask))
+  config_opencat['path_to_data_subtask_add'] = (
+    config_opencat['path_to_data_subtask'] + 'additional/')
+  config_opencat['path_to_data_subtask_train'] = (
+    config_opencat['path_to_data_subtask'] + 'training/')
+  config_opencat['path_to_data_subtask_val'] = (
+    config_opencat['path_to_data_subtask'] + 'validation/')
+  config_opencat['path_to_data_subtask_test'] = (
+    config_opencat['path_to_data_subtask'] + 'testing/')
+  
+  
+  
+  ### Create saving folder structure ###
+  if save:
+    
+    # create directory if not existent for entire task    
+    check_create_dir(config_opencat['path_to_data'])
+    
+    # delete any previous results for this subtask
+    if os.path.isdir(config_opencat['path_to_data_subtask']):
+      shutil.rmtree(config_opencat['path_to_data_subtask'])
+    
+    # iterate over all directories
+    for path in [config_opencat['path_to_data_subtask_add'],
+      config_opencat['path_to_data_subtask_train'],
+      config_opencat['path_to_data_subtask_val'],
+      config_opencat['path_to_data_subtask_test']]:
+      
+      # create directory if not existent      
+      check_create_dir(path)
+          
+    
+  
+  
+  
+  
+  
+  
   
   ### Save some general values ###
   config_opencat['seed'] = config['general']['seed']
   config_opencat['subtask'] = subtask
   
   
+  
   return config_opencat
     
-    
-"""    
-def config_OC(config: dict) -> dict:
-    
-    # get base config
-    dictionary = config['open_catalyst']
-            
-    # add data paths
-    dictionary['path_to_data_raw_opencatalyst'] = (
-        config['general']['path_to_data_raw'] 
-        + 'OpenCatalyst/OC20/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_pte'] = (
-        config['general']['path_to_data_raw'] 
-        + 'OpenCatalyst/PubChemElements_all.csv'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef'] = (
-        dictionary['path_to_data_raw_opencatalyst']
-        + 'S2EF/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef_train'] = (
-        dictionary['path_to_data_raw_opencatalyst_s2ef']
-        + 's2ef_train_2M/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef_val_id'] = (
-        dictionary['path_to_data_raw_opencatalyst_s2ef']
-        + 's2ef_val_id/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_ads'] = (
-        dictionary['path_to_data_raw_opencatalyst_s2ef']
-        + 's2ef_val_ood_ads/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_cat'] = (
-        dictionary['path_to_data_raw_opencatalyst_s2ef']
-        + 's2ef_val_ood_cat/'
-    )
-    dictionary['path_to_data_raw_opencatalyst_s2ef_val_ood_both'] = (
-        dictionary['path_to_data_raw_opencatalyst_s2ef']
-        + 's2ef_val_ood_both/'
-    )
-    dictionary['path_to_data_opencatalyst'] = (
-        config['general']['path_to_data'] 
-        + 'OpenCatalyst/'
-    )
-    dictionary['path_to_data_opencatalyst_oc20_s2ef'] = (
-        dictionary['path_to_data_opencatalyst']
-        + 'OC20_S2EF/'
-    )
-    dictionary['path_to_data_opencatalyst_oc20_s2ef_add'] = (
-        dictionary['path_to_data_opencatalyst_oc20_s2ef']
-        + 'additional/'
-    )
-    dictionary['path_to_data_opencatalyst_oc20_s2ef_train'] = (
-        dictionary['path_to_data_opencatalyst_oc20_s2ef']
-        + 'training/'
-    )
-    dictionary['path_to_data_opencatalyst_oc20_s2ef_val'] = (
-        dictionary['path_to_data_opencatalyst_oc20_s2ef']
-        + 'validation/'
-    )
-    dictionary['path_to_data_opencatalyst_oc20_s2ef_test'] = (
-        dictionary['path_to_data_opencatalyst_oc20_s2ef']
-        + 'testing/'
-    )
-    
-    # create directory structure for saving results
-    for path in [
-        dictionary['path_to_data_opencatalyst'], 
-        dictionary['path_to_data_opencatalyst_oc20_s2ef'],
-        dictionary['path_to_data_opencatalyst_oc20_s2ef_add'],
-        dictionary['path_to_data_opencatalyst_oc20_s2ef_train'],
-        dictionary['path_to_data_opencatalyst_oc20_s2ef_val'],
-        dictionary['path_to_data_opencatalyst_oc20_s2ef_test']
-    ]:
-        check_create_dir(path)
-    
-    
-    config['open_catalyst'] = dictionary
-    return config
-"""    
+
     
 def check_create_dir(path: str):
   """
