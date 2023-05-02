@@ -47,12 +47,15 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         sampled_files = random.sample(file_list, n_samples)
         
         # load csv fast
+        print("\nLoading .csv files now!")
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
+        print("\nShuffling dataframe now!")
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # write csv fast
+        print("\nWriting dataframe to .csv again now!")
         write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
         
         
@@ -92,13 +95,7 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   # define function to parallelize
   def load_csv(path_to_csv):
     
-    # read csv
-    df = pd.read_csv(path_to_csv)
-    
-    # remove csv. This makes writing faster
-    os.remove(path_to_csv)
-    
-    return df
+    return pd.read_csv(path_to_csv)
 
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
