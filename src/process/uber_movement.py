@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-from load_config import config_UM
+from config.load_um import config_UM
 
 
 def process_all_datasets(config: dict, save:bool):

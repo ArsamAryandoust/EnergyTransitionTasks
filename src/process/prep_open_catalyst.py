@@ -45,7 +45,6 @@ def create_dataset_df(
     # iterate over all filenames
     for filename in file_list:
         
-        
         # declare values array with 'empty' strings and sufficient Unicode length
         n_atoms_assumed = 500
         values_array = np.full((n_sample, 7+2*3*n_atoms_assumed), 'empty', dtype='<U32')
