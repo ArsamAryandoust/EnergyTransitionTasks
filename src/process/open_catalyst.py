@@ -2,8 +2,8 @@
 
 
 from config.load_oc import config_OC
+import ocpmodels
 from ocpmodels.datasets import TrajectoryLmdbDataset, SinglePointLmdbDataset
-
 
 def process_all_datasets(config: dict, save: bool):
   """
