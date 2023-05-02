@@ -7,7 +7,6 @@ jupyter
 lmdb
 torch
 torch_geometric
-torch-scatter
 
 requests
 scikit-learn 
