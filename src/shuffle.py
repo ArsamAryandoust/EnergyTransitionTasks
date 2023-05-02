@@ -117,6 +117,9 @@ def write_csv_fast(path_to_folder: str, df: pd.DataFrame,
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
     
+    # declare list to save results
+    futures = []
+    
     # iterate over lists and add to execution pool
     for fname, n_samples in zip(sampled_files, n_data_points_list):
       
@@ -124,10 +127,15 @@ def write_csv_fast(path_to_folder: str, df: pd.DataFrame,
       path_to_csv = path_to_folder + fname
       
       # execute
-      executor.submit(write_csv, path_to_csv, df[:n_samples])
+      futures.append(executor.submit(write_csv, path_to_csv, df[:n_samples]))
       
       # shorten df
       df = df[n_samples:]
+      
+    # iterate over all parallelzed execution results
+    for f in tqdm(futures):
+      pass
+      
       
       
   
@@ -149,7 +157,10 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
     
+    # declare list to save results
     futures = []
+    
+    # iterate over lists and add to execution pool
     for fname in filenames:
       
       # add to executor and save future results in list
