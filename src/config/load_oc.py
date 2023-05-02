@@ -23,9 +23,9 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   config_opencat['path_to_data_raw'] = (
     config['general']['path_to_data_raw'] + 'OpenCatalyst/')
   config_opencat['path_to_data_raw_oc20'] = (
-    config_opencat['path_to_data_raw'] + 'oc20/')
+    config_opencat['path_to_data_raw'] + 'OC20/')
   config_opencat['path_to_data_raw_oc22'] = (
-    config_opencat['path_to_data_raw'] + 'oc22/')
+    config_opencat['path_to_data_raw'] + 'OC22/')
   
   ### Set paths to IS2RE/S for oc20 ###
   config_opencat['path_to_data_raw_oc20_is2res'] = (
