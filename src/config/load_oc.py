@@ -13,9 +13,15 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   Augments configuration file for processing Open Catalyst dataset.
   """
   # get base config
-  config_opencata = config['OpenCatalyst']     
+  config_opencat = config['OpenCatalyst']     
   
   
+  
+  config_opencat['seed'] = config['seed']
+  config_opencat['subtask'] = subtask
+  
+  
+  return config_opencat
     
     
     
