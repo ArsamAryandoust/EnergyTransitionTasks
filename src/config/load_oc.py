@@ -167,10 +167,10 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
       shutil.rmtree(config_opencat['path_to_data_subtask'])
     
     # iterate over all directories
-    for path in [config_opencat['path_to_data_subtask_add'],
-      config_opencat['path_to_data_subtask_train'],
+    for path in [config_opencat['path_to_data_subtask_train'],
       config_opencat['path_to_data_subtask_val'],
-      config_opencat['path_to_data_subtask_test']]:
+      config_opencat['path_to_data_subtask_test'],
+      config_opencat['path_to_data_subtask_add']]:
       
       # create directory if not existent      
       check_create_dir(path)
