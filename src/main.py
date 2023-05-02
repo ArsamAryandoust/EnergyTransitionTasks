@@ -6,7 +6,7 @@ import baseline
 
 from selberai.data import download_data
 from process import building_electricity, wind_farm, uber_movement, climart
-from process import polianna
+from process import polianna, open_catalyst
 
 from baseline import train_RF_baseline
 
