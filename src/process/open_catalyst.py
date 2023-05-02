@@ -143,24 +143,16 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   # create all relevant data paths
   train_path = config_opencat['path_to_data_raw_oc22_is2res_train']
   val_id_path = config_opencat['path_to_data_raw_oc22_is2res_val_id']
-  val_ood_ads_path = config_opencat['path_to_data_raw_oc22_is2res_val_ood_ads']
-  val_ood_cat_path = config_opencat['path_to_data_raw_oc22_is2res_val_ood_cat']
-  val_ood_both_path = config_opencat['path_to_data_raw_oc22_is2res_val_ood_both']
+  val_ood_path = config_opencat['path_to_data_raw_oc22_is2res_val_ood']
   test_id_path = config_opencat['path_to_data_raw_oc22_is2res_test_id']
-  test_ood_ads_path = config_opencat['path_to_data_raw_oc22_is2res_test_ood_ads']
-  test_ood_cat_path = config_opencat['path_to_data_raw_oc22_is2res_test_ood_cat']
-  test_ood_both_path = config_opencat['path_to_data_raw_oc22_is2res_test_ood_both']
+  test_ood_path = config_opencat['path_to_data_raw_oc22_is2res_test_ood']
   
   # load all datasets
   train_dataset = load_dataset(train_path, single_point_lmdb=True)
   val_id_dataset = load_dataset(val_id_path, single_point_lmdb=True)
-  val_ood_ads_dataset = load_dataset(val_ood_ads_path, single_point_lmdb=True)
-  val_ood_cat_dataset = load_dataset(val_ood_cat_path, single_point_lmdb=True)
-  val_ood_both_dataset = load_dataset(val_ood_both_path, single_point_lmdb=True)
+  val_ood_dataset = load_dataset(val_ood_both_path, single_point_lmdb=True)
   test_id_dataset = load_dataset(test_id_path, single_point_lmdb=True)
-  test_ood_ads_dataset = load_dataset(test_ood_ads_path, single_point_lmdb=True)
-  test_ood_cat_dataset = load_dataset(test_ood_cat_path, single_point_lmdb=True)
-  test_ood_both_dataset = load_dataset(test_ood_both_path, single_point_lmdb=True)
+  test_ood_dataset = load_dataset(test_ood_both_path, single_point_lmdb=True)
   
   
   
