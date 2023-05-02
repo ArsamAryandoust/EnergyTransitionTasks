@@ -47,16 +47,15 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         sampled_files = random.sample(file_list, n_samples)
         
         # load csv fast
-        print("\nLoading .csv files now:")
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
-        print("\nShuffling dataframe now!")
+        print("\nShuffling dataframe!")
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
         # iterate over lists and write to csv
-        print("\nWriting dataframe to .csv again now:")
-        for fname, n_samples in zip(sampled_files, n_data_points_list):
+        print("\nWriting dataframe to .csv again:")
+        for fname, n_samples in tqdm(zip(sampled_files, n_data_points_list)):
           
           # set full saving path argument 1
           path_to_csv = path_to_folder + fname 
@@ -79,7 +78,8 @@ def write_csv_fast(path_to_folder: str, df: pd.DataFrame,
   sampled_files: list[str], n_data_points_list: list[int]):
   """
   """
-
+  print("\nLoading .csv files:")
+  
   # define function to parallelize
   def write_csv(path_to_csv, df_slice):
     
