@@ -170,7 +170,7 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     for path in [config_opencat['path_to_data_subtask'],
       config_opencat['path_to_data_subtask_train'],
       config_opencat['path_to_data_subtask_val'],
-      config_opencat['path_to_data_subtask_test']:
+      config_opencat['path_to_data_subtask_test']]:
       
       # create directory if not existent      
       check_create_dir(path)
