@@ -40,7 +40,7 @@ def load_dataset(path:str, single_lmdb:bool=False) -> (
   """
   """
   
-  if single_point_lmdb:
+  if single_lmdb:
     filename = os.listdir(path)[1]
     path += filename
     dataset = SinglePointLmdbDataset({"src": path})
