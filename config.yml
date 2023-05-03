@@ -78,8 +78,8 @@ ClimART:
     
 OpenCatalyst:
   subtask_list : ['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
-  chunk_size_opencatalyst: 20_000
-  subsample_opencatalyst: 0.2
+  subsample_frac: 0.2
+  data_per_file: 20_000
   
   
 Polianna:

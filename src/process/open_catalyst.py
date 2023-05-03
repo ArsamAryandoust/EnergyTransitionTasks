@@ -1,6 +1,7 @@
 import os
 import gc
 import json
+import random
 
 from tqdm import tqdm
 import ocpmodels
@@ -73,16 +74,25 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     # load dataset from currently iterated path
     s2ef_dataset = load_dataset(path)
     
+    # subsample data
+    n_data = len(s2ef_dataset)
+    n_samples = int(config_opencat['subsample_frac'] * n_data)
+    random.seed(config_opencat['seed'])
+    sample_list = random.sample(range(n_data), n_samples)
+    
     # iterate over all datapoints
-    for datapoint in tqdm(s2ef_dataset):
+    for data_index in tqdm(sample_list):
+      
+      # get random datapoint
+      datapoint = s2ef_dataset[data_index]
       
       # save datapoint information in results dictionary
       s2ef_data_dict[id_counter] = {
-        'structure' : datapoint.pos,
         'energy' : datapoint.y,
+        'atoms' : datapoint.atomic_numbers.int(),
+        'structure' : datapoint.pos,
         'forces' : datapoint.force
       }
-  
       
   # free up memory
   del s2ef_dataset
