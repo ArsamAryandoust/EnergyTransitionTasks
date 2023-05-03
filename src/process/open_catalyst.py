@@ -179,6 +179,7 @@ def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str,
 def process_oc20_s2ef(config_opencat: dict, save: bool):
   """
   """  
+  print('\nProcessing OC20_S2EF.\n')
   
   # create all relevant data paths
   p_train = config_opencat['path_to_data_raw_oc20_s2ef_train']
@@ -189,9 +190,9 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
 
   
   # Create training data from all in distribution datasets
-  config_opencat['subsample_frac'] *= 0.1
+  config_opencat['subsample_frac'] *= 0.01
   s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
-  config_opencat['subsample_frac'] *= 10
+  config_opencat['subsample_frac'] *= 100
   
   if save:
     save_data(config_opencat, s2ef_data_dict, 
@@ -217,6 +218,7 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
 def process_oc20_is2res(config_opencat: dict, save: bool):
   """
   """
+  print('\nProcessing OC20_IS2RES.\n')
   
   # create all relevant data paths
   p_train = config_opencat['path_to_data_raw_oc20_is2res_train']
@@ -255,6 +257,7 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
 def process_oc22_s2ef(config_opencat: dict, save: bool):
   """
   """
+  print('\nProcessing OC22_S2EF.\n')
   
   # create all relevant data paths
   p_train = config_opencat['path_to_data_raw_oc22_s2ef_train']
@@ -287,6 +290,7 @@ def process_oc22_s2ef(config_opencat: dict, save: bool):
 def process_oc22_is2res(config_opencat: dict, save: bool):
   """
   """
+  print('\nProcessing OC22_IS2RES.\n')
   
   # create all relevant data paths
   p_train = config_opencat['path_to_data_raw_oc22_is2res_train']
