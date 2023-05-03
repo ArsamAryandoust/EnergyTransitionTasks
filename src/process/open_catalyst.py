@@ -39,7 +39,7 @@ def process_all_datasets(config: dict, save: bool):
       
       
 
-def create_meta_data(config_OC: dict, save: bool) -> pd.DataFrame:
+def create_meta_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   """
   """
   
