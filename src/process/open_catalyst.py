@@ -2,6 +2,7 @@ import os
 import gc
 import json
 
+from tqdm import tqdm
 import ocpmodels
 from config.load_oc import config_OC
 from ocpmodels.datasets import TrajectoryLmdbDataset, SinglePointLmdbDataset
@@ -73,7 +74,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     s2ef_dataset = load_dataset(path)
     
     # iterate over all datapoints
-    for datapoint in s2ef_dataset:
+    for datapoint in tqdm(s2ef_dataset):
       
       # save datapoint information in results dictionary
       s2ef_data_dict[id_counter] = {
