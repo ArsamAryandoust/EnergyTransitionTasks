@@ -22,6 +22,7 @@ def process_all_datasets(config: dict, save: bool):
     
     # do data processing according to current subtask
     if subtask == 'oc20_s2ef':
+      config_opencat['subsample_frac'] *= 0.1
       process_oc20_s2ef(config_opencat, save)
       
     elif subtask == 'oc20_is2res':
