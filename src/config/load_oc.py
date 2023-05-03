@@ -117,6 +117,10 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   
   ### Set paths to miscellaneous meta data ###
   
+  # set path to periodic table data
+  config_opencat['path_to_data_raw_periodic_table'] = (
+    config_opencat['path_to_data_raw'] + 'PubChemElements_all.csv')  
+  
   # set path to Bader charge data for oc20
   config_opencat['path_to_data_raw_oc20_bader'] = (
     config_opencat['path_to_data_raw_oc20'] + 'oc20_bader_data/bader/')  
