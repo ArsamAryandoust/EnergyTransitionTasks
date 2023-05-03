@@ -20,6 +20,9 @@ def process_all_datasets(config: dict, save: bool):
     # augment conigurations with additional information
     config_opencat = config_OC(config, subtask, save)
     
+    # create meta data
+    _ = create_meta_data(config_opencat, save)
+    
     # do data processing according to current subtask
     if subtask == 'oc20_s2ef':
       process_oc20_s2ef(config_opencat, save)
@@ -32,6 +35,31 @@ def process_all_datasets(config: dict, save: bool):
       
     elif subtask == 'oc22_is2res':
       process_oc22_is2res(config_opencat, save)
+      
+      
+
+def create_meta_data(config_OC: dict, save: bool) -> pd.DataFrame:
+  """
+  """
+  
+  # load periodic table
+  df_periodic_table = pd.read_csv(
+    config_opencat['path_to_data_raw_periodic_table'])
+  
+  # set AtomicNumber column as index
+  df_periodic_table = df_periodic_table.set_index(['AtomicNumber'])
+  
+  # transpose the dataframe
+  df_periodic_table = df_periodic_table.transpose()
+  
+  # set filename
+  saving_path = config_opencat['path_to_data_metadata'] + 'periodic_table.csv'
+  
+  if save:
+    # save file
+    df_periodic_table.to_csv(saving_path)
+    
+  return df_periodic_table    
       
       
       
