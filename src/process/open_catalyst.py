@@ -22,7 +22,7 @@ def process_all_datasets(config: dict, save: bool):
     config_opencat = config_OC(config, subtask, save)
     
     # create meta data
-    _ = create_meta_data(config_opencat, save)
+    _ = create_add_data(config_opencat, save)
     
     # do data processing according to current subtask
     if subtask == 'oc20_s2ef':
@@ -39,7 +39,7 @@ def process_all_datasets(config: dict, save: bool):
       
       
 
-def create_meta_data(config_opencat: dict, save: bool) -> pd.DataFrame:
+def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   """
   """
   
@@ -112,7 +112,7 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
       # save datapoint information in results dictionary
       is2res_data_dict[id_counter] = {
         'relexed_energy' : datapoint.y_relaxed,
-        'atoms' : datapoint.atomic_numbers.int().tolist(),
+        'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
         'initial_structure' : datapoint.pos.tolist(),
         'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
       }
@@ -157,7 +157,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
       # save datapoint information in results dictionary
       s2ef_data_dict[id_counter] = {
         'energy' : datapoint.y,
-        'atoms' : datapoint.atomic_numbers.int().tolist(),
+        'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
         'structure' : datapoint.pos.tolist(),
         'forces' : datapoint.force.tolist()
       }
