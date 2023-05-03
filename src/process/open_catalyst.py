@@ -83,9 +83,9 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
       # save datapoint information in results dictionary
       is2res_data_dict[id_counter] = {
         'relexed_energy' : datapoint.y_relaxed,
-        'atoms' : datapoint.atomic_numbers.int(),
-        'initial_structure' : datapoint.pos,
-        'relaxed_strucutre' : datapoint.pos_relaxed
+        'atoms' : datapoint.atomic_numbers.int().numpy(),
+        'initial_structure' : datapoint.pos.numpy(),
+        'relaxed_strucutre' : datapoint.pos_relaxed.numpy()
       }
       
       # increment ID counter
@@ -128,9 +128,9 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
       # save datapoint information in results dictionary
       s2ef_data_dict[id_counter] = {
         'energy' : datapoint.y,
-        'atoms' : datapoint.atomic_numbers.int(),
-        'structure' : datapoint.pos,
-        'forces' : datapoint.force
+        'atoms' : datapoint.atomic_numbers.int().numpy(),
+        'structure' : datapoint.pos.numpy(),
+        'forces' : datapoint.force.numpy()
       }
       
       # increment ID counter
