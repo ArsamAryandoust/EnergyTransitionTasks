@@ -167,7 +167,7 @@ def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str,
     save_dict = dict((k, data_dict[k]) for k in samples)
     
     # set path for saving
-    filename = name_base + '_' + index + '.json'
+    filename = name_base + '_' + str(index) + '.json'
     saving_path = path_to_folder + filename
     
     # save to json file
