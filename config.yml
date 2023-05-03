@@ -81,7 +81,6 @@ OpenCatalyst:
   subsample_frac: 0.2
   data_per_file: 20_000
   
-  
 Polianna:
   subtask_list : ['article_level', 'text_level']
   data_col_list : ['Date created', 'Treaty', 'Text', 'Tokens', 'Curation', 
