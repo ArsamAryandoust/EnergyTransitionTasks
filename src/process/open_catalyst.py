@@ -150,8 +150,9 @@ def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str,
   """
   
   # create shuffled list of ordered integers
+  random_list = list(range(len(data_dict)))
   random.seed(config_opencat['seed'])
-  random_list = random.shuffle(list(range(len(data_dict))))
+  random.shuffle(random_list)
   
   # create list of data_per_file sized samples
   sample_list = []
