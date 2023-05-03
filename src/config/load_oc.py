@@ -117,6 +117,10 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   
   ### Set paths to miscellaneous meta data ###
   
+  # set path to periodic table data
+  config_opencat['path_to_data_raw_periodic_table'] = (
+    config_opencat['path_to_data_raw'] + 'PubChemElements_all.csv')  
+  
   # set path to Bader charge data for oc20
   config_opencat['path_to_data_raw_oc20_bader'] = (
     config_opencat['path_to_data_raw_oc20'] + 'oc20_bader_data/bader/')  
@@ -143,10 +147,10 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   
   config_opencat['path_to_data'] = (
     config['general']['path_to_data'] + 'OpenCatalyst/')
+  config_opencat['path_to_data_metadata'] = (
+    config_opencat['path_to_data'] + 'metadata/')
   config_opencat['path_to_data_subtask'] = (
     config_opencat['path_to_data'] + '{}/'.format(subtask))
-  config_opencat['path_to_data_subtask_add'] = (
-    config_opencat['path_to_data_subtask'] + 'additional/')
   config_opencat['path_to_data_subtask_train'] = (
     config_opencat['path_to_data_subtask'] + 'training/')
   config_opencat['path_to_data_subtask_val'] = (
@@ -155,12 +159,12 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_subtask'] + 'testing/')
   
   
-  
   ### Create saving folder structure ###
   if save:
     
     # create directory if not existent for entire task    
     check_create_dir(config_opencat['path_to_data'])
+    check_create_dir(config_opencat['path_to_data_metadata'])
     
     # delete any previous results for this subtask
     if os.path.isdir(config_opencat['path_to_data_subtask']):
@@ -170,24 +174,15 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     for path in [config_opencat['path_to_data_subtask'],
       config_opencat['path_to_data_subtask_train'],
       config_opencat['path_to_data_subtask_val'],
-      config_opencat['path_to_data_subtask_test'],
-      config_opencat['path_to_data_subtask_add']]:
+      config_opencat['path_to_data_subtask_test']]:
       
       # create directory if not existent      
       check_create_dir(path)
           
-    
-  
-  
-  
-  
-  
-  
   
   ### Save some general values ###
   config_opencat['seed'] = config['general']['seed']
   config_opencat['subtask'] = subtask
-  
   
   
   return config_opencat

@@ -15,7 +15,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
   print("Shuffling processed {} data.".format(name))
   
   # iterate over all subtasks
-  for subtask in config[name]['subtask_list']:
+  for subtask in ['cities_43']: #config[name]['subtask_list']:
     
     # set some paths
     path_to_train = (config['general']['path_to_data'] 
@@ -50,40 +50,22 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
+        print("\nShuffling dataframe!")
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
-        # write csv fast
-        write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
+        # iterate over lists and write to csv
+        print("\nWriting dataframe to .csv again:")
+        for fname, n_samples in tqdm(zip(sampled_files, n_data_points_list)):
+          
+          # set full saving path argument 1
+          path_to_csv = path_to_folder + fname 
+          
+          # save df slice
+          df[:n_samples].to_csv(path_to_csv, index=False)
         
+          # shorten df
+          df = df[n_samples:]
         
-
-def write_csv_fast(path_to_folder: str, df: pd.DataFrame, 
-  sampled_files: list[str], n_data_points_list: list[int]):
-  """
-  """
-
-  # define function to parallelize
-  def write_csv(path_to_csv, df_slice):
-    
-    # save df slice
-    df_slice.to_csv(path_to_csv, index=False)
-  
-  # open parall execution thread pool
-  with ThreadPoolExecutor() as executor:
-    
-    # iterate over lists and add to execution pool
-    for fname, n_samples in zip(sampled_files, n_data_points_list):
-      
-      # set full saving path argument 1
-      path_to_csv = path_to_folder + fname
-      
-      # execute
-      executor.submit(write_csv, path_to_csv, df[:n_samples])
-      
-      # shorten df
-      df = df[n_samples:]
-      
-      
       
 def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   """
@@ -92,13 +74,7 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   # define function to parallelize
   def load_csv(path_to_csv):
     
-    # read csv
-    df = pd.read_csv(path_to_csv)
-    
-    # remove csv. This makes writing faster
-    os.remove(path_to_csv)
-    
-    return df
+    return pd.read_csv(path_to_csv)
 
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
