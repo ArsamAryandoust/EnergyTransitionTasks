@@ -2,6 +2,7 @@ import os
 import gc
 import json
 import random
+import pandas as pd
 
 from tqdm import tqdm
 import ocpmodels
