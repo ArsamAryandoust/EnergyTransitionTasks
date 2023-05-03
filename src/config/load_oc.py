@@ -148,7 +148,7 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
   config_opencat['path_to_data'] = (
     config['general']['path_to_data'] + 'OpenCatalyst/')
   config_opencat['path_to_data_metadata'] = (
-    config_opencat['path_to_data'] + 'metadata/')
+    config_opencat['path_to_data'] + 'additional/')
   config_opencat['path_to_data_subtask'] = (
     config_opencat['path_to_data'] + '{}/'.format(subtask))
   config_opencat['path_to_data_subtask_train'] = (

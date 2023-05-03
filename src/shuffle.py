@@ -70,7 +70,8 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
 def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   """
   """
-  
+  print("\nLoading csv files!")
+    
   # define function to parallelize
   def load_csv(path_to_csv):
     
@@ -100,6 +101,7 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
       n_data_points_list.append(len(f.result().index))
       dfs.append(f.result())
   
+  print("\nConcatenating dataframes.")
   # concatenate dataframes
   df_result = pd.concat(dfs, ignore_index=True, copy=False)
   

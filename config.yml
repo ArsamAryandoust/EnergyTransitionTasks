@@ -79,7 +79,7 @@ ClimART:
     
 OpenCatalyst:
   subtask_list : ['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
-  subsample_frac: 0.1
+  subsample_frac: 0.01
   data_per_file: 100_000
   
   
