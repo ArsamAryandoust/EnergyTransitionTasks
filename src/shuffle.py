@@ -5,6 +5,7 @@ import random
 import gc
 from concurrent.futures import ThreadPoolExecutor
 
+
 def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1, 
   n_files_simultan=600):
   """
@@ -26,7 +27,7 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
     
     
     # do this for train, val and test datasets separately
-    for path_to_folder in [path_to_test]: #[path_to_train, path_to_val, path_to_test]:
+    for path_to_folder in [path_to_train, path_to_val, path_to_test]:
     
       # get a list of files in currently iterated dataset (train,val, or test)
       file_list = os.listdir(path_to_folder)
@@ -49,88 +50,23 @@ def shuffle_data_files(name: str, config: dict, n_iter_shuffle=1,
         df, n_data_points_list = load_csv_fast(path_to_folder, sampled_files)
         
         # shuffle
+        print("\nShuffling dataframe!")
         df = df.sample(frac=1, random_state=config['general']['seed'])
         
-        # write csv fast
-        write_csv_fast(path_to_folder, df, sampled_files, n_data_points_list)
-        
-        
-"""        
-        # declare empty dataframe
-        df = pd.DataFrame()
-        
-        # declare empty list to save number of data points of each file
-        n_data_points_list = []
-        
-        
-        # iterate over all sampled files
-        for filename in sampled_files:
-        
-          # create path to iterated file
-          path_to_csv = path_to_folder + filename
+        # iterate over lists and write to csv
+        print("\nWriting dataframe to .csv again:")
+        for fname, n_samples in tqdm(zip(sampled_files, n_data_points_list)):
           
-          # import iterated file
-          df_csv = pd.read_csv(path_to_csv)
+          # set full saving path argument 1
+          path_to_csv = path_to_folder + fname 
           
-          # track the number of data points available in file
-          n_data_points_list.append(len(df_csv.index))
-          
-          # append imported file to dataframe
-          df = pd.concat([df, df_csv])
+          # save df slice
+          df[:n_samples].to_csv(path_to_csv, index=False)
         
-        # free up memory
-        del df_csv
-        gc.collect()
+          # shorten df
+          df = df[n_samples:]
         
-        # shuffle
-        df = df.sample(frac=1, random_state=config['general']['seed'])
-        
-        # iterate over sampled files and n_data_points simultaneously
-        for filename, n_data_points in zip(sampled_files, n_data_points_list):
-        
-          # create path to iterated file
-          path_to_csv = path_to_folder + filename
-          
-          # save shuffled slice
-          df[:n_data_points].to_csv(path_to_csv, index=False)
-          
-          # remove saved slice
-          df = df[n_data_points:]
-            
-        # update progress bar
-        pbar.update(1) 
-"""
-        
-
-def write_csv_fast(path_to_folder: str, df: pd.DataFrame, 
-  sampled_files: list[str], n_data_points_list: list[int]):
-  """
-  """
-
-  # define function to parallelize
-  def write_csv(path_to_csv, df_slice):
-    
-    # save df slice
-    df_slice.to_csv(path_to_csv, index=False)
-  
-  # open parall execution thread pool
-  with ThreadPoolExecutor() as executor:
-    
-    # iterate over lists and add to execution pool
-    for fname, n_samples in zip(sampled_files, n_data_points_list):
       
-      # set full saving path argument 1
-      path_to_csv = path_to_folder + fname
-      
-      # execute
-      executor.submit(write_csv, path_to_csv, df[:n_samples])
-      
-      # shorten df
-      df = df[n_samples:]
-      
-      
-      
-  
 def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   """
   """
@@ -138,13 +74,7 @@ def load_csv_fast(path_to_folder: str, filenames: list[str]) -> pd.DataFrame:
   # define function to parallelize
   def load_csv(path_to_csv):
     
-    # read csv
-    df = pd.read_csv(path_to_csv)
-    
-    # remove csv. This makes writing faster
-    os.remove(path_to_csv)
-    
-    return df
+    return pd.read_csv(path_to_csv)
 
   # open parall execution thread pool
   with ThreadPoolExecutor() as executor:
