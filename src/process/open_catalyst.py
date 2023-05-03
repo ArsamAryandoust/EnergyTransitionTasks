@@ -144,10 +144,6 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
   p_val_ood_ads = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_ads']
   p_val_ood_cat = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_cat']
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_both']
-  #test_id_path = config_opencat['path_to_data_raw_oc20_s2ef_test_id']
-  #test_ood_ads_path = config_opencat['path_to_data_raw_oc20_s2ef_test_ood_ads']
-  #test_ood_cat_path = config_opencat['path_to_data_raw_oc20_s2ef_test_ood_cat']
-  #test_ood_both_path = config_opencat['path_to_data_raw_oc20_s2ef_test_ood_both']
 
   
   # Create training data from all in distribution datasets
@@ -168,11 +164,6 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
   p_val_ood_ads = config_opencat['path_to_data_raw_oc20_is2res_val_ood_ads']
   p_val_ood_cat = config_opencat['path_to_data_raw_oc20_is2res_val_ood_cat']
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_is2res_val_ood_both']
-  #test_id_path = config_opencat['path_to_data_raw_oc20_is2res_test_id']
-  #test_ood_ads_path = config_opencat['path_to_data_raw_oc20_is2res_test_ood_ads']
-  #test_ood_cat_path = config_opencat['path_to_data_raw_oc20_is2res_test_ood_cat']
-  #test_ood_both_path = config_opencat['path_to_data_raw_oc20_is2res_test_ood_both']
-  #test_challenge_path = config_opencat['path_to_data_raw_oc20_is2res_test_challenge']
 
 
   # Create training data from all in distribution datasets
@@ -192,8 +183,6 @@ def process_oc22_s2ef(config_opencat: dict, save: bool):
   p_train = config_opencat['path_to_data_raw_oc22_s2ef_train']
   p_val_id = config_opencat['path_to_data_raw_oc22_s2ef_val_id']
   p_val_ood = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
-  #test_id_path = config_opencat['path_to_data_raw_oc22_s2ef_test_id']
-  #test_ood_path = config_opencat['path_to_data_raw_oc22_s2ef_test_ood']
 
   # Create training data from all in distribution datasets
   s2ef_data_dict = create_s2ef_data(config_opencat, [p_train, p_val_id])
@@ -210,9 +199,6 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   p_train = config_opencat['path_to_data_raw_oc22_is2res_train']
   p_val_id = config_opencat['path_to_data_raw_oc22_is2res_val_id']
   p_val_ood = config_opencat['path_to_data_raw_oc22_is2res_val_ood']
-  #test_id_path = config_opencat['path_to_data_raw_oc22_is2res_test_id']
-  #test_ood_path = config_opencat['path_to_data_raw_oc22_is2res_test_ood']
-  
   
   # Create training data from all in distribution datasets
   is2res_data_dict = create_is2res_data(config_opencat, [p_train, p_val_id])
