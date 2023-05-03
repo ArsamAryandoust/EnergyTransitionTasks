@@ -32,8 +32,9 @@ def process_all_datasets(config: dict, save: bool):
       
     elif subtask == 'oc22_is2res':
       process_oc22_is2res(config_opencat, save)
-
-
+      
+      
+      
 def load_dataset(path:str, single_lmdb:bool=False) -> (
   ocpmodels.datasets.lmdb_dataset.SinglePointLmdbDataset | 
   ocpmodels.datasets.lmdb_dataset.TrajectoryLmdbDataset):
@@ -49,6 +50,7 @@ def load_dataset(path:str, single_lmdb:bool=False) -> (
     dataset = TrajectoryLmdbDataset({"src": path})
       
   return dataset    
+  
   
   
 def create_is2res_data(config_opencat: dict, path_list: list[str], 
@@ -86,11 +88,15 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
         'relaxed_strucutre' : datapoint.pos_relaxed
       }
       
+      # increment ID counter
+      id_counter += 1
+      
   # free up memory
   del is2res_dataset
   gc.collect()
   
   return is2res_data_dict
+
 
 
 def create_s2ef_data(config_opencat: dict, path_list: list[str]):
@@ -127,11 +133,15 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
         'forces' : datapoint.force
       }
       
+      # increment ID counter
+      id_counter += 1
+      
   # free up memory
   del s2ef_dataset
   gc.collect()
   
   return s2ef_data_dict
+  
   
   
 def process_oc20_s2ef(config_opencat: dict, save: bool):
@@ -175,6 +185,7 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
     [p_val_ood_ads, p_val_ood_cat, p_val_ood_both], single_lmdb=True)
     
   
+  
 def process_oc22_s2ef(config_opencat: dict, save: bool):
   """
   """
@@ -189,6 +200,7 @@ def process_oc22_s2ef(config_opencat: dict, save: bool):
   
   # create validation data from out-of-distribution datasets
   s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_ood])
+  
   
   
 def process_oc22_is2res(config_opencat: dict, save: bool):

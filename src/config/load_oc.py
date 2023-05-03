@@ -155,7 +155,6 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_subtask'] + 'testing/')
   
   
-  
   ### Create saving folder structure ###
   if save:
     
@@ -176,18 +175,10 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
       # create directory if not existent      
       check_create_dir(path)
           
-    
-  
-  
-  
-  
-  
-  
   
   ### Save some general values ###
   config_opencat['seed'] = config['general']['seed']
   config_opencat['subtask'] = subtask
-  
   
   
   return config_opencat
