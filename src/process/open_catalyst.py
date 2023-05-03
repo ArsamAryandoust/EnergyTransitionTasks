@@ -22,7 +22,6 @@ def process_all_datasets(config: dict, save: bool):
     
     # do data processing according to current subtask
     if subtask == 'oc20_s2ef':
-      config_opencat['subsample_frac'] *= 0.1
       process_oc20_s2ef(config_opencat, save)
       
     elif subtask == 'oc20_is2res':
@@ -190,7 +189,9 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
 
   
   # Create training data from all in distribution datasets
+  config_opencat['subsample_frac'] *= 0.1
   s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  config_opencat['subsample_frac'] *= 10
   
   if save:
     save_data(config_opencat, s2ef_data_dict, 
