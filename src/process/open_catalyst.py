@@ -3,7 +3,7 @@ import gc
 import json
 import random
 import pandas as pd
-
+import numpy as np
 from tqdm import tqdm
 import ocpmodels
 from config.load_oc import config_OC
@@ -38,6 +38,170 @@ def process_all_datasets(config: dict, save: bool):
       process_oc22_is2res(config_opencat, save)
       
       
+      
+def process_oc20_s2ef(config_opencat: dict, save: bool):
+  """
+  """  
+  print('\nProcessing OC20_S2EF.\n')
+  
+  # create all relevant data paths
+  p_train = config_opencat['path_to_data_raw_oc20_s2ef_train']
+  p_val_id = config_opencat['path_to_data_raw_oc20_s2ef_val_id']
+  p_val_ood_ads = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_ads']
+  p_val_ood_cat = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_cat']
+  p_val_ood_both = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_both']
+
+  
+  # Create training data from all in distribution datasets
+  config_opencat['subsample_frac'] *= 0.01
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  config_opencat['subsample_frac'] *= 100
+  n_train = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create validation data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
+  n_val = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create testing data from out-of-distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, 
+    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both])
+  n_test = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
+  print_split_results(n_train, n_val, n_test)
+  
+  
+  
+def process_oc20_is2res(config_opencat: dict, save: bool):
+  """
+  """
+  print('\nProcessing OC20_IS2RES.\n')
+  
+  # create all relevant data paths
+  p_train = config_opencat['path_to_data_raw_oc20_is2res_train']
+  p_val_id = config_opencat['path_to_data_raw_oc20_is2res_val_id']
+  p_val_ood_ads = config_opencat['path_to_data_raw_oc20_is2res_val_ood_ads']
+  p_val_ood_cat = config_opencat['path_to_data_raw_oc20_is2res_val_ood_cat']
+  p_val_ood_both = config_opencat['path_to_data_raw_oc20_is2res_val_ood_both']
+
+
+  # Create training data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_train], single_lmdb=True)
+  n_train = len(is2res_data_dict)
+    
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+    
+  # Create validation data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_val_id], single_lmdb=True)
+  n_val = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create testing data from out-of-distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both], single_lmdb=True)
+  n_test = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
+  print_split_results(n_train, n_val, n_test)
+  
+  
+  
+def process_oc22_s2ef(config_opencat: dict, save: bool):
+  """
+  """
+  print('\nProcessing OC22_S2EF.\n')
+  
+  # create all relevant data paths
+  p_train = config_opencat['path_to_data_raw_oc22_s2ef_train']
+  p_val_id = config_opencat['path_to_data_raw_oc22_s2ef_val_id']
+  p_val_ood = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
+
+  # Create training data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  n_train = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create validation data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
+  n_val = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+      
+  # create validation data from out-of-distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_ood])
+  n_test = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+      
+  print_split_results(n_train, n_val, n_test)    
+  
+  
+  
+def process_oc22_is2res(config_opencat: dict, save: bool):
+  """
+  """
+  print('\nProcessing OC22_IS2RES.\n')
+  
+  # create all relevant data paths
+  p_train = config_opencat['path_to_data_raw_oc22_is2res_train']
+  p_val_id = config_opencat['path_to_data_raw_oc22_is2res_val_id']
+  p_val_ood = config_opencat['path_to_data_raw_oc22_is2res_val_ood']
+  
+  # Create training data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, [p_train])
+  n_train = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create training data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, [p_val_id])
+  n_val = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create validation data from out-of-distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, [p_val_ood])
+  n_test = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
+  
+  print_split_results(n_train, n_val, n_test)      
+
 
 def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   """
@@ -155,9 +319,11 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
   """
   """
 
-  # create empty dictionary to save results
+  # create empty dictionary to save results and initialize minimums and maximums
   is2res_data_dict = {}
   id_counter = 0
+  max_atoms = 0
+  min_atoms = 1e10
   
   # iterate over passed path list
   for path in path_list:
@@ -170,6 +336,10 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
     n_samples = int(config_opencat['subsample_frac'] * n_data)
     random.seed(config_opencat['seed'])
     sample_list = random.sample(range(n_data), n_samples)
+    
+    # create array to calc min and max values
+    atoms_array = np.zeros((len(sample_list),))
+    entry_counter = 0
     
     # iterate over all datapoints
     for data_index in tqdm(sample_list):
@@ -185,17 +355,34 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
         'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
       }
       
-      # increment ID counter
+      # save number of atoms in system
+      atoms_array[entry_counter] = datapoint.natoms
+      
+      # increment counters
       id_counter += 1
+      entry_counter += 1
+            
+    # calculate min and max number of atoms
+    min_atoms_array = atoms_array.min()
+    max_atoms_array = atoms_array.max()
+      
+    # update min and max
+    if min_atoms_array < min_atoms:
+      min_atoms = int(min_atoms_array)
+    if max_atoms_array > max_atoms:
+      max_atoms = int(max_atoms_array)
+    
       
   # free up memory
   del is2res_dataset
   gc.collect()
   
-  return is2res_data_dict
+  print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
   
-    
-    
+  return is2res_data_dict
+
+
+
 def create_s2ef_data(config_opencat: dict, path_list: list[str]):
   """
   """
@@ -203,6 +390,8 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
   # create empty dictionary to save results
   s2ef_data_dict = {}
   id_counter = 0
+  max_atoms = 0
+  min_atoms = 1e10
   
   # iterate over passed path list
   for path in path_list:
@@ -215,6 +404,10 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
     n_samples = int(config_opencat['subsample_frac'] * n_data)
     random.seed(config_opencat['seed'])
     sample_list = random.sample(range(n_data), n_samples)
+    
+    # create array to calc min and max values
+    atoms_array = np.zeros((len(sample_list),))
+    entry_counter = 0
     
     # iterate over all datapoints
     for data_index in tqdm(sample_list):
@@ -230,16 +423,32 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
         'forces' : datapoint.force.tolist()
       }
       
-      # increment ID counter
+      # save number of atoms in system
+      atoms_array[entry_counter] = datapoint.natoms
+      
+      # increment counters
       id_counter += 1
+      entry_counter += 1
+            
+    # calculate min and max number of atoms
+    min_atoms_array = atoms_array.min()
+    max_atoms_array = atoms_array.max()
+      
+    # update min and max
+    if min_atoms_array < min_atoms:
+      min_atoms = int(min_atoms_array)
+    if max_atoms_array > max_atoms:
+      max_atoms = int(max_atoms_array)
       
   # free up memory
   del s2ef_dataset
   gc.collect()
   
+  print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
+  
   return s2ef_data_dict
   
-  
+
   
 def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str, 
   name_base: str):
@@ -273,148 +482,18 @@ def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str,
   
   
   
-def process_oc20_s2ef(config_opencat: dict, save: bool):
-  """
-  """  
-  print('\nProcessing OC20_S2EF.\n')
-  
-  # create all relevant data paths
-  p_train = config_opencat['path_to_data_raw_oc20_s2ef_train']
-  p_val_id = config_opencat['path_to_data_raw_oc20_s2ef_val_id']
-  p_val_ood_ads = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_ads']
-  p_val_ood_cat = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_cat']
-  p_val_ood_both = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_both']
-
-  
-  # Create training data from all in distribution datasets
-  config_opencat['subsample_frac'] *= 0.01
-  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
-  config_opencat['subsample_frac'] *= 100
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_train'], 'training')
-  
-  # Create validation data from all in distribution datasets
-  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_val'], 'validation')
-  
-  # create testing data from out-of-distribution datasets
-  s2ef_data_dict = create_s2ef_data(config_opencat, 
-    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both])
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_test'], 'testing')
-  
-  
-  
-def process_oc20_is2res(config_opencat: dict, save: bool):
+def print_split_results(n_train: int, n_val: int, n_test: int):
   """
   """
-  print('\nProcessing OC20_IS2RES.\n')
   
-  # create all relevant data paths
-  p_train = config_opencat['path_to_data_raw_oc20_is2res_train']
-  p_val_id = config_opencat['path_to_data_raw_oc20_is2res_val_id']
-  p_val_ood_ads = config_opencat['path_to_data_raw_oc20_is2res_val_ood_ads']
-  p_val_ood_cat = config_opencat['path_to_data_raw_oc20_is2res_val_ood_cat']
-  p_val_ood_both = config_opencat['path_to_data_raw_oc20_is2res_val_ood_both']
-
-
-  # Create training data from all in distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, 
-    [p_train], single_lmdb=True)
-    
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_train'], 'training')
-    
-  # Create validation data from all in distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, 
-    [p_val_id], single_lmdb=True)
+  # set total number
+  n_total = n_train + n_val + n_test
   
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_val'], 'validation')
-  
-  # create testing data from out-of-distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, 
-    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both], single_lmdb=True)
-    
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_test'], 'testing')
-  
-  
-  
-def process_oc22_s2ef(config_opencat: dict, save: bool):
-  """
-  """
-  print('\nProcessing OC22_S2EF.\n')
-  
-  # create all relevant data paths
-  p_train = config_opencat['path_to_data_raw_oc22_s2ef_train']
-  p_val_id = config_opencat['path_to_data_raw_oc22_s2ef_val_id']
-  p_val_ood = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
-
-  # Create training data from all in distribution datasets
-  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_train'], 'training')
-  
-  # Create validation data from all in distribution datasets
-  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_val'], 'validation')
-      
-  # create validation data from out-of-distribution datasets
-  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_ood])
-  
-  if save:
-    save_data(config_opencat, s2ef_data_dict, 
-      config_opencat['path_to_data_subtask_test'], 'testing')
-      
-      
-  
-def process_oc22_is2res(config_opencat: dict, save: bool):
-  """
-  """
-  print('\nProcessing OC22_IS2RES.\n')
-  
-  # create all relevant data paths
-  p_train = config_opencat['path_to_data_raw_oc22_is2res_train']
-  p_val_id = config_opencat['path_to_data_raw_oc22_is2res_val_id']
-  p_val_ood = config_opencat['path_to_data_raw_oc22_is2res_val_ood']
-  
-  # Create training data from all in distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, [p_train])
-  
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_train'], 'training')
-  
-  # Create training data from all in distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, [p_val_id])
-  
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_val'], 'validation')
-  
-  # create validation data from out-of-distribution datasets
-  is2res_data_dict = create_is2res_data(config_opencat, [p_val_ood])
-  
-  if save:
-    save_data(config_opencat, is2res_data_dict, 
-      config_opencat['path_to_data_subtask_test'], 'testing')
-  
-  
-  
-  
+  # print
+  print("Training data   :   {}/{} {:.0%}".format(n_train, n_total, 
+      n_train/n_total),
+    "\nValidation data :   {}/{} {:.0%}".format(n_val, n_total,
+      n_val/n_total),
+    "\nTesting data    :   {}/{} {:.0%}".format(n_test, n_total,
+      n_test/n_total)
+  )
