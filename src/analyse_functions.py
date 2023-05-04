@@ -112,7 +112,9 @@ def ios_score(features, labels, features_to_skip=[], device='cpu'):
             feature_slice = slice[:, 0]
             delta_label = label_slice[1:] - label_slice[:-1]
             delta_feature = feature_slice[1:] - feature_slice[:-1]
-            delta = torch.arctan(torch.abs(delta_label/delta_feature))/(math.pi/2)
+            delta = delta_label/delta_feature
+            delta = delta[~torch.isnan(delta) & ~torch.isinf(delta)]
+            delta = torch.arctan(torch.abs(delta))/(math.pi/2)
             mean_delta = torch.mean(delta)
             mean_deltas[feature][label] = mean_delta
         
