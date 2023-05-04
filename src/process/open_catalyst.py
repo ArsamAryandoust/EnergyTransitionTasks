@@ -58,9 +58,13 @@ def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   df_ord_features = df_periodic_table.loc[config_opencat['ord_features']]
   df_onehot_features = df_periodic_table.loc[config_opencat['onehot_features']]
 
+
+  ### Process num_features ####
   # replace NaN entries in numeric features with zero
   df_num_features = df_num_features.fillna(0)
   
+  
+  ### Proecess ord_features ###
   # ordinally encode categorical features
   dict_encoding = {}
   for index in df_ord_features.index:
@@ -68,14 +72,52 @@ def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
     df_ord_features.loc[index] = codes
     dict_encoding[index] = list(uniques)
   
+  ### Process onehot_features ###
+  
+  # replace not available with 'unknown' category
+  df_onehot_features = df_onehot_features.fillna('unknown')
+  
+  # create list of oxidation state entries
+  list_ox_states = list(df_onehot_features.loc['OxidationStates'])
+
+  # process list and create unique entries list
+  dict_ox_states = {}
+  new_list_ox_states = []
+  for index, string in enumerate(list_ox_states):
+      list_entries = []
+      for entry in string.split(", "):
+          # second split necessary because of irregularity in one case
+          for entry_2 in entry.split(","):  
+              new_list_ox_states.append(entry_2)
+              list_entries.append(entry_2)
+      
+      dict_ox_states[index+1] = list_entries
+      
+  # create set and new index list
+  set_ox_states = set(new_list_ox_states)
+  new_index_list = []
+  for ox_state in set_ox_states:
+      new_index_list.append(ox_state)
+  new_index_list.sort()
+
+  # create new dataframe with one hot encodings
+  df_onehot_features_new = pd.DataFrame(0, index=new_index_list, 
+    columns=df_onehot_features.columns)
+  for col, value in dict_ox_states.items():
+      for index in value:
+          df_onehot_features_new.loc[index, col] = 1
+
+  # overwrite with new dataframe          
+  df_onehot_features = df_onehot_features_new
+  
   
   if save:
   
     # set saving paths
     p_table = config_opencat['path_to_data_metadata'] + 'periodic_table.csv'
-    p_num = config_opencat['path_to_data_metadata'] + 'numeric_features.csv'
-    p_ord = config_opencat['path_to_data_metadata'] + 'ordinal_features.csv'
-    p_onehot = config_opencat['path_to_data_metadata'] + 'onehot_features.csv'
+    p_num = config_opencat['path_to_data_metadata'] + 'numeric_feat.csv'
+    p_ord = config_opencat['path_to_data_metadata'] + 'ordinal_feat.csv'
+    p_onehot = config_opencat['path_to_data_metadata'] + 'onehot_ox_feat.csv'
     p_ord_enc = config_opencat['path_to_data_metadata'] + 'ordinal_enc.json'
     
     # save files
