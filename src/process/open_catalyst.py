@@ -272,9 +272,9 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
       
     # update min and max
     if min_atoms_array < min_atoms:
-      min_atoms = min_atoms_array
+      min_atoms = int(min_atoms_array)
     if max_atoms_array > max_atoms:
-      max_atoms = max_atoms_array
+      max_atoms = int(max_atoms_array)
       
   # free up memory
   del s2ef_dataset
