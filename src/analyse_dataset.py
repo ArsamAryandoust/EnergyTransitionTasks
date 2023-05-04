@@ -24,7 +24,7 @@ def analyse(config: dict, name: str, subtask: str):
     results_dir.mkdir(parents=True, exist_ok=True)
 
     # load data
-    dataset = load_data.load(name, subtask, sample_only=False, form="tabular", path_to_data=path_to_data, path_to_token=path_to_token)
+    dataset = load_data.load(name, subtask, sample_only=True, form="tabular", path_to_data=path_to_data, path_to_token=path_to_token)
 
     print("Calculating stOOD score...")
     val_stood, test_stood, val_js, test_js = stood_score(torch.from_numpy(dataset.train[0]), torch.from_numpy(dataset.val[0]), torch.from_numpy(dataset.test[0]))
@@ -40,7 +40,7 @@ def analyse(config: dict, name: str, subtask: str):
 
     plot_scores(train_js, "Features", "Training simb score", results_dir / "simb_train.svg")
     plot_scores(val_js, "Features", "Validation simb score", results_dir / "simb_val.svg")
-    plot_scores(test_js, "Features", "Testing simb score", results_dir / "aimb_test.svg")
+    plot_scores(test_js, "Features", "Testing simb score", results_dir / "simb_test.svg")
     print("Done!")
 
     print("Calculating ios score...")

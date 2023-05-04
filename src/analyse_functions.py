@@ -1,11 +1,12 @@
 import math
 import torch
-import torch.distributions as distributions
 import seaborn as sns
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 LOG_EPSILON = 1e-39
+sns.set(style='darkgrid')
+
 
 def remove_outliers(x):
     mean, std = torch.mean(x), torch.std(x)
@@ -26,10 +27,10 @@ def compute_js_divergence(p, q):
 
 def plot_scores(scores, x_label, y_label, path, show=False):
     indices = [i for i in range(len(scores))]
-    plt.bar(indices, scores)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    fig, ax = plt.subplots()
     sns.set(style='darkgrid')
+    ax.bar(indices, scores)
+    ax.set(xlabel=x_label, ylabel=y_label)
     plt.tight_layout()
     plt.savefig(path)
     if show:
@@ -37,8 +38,8 @@ def plot_scores(scores, x_label, y_label, path, show=False):
 
 def plot_heatmap(x, x_label, y_label, path, show=False):
     ax = sns.heatmap(x.numpy(), annot=True)
-    ax.set(xlabel=x_label, ylabel=y_label)
     sns.set(style='darkgrid')
+    ax.set(xlabel=x_label, ylabel=y_label)
     plt.tight_layout()
     plt.savefig(path)
     if show:
