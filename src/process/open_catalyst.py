@@ -115,9 +115,9 @@ def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   
     # set saving paths
     p_table = config_opencat['path_to_data_metadata'] + 'periodic_table.csv'
-    p_num = config_opencat['path_to_data_metadata'] + 'numeric_features.csv'
-    p_ord = config_opencat['path_to_data_metadata'] + 'ordinal_features.csv'
-    p_onehot = config_opencat['path_to_data_metadata'] + 'onehot_features.csv'
+    p_num = config_opencat['path_to_data_metadata'] + 'numeric_feat.csv'
+    p_ord = config_opencat['path_to_data_metadata'] + 'ordinal_feat.csv'
+    p_onehot = config_opencat['path_to_data_metadata'] + 'onehot_ox_feat.csv'
     p_ord_enc = config_opencat['path_to_data_metadata'] + 'ordinal_enc.json'
     
     # save files
