@@ -3,7 +3,7 @@ import gc
 import json
 import random
 import pandas as pd
-
+import numpy as np
 from tqdm import tqdm
 import ocpmodels
 from config.load_oc import config_OC
@@ -155,9 +155,11 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
   """
   """
 
-  # create empty dictionary to save results
+  # create empty dictionary to save results and initialize minimums and maximums
   is2res_data_dict = {}
   id_counter = 0
+  max_atoms = 0
+  min_atoms = 1e10
   
   # iterate over passed path list
   for path in path_list:
@@ -170,6 +172,10 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
     n_samples = int(config_opencat['subsample_frac'] * n_data)
     random.seed(config_opencat['seed'])
     sample_list = random.sample(range(n_data), n_samples)
+    
+    # create array to calc min and max values
+    atoms_array = np.zeros((len(sample_list),))
+    entry_counter = 0
     
     # iterate over all datapoints
     for data_index in tqdm(sample_list):
@@ -185,12 +191,29 @@ def create_is2res_data(config_opencat: dict, path_list: list[str],
         'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
       }
       
-      # increment ID counter
+      # save number of atoms in system
+      atoms_array[entry_counter] = datapoint.natoms
+      
+      # increment counters
       id_counter += 1
+      entry_counter += 1
+            
+    # calculate min and max number of atoms
+    min_atoms_array = atoms_array.min()
+    max_atoms_array = atoms_array.max()
+      
+    # update min and max
+    if min_atoms_array < min_atoms:
+      min_atoms = min_atoms_array
+    if max_atoms_array > max_atoms:
+      max_atoms = max_atoms_array
+    
       
   # free up memory
   del is2res_dataset
   gc.collect()
+  
+  print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
   
   return is2res_data_dict
   
@@ -203,6 +226,8 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
   # create empty dictionary to save results
   s2ef_data_dict = {}
   id_counter = 0
+  max_atoms = 0
+  min_atoms = 1e10
   
   # iterate over passed path list
   for path in path_list:
@@ -215,6 +240,10 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
     n_samples = int(config_opencat['subsample_frac'] * n_data)
     random.seed(config_opencat['seed'])
     sample_list = random.sample(range(n_data), n_samples)
+    
+    # create array to calc min and max values
+    atoms_array = np.zeros((len(sample_list),))
+    entry_counter = 0
     
     # iterate over all datapoints
     for data_index in tqdm(sample_list):
@@ -230,12 +259,28 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str]):
         'forces' : datapoint.force.tolist()
       }
       
-      # increment ID counter
+      # save number of atoms in system
+      atoms_array[entry_counter] = datapoint.natoms
+      
+      # increment counters
       id_counter += 1
+      entry_counter += 1
+            
+    # calculate min and max number of atoms
+    min_atoms_array = atoms_array.min()
+    max_atoms_array = atoms_array.max()
+      
+    # update min and max
+    if min_atoms_array < min_atoms:
+      min_atoms = min_atoms_array
+    if max_atoms_array > max_atoms:
+      max_atoms = max_atoms_array
       
   # free up memory
   del s2ef_dataset
   gc.collect()
+  
+  print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
   
   return s2ef_data_dict
   
