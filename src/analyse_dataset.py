@@ -3,6 +3,48 @@ import torch
 from pathlib import Path
 import csv
 from analyse_functions import simb_score, stood_score, ios_score, plot_scores, plot_heatmap
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import KernelPCA
+
+def standardize(dataset):
+    X_train, Y_train = dataset.train
+    X_val, Y_val = dataset.val
+    X_test, Y_test = dataset.test
+
+    X_scaler = StandardScaler(copy=False)
+    Y_scaler = StandardScaler(copy=False)
+
+    X_train = X_scaler.fit_transform(X_train)
+    Y_train = Y_scaler.fit_transform(Y_train)
+    dataset.train = X_train, Y_train
+
+    X_val = X_scaler.transform(X_val)
+    Y_val = Y_scaler.transform(Y_val)
+    dataset.val = X_val, Y_val
+
+    X_test = X_scaler.transform(X_test)
+    Y_test = Y_scaler.transform(Y_test)
+    dataset.test = X_test, Y_test
+
+    return dataset
+
+def apply_PCA(dataset):
+    X_train, Y_train = dataset.train
+    X_val, Y_val = dataset.val
+    X_test, Y_test = dataset.test
+    pca = KernelPCA(n_components=X_train.shape[1], copy_X=False, n_jobs=-1, kernel="rbf")
+
+    print("Fitting...")
+    pca.fit(X_train[:100])
+    print("Transforming...")
+    X_train = pca.transform(X_train)
+    X_val = pca.transform(X_val)
+    X_test = pca.transform(X_test)
+    dataset.train = X_train, Y_train
+    dataset.val = X_val, Y_val
+    dataset.test = X_test, Y_test
+
+    return dataset
 
 
 def analyse(config: dict, name: str, subtask: str):
@@ -25,6 +67,14 @@ def analyse(config: dict, name: str, subtask: str):
 
     # load data
     dataset = load_data.load(name, subtask, sample_only=True, form="tabular", path_to_data=path_to_data, path_to_token=path_to_token)
+
+    print("Number of training samples:", len(dataset.train[0]))
+    print("Number of test samples:", len(dataset.test[0]))
+
+    print("standardizing values...")
+    dataset = standardize(dataset)
+    # print("calculating PCA...")
+    # dataset = apply_PCA(dataset)
 
     print("Calculating stOOD score...")
     val_stood, test_stood, val_js, test_js = stood_score(torch.from_numpy(dataset.train[0]), torch.from_numpy(dataset.val[0]), torch.from_numpy(dataset.test[0]))
