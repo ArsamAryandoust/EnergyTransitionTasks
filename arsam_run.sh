@@ -11,13 +11,19 @@ done
 if [ $update -eq 1 ]; then
   # Pull latest code from EnergyTransitionTasks
   git stash push .
-  git pull origin latest_release
+  git pull origin lead_contributions
 
   # Clone code from selberai branch latest_release
   sudo rm -r src/selberai
-  git clone -b latest_release https://github.com/Selber-AI/selberai
+  git clone -b lead_contributions https://github.com/Selber-AI/selberai
   mv selberai/selberai src/
   sudo rm -r selberai
+
+  # Clonde code from open catalyst project
+  sudo rm -r src/ocpmodels
+  git clone https://github.com/Open-Catalyst-Project/ocp
+  mv ocp/ocpmodels src/
+  sudo rm -r ocp
 fi
  
 

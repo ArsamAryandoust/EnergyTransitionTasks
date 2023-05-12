@@ -1,12 +1,12 @@
 import sys
 sys.path.append("/selberai")
 import yaml
-import parse_args, upload_dataset, test_dataset, analyse_dataset, shuffle 
+import parse_args, test_dataset, analyse_dataset, shuffle 
 import baseline
 
-from selberai.data import download_data
+from selberai.data import download_data, upload_data
 from process import building_electricity, wind_farm, uber_movement, climart
-from process import polianna
+from process import polianna, open_catalyst
 
 from baseline import train_RF_baseline
 
@@ -31,12 +31,12 @@ if __name__ == "__main__":
     resp = input('Please enter "yes" or "no"! \n'.format(args.upload))
     
     if resp == 'yes' or resp == 'y':
-      upload_dataset.upload(config, args.upload)
+      upload_data.upload(config, args.upload)
     
     else:
       print('\nYou chose "no". Process interrupted!')
       exit(1)
-      
+  
   # download passed dataset
   elif args.download is not None:
     download_data.download(config, args.download)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
       climart.process_all_datasets(config, save=True)
     
     elif args.process == 'OpenCatalyst':
-      print("To do: Implement Open Catalyst dataset processing.")
+      open_catalyst.process_all_datasets(config, save=True)
       
     elif args.process == 'Polianna':
       polianna.process_all_datasets(config, save=True)
