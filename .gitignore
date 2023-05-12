@@ -12,3 +12,4 @@ datasets/*/.ipynb_checkpoints
 notebooks/.ipynb_checkpoints
 notebooks/
 
+run_local.sh
