@@ -3,6 +3,7 @@ general:
   path_to_data: '../data/'
   path_to_data_raw: '../data/raw/'
   baseline_results_dir: "baseline_results/"
+  analyse_results_dir: "analyse_results/"
 
 dataverse:
   path_to_token: '../../.aa_secrets/dataverse_token'

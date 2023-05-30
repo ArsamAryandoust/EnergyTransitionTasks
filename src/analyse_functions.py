@@ -29,21 +29,26 @@ def plot_scores(scores, x_label, y_label, path, show=False):
     indices = [i for i in range(len(scores))]
     fig, ax = plt.subplots()
     sns.set(style='darkgrid')
-    ax.bar(indices, scores)
+    ax.bar(indices, scores, edgecolor="none")
     ax.set(xlabel=x_label, ylabel=y_label)
     plt.tight_layout()
     plt.savefig(path)
     if show:
         plt.show()
+    plt.close()
 
 def plot_heatmap(x, x_label, y_label, path, show=False):
-    ax = sns.heatmap(x.numpy(), annot=True)
+    annot = True
+    if x.shape[0] > 20 or x.shape[1] > 20:
+        annot = False
+    ax = sns.heatmap(x.numpy(), annot=annot)
     sns.set(style='darkgrid')
     ax.set(xlabel=x_label, ylabel=y_label)
     plt.tight_layout()
     plt.savefig(path)
     if show:
         plt.show()
+    plt.close()
 
 def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
     n_features = dataset.shape[1]
@@ -99,7 +104,7 @@ def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_s
     stood_score_test = torch.mean(js_divergences_test)
     return stood_score_val, stood_score_test, js_divergences_validation, js_divergences_test
 
-def ios_score(features, labels, features_to_skip=[], device='cpu'):
+def io_score(features, labels, features_to_skip=[], device='cpu'):
     n_features = features.shape[1]
     n_labels = labels.shape[1]
     mean_deltas = torch.zeros(n_features - len(features_to_skip), n_labels).to(device)
@@ -116,8 +121,15 @@ def ios_score(features, labels, features_to_skip=[], device='cpu'):
             delta = delta_label/delta_feature
             delta = delta[~torch.isnan(delta) & ~torch.isinf(delta)]
             delta = torch.arctan(torch.abs(delta))/(math.pi/2)
+            delta = delta[~torch.isnan(delta) & ~torch.isinf(delta)]
             mean_delta = torch.mean(delta)
             mean_deltas[feature][label] = mean_delta
         
-    alu_score = mean_deltas.mean()
-    return alu_score, mean_deltas
+    io_score = mean_deltas.mean()
+    return io_score, mean_deltas
+
+if __name__ == "__main__":
+    data = torch.rand((30, 70))
+    plot_heatmap(data, "x", "y", "test.png")
+    data2 = torch.rand((2000))
+    plot_scores(data2, "x", "y", "test2.png")
