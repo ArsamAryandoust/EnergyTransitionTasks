@@ -79,7 +79,7 @@ ClimART:
     
     
 OpenCatalyst:
-  subtask_list : ['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
+  subtask_list : ['oc22_s2ef'] #['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
   num_features: ['AtomicMass', 'Electronegativity', 'AtomicRadius', 
     'IonizationEnergy', 'ElectronAffinity', 'MeltingPoint', 'BoilingPoint',
     'Density']
