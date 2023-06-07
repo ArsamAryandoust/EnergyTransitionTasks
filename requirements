@@ -12,4 +12,5 @@ requests
 scikit-learn 
 pyJoules 
 scipy 
+seaborn
 
