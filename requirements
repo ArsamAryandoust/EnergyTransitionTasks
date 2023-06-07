@@ -12,4 +12,7 @@ requests
 scikit-learn 
 pyJoules 
 scipy 
-
+seaborn
+xgboost
+torchtext
+codecarbon

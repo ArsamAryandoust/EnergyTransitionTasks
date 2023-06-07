@@ -15,7 +15,12 @@
 * [Open Catalyst](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/OpenCatalyst)
 
 
+<img src="figures/unified_data_representation.png"/>
+
+
 ## Citation
+
+
 
 
 ## Contributing
