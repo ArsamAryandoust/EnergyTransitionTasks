@@ -54,9 +54,9 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
   
   # Create training data from all in distribution datasets
   #config_opencat['subsample_frac'] *= 0.01
-  #s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
   #config_opencat['subsample_frac'] *= 100
-  #n_train = len(s2ef_data_dict)
+  n_train = len(s2ef_data_dict)
   
   if save:
     save_data(config_opencat, s2ef_data_dict, 
