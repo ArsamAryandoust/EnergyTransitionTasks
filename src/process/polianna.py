@@ -371,12 +371,12 @@ def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame,
   n_data_total = len(df_data)
 
   # extract temporal ood data for testing
-  df_test_year = df_data[
-    df_data.index.isin(config_polianna['temporal_ood']['test_years'])]
+  df_test_year = df_data.loc[df_data['year'].isin(
+    config_polianna['temporal_ood']['test_years'])]
     
   # extract spatial ood data for testing
-  df_test_treaties = df_data[
-    df_data.index.isin(config_polianna['spatial_ood']['test_treaties'])]
+  df_test_treaties = df_data.loc[df_data['treaty'].isin(
+    config_polianna['spatial_ood']['test_treaties'])]
   
   # append extracted rows to test dataframes
   df_testing = pd.concat([df_test_year, df_test_treaties], ignore_index=True)
