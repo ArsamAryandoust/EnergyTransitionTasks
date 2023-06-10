@@ -7,11 +7,19 @@ import matplotlib.pyplot as plt
 LOG_EPSILON = 1e-39
 sns.set(style='darkgrid')
 
-
-def remove_outliers(x):
+def remove_outliers_with_std(x):
     mean, std = torch.mean(x), torch.std(x)
     threshold = 3
     outlier_indices = torch.abs(x - mean) > threshold * std
+    x = x[~outlier_indices]
+    return x
+
+def remove_outliers_with_quantiles(x, q):
+    right_q = q + (1 - q)/2
+    left_q = (1 - q)/2
+    right_quantile = torch.quantile(x, right_q)
+    left_quantile = torch.quantile(x, left_q)
+    outlier_indices = torch.logical_or(x < left_quantile, x > right_quantile)
     x = x[~outlier_indices]
     return x
 
@@ -50,7 +58,7 @@ def plot_heatmap(x, x_label, y_label, path, show=False):
         plt.show()
     plt.close()
 
-def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
+def simb_score(dataset, n_bins=10000, features_to_skip=[], q=0.99, device='cpu'):
     n_features = dataset.shape[1]
     js_divergences = []
     uniform_distribution = torch.ones(n_bins).to(device) / n_bins
@@ -59,7 +67,7 @@ def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
         if feature in features_to_skip:
             continue
         dataset_slice = dataset[:, feature]
-        dataset_slice = remove_outliers(dataset_slice)
+        dataset_slice = remove_outliers_with_quantiles(dataset_slice, q)
         min, max = torch.min(dataset_slice), torch.max(dataset_slice)
         distribution = create_distribution(dataset_slice, min, max, n_bins=n_bins)
         js_divergence= compute_js_divergence(distribution, uniform_distribution)
@@ -69,7 +77,7 @@ def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
     simb_score = torch.mean(js_divergences)
     return simb_score, js_divergences
 
-def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_skip=[], device='cpu'):
+def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_skip=[], q=0.99, device='cpu'):
     n_features = train_set.shape[1]
     js_divergences_validation, js_divergences_test = [], []
 
@@ -80,9 +88,9 @@ def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_s
         validation_slice = validation_set[:, feature]
         test_slice = test_set[:, feature]
 
-        train_slice = remove_outliers(train_slice)
-        validation_slice = remove_outliers(validation_slice)
-        test_slice = remove_outliers(test_slice)
+        train_slice = remove_outliers_with_quantiles(train_slice, q)
+        validation_slice = remove_outliers_with_quantiles(validation_slice, q)
+        test_slice = remove_outliers_with_quantiles(test_slice ,q)
 
         slice = torch.cat((train_slice, validation_slice, test_slice), dim=0)
         min, max = torch.min(slice), torch.max(slice)
