@@ -370,12 +370,23 @@ def split_train_val_test(config_polianna: dict, df_data: pd.DataFrame,
   # get total number of data points 
   n_data_total = len(df_data)
 
-  # sample testing
-  df_testing = df_data.sample(frac=config_polianna['train_test_split'], 
-    random_state=config_polianna['seed'])
-
-  # drop and keep rest as training
-  df_training = df_data.drop(df_testing.index)
+  # extract temporal ood data for testing
+  df_test_year = df_data.loc[df_data['year'].isin(
+    config_polianna['temporal_ood']['test_years'])]
+    
+  # extract spatial ood data for testing
+  df_test_treaties = df_data.loc[df_data['treaty'].isin(
+    config_polianna['spatial_ood']['test_treaties'])]
+  
+  # append extracted rows to test dataframes
+  df_testing = pd.concat([df_test_year, df_test_treaties], ignore_index=True)
+  
+  # drop
+  df_data.drop(df_test_year.index, inplace=True)
+  df_data.drop(df_test_treaties.index, inplace=True)
+  
+  # Keep rest as training
+  df_training = df_data
 
   # sample validation from testing
   df_validation = df_testing.sample(frac=config_polianna['val_test_split'], 
