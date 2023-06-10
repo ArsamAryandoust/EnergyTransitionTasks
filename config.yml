@@ -101,7 +101,9 @@ Polianna:
     'Form' : 'form',
     'Treaty' : 'treaty'
   }
-  train_test_split : 0.5
+  temporal_test_split: 0.4
+  spatial_test_split: 0.4
+  #train_test_split : 0.5
   val_test_split: 0.2
   data_per_file: 500
   
