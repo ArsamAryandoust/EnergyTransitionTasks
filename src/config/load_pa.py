@@ -58,7 +58,6 @@ def config_PA(config: dict, subtask: str, save: bool) -> dict:
     'test_treaties' : test_treaties
   }
   
-  
   # create directory structure for saving results
   if save:
     
