@@ -156,7 +156,7 @@ def process_split_all_data(config_climart: dict, save: bool):
       df_test, test_chunk_counter = save_chunk(config_climart, df_test,
         test_chunk_counter, config_climart['path_to_data_subtask_test'],
         'testing', save=save)
-            
+    
     # save resulting data in chunks
     df_train, train_chunk_counter = save_chunk(config_climart, df_train, 
       train_chunk_counter, config_climart['path_to_data_subtask_train'], 
@@ -164,6 +164,7 @@ def process_split_all_data(config_climart: dict, save: bool):
         
     # update progbar
     pbar.update(1)
+    
       
   ### Tell us the ratios that result from our splitting rules
   n_train = (train_chunk_counter * config_climart['data_per_file'] 

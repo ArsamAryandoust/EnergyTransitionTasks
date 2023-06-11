@@ -187,6 +187,7 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   is2res_data_dict = create_is2res_data(config_opencat, [p_val_id])
   n_val = len(is2res_data_dict)
   
+  # save
   if save:
     save_data(config_opencat, is2res_data_dict, 
       config_opencat['path_to_data_subtask_val'], 'validation')
@@ -195,12 +196,14 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   is2res_data_dict = create_is2res_data(config_opencat, [p_val_ood])
   n_test = len(is2res_data_dict)
   
+  # save
   if save:
     save_data(config_opencat, is2res_data_dict, 
       config_opencat['path_to_data_subtask_test'], 'testing')
   
-  
+  # print results
   print_split_results(n_train, n_val, n_test)      
+
 
 
 def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
@@ -235,6 +238,7 @@ def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
     codes, uniques = pd.factorize(df_ord_features.loc[index])
     df_ord_features.loc[index] = codes
     dict_encoding[index] = list(uniques)
+  
   
   ### Process onehot_features ###
   
@@ -274,7 +278,7 @@ def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
   # overwrite with new dataframe          
   df_onehot_features = df_onehot_features_new
   
-  
+  # save
   if save:
   
     # set saving paths
