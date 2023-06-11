@@ -85,7 +85,7 @@ OpenCatalyst:
     'Density']
   ord_features: ['StandardState', 'GroupBlock']
   onehot_features: ['OxidationStates']
-  spatial_test_split: 0.5
+  spatial_test_split: 0.3
   subsample_frac: 1
   data_per_file: 100_000
   
