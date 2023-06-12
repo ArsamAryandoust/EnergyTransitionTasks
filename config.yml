@@ -79,13 +79,15 @@ ClimART:
     
     
 OpenCatalyst:
-  subtask_list : ['oc20_s2ef'] #['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', oc22_is2res]
+  subtask_list : ['oc20_s2ef'] #['oc20_s2ef', 'oc20_is2res', 'oc22_s2ef', 'oc22_is2res']
   num_features: ['AtomicMass', 'Electronegativity', 'AtomicRadius', 
     'IonizationEnergy', 'ElectronAffinity', 'MeltingPoint', 'BoilingPoint',
     'Density']
   ord_features: ['StandardState', 'GroupBlock']
   onehot_features: ['OxidationStates']
-  subsample_frac: 1
+  spatial_test_split: 0.3
+  val_test_split: 0.1
+  subsample_frac: 0.1
   data_per_file: 100_000
   
   
