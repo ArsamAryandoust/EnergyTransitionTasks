@@ -159,6 +159,24 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['path_to_data_subtask'] + 'testing/')
   
   
+  # out of distribution test splitting rules in space
+  # Stuctures have between 7 and 235 atoms. Calculate the bounds of atom numbers
+  # that we want to be separated out for testing.
+  min_atoms = 7
+  max_atoms = 235
+  middle_n_atoms = round((min_atoms + max_atoms) / 2)
+  b_low = middle_n_atoms - round(
+    config_opencat['spatial_test_split'] * (middle_n_atoms-min_atoms))
+  b_high = middle_n_atoms + round(
+    config_opencat['spatial_test_split'] *(max_atoms-middle_n_atoms)) 
+  n_atom_bounds = (b_low, b_high)
+  
+  # dictionary saving rules
+  config_opencat['spatial_ood'] = {
+    'n_atom_bounds' : n_atom_bounds
+  }
+  
+  
   ### Create saving folder structure ###
   if save:
     
@@ -179,6 +197,8 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
       # create directory if not existent      
       check_create_dir(path)
           
+  
+  
   
   ### Save some general values ###
   config_opencat['seed'] = config['general']['seed']
