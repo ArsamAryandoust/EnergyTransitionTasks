@@ -52,13 +52,9 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_both']
   
   # create train, val, test data
-  n_train, n_val, n_test = create_s2ef_data(config_opencat, 
+  create_s2ef_data(config_opencat, 
     [p_train, p_val_id, p_val_ood_ads, p_val_ood_cat, p_val_ood_both], 
     save=save)
-  
-  # print out the splitting ratios
-  print_split_results(n_train, n_val, n_test)
-  
   
   
 def process_oc20_is2res(config_opencat: dict, save: bool):
@@ -74,12 +70,9 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_is2res_val_ood_both']
 
   # create train, val, test data
-  n_train, n_val, n_test = create_is2res_data(config_opencat, 
+  create_is2res_data(config_opencat, 
     [p_train, p_val_id, p_val_ood_ads, p_val_ood_cat, p_val_ood_both], 
     save=save, single_lmdb=True)
-  
-  # print out the splitting ratios
-  print_split_results(n_train, n_val, n_test)
   
   
   
@@ -94,11 +87,7 @@ def process_oc22_s2ef(config_opencat: dict, save: bool):
   p_val_ood = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
 
   # create train, val, test data
-  n_train, n_val, n_test = create_s2ef_data(config_opencat, 
-    [p_train, p_val_id, p_val_ood], save=save)
-  
-  # print out the splitting ratios
-  print_split_results(n_train, n_val, n_test)    
+  create_s2ef_data(config_opencat, [p_train, p_val_id, p_val_ood], save=save)
   
   
   
