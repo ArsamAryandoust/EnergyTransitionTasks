@@ -390,7 +390,6 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
       max_atoms = int(max_atoms_array)
       
       
-      
     ### split off val here every couple of iteration
     # shuffle dictionary entries
     keys =  list(s2ef_test_dict.keys())
@@ -416,12 +415,15 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     )
     
     ### Save
-    s2ef_train_dict = save_chunk(config_opencat, s2ef_train_dict, train_count,
-      config_opencat['path_to_data_subtask_train'], 'training', save=save)
-    s2ef_val_dict = save_chunk(config_opencat, s2ef_val_dict, val_count,
-      config_opencat['path_to_data_subtask_val'], 'validation', save=save)
-    s2ef_test_dict = save_chunk(config_opencat, s2ef_test_dict, test_count,
-      config_opencat['path_to_data_subtask_test'], 'testing', save=save)
+    s2ef_train_dict, train_count = save_chunk(config_opencat, s2ef_train_dict,
+      train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+      save=save)
+    s2ef_val_dict, val_count = save_chunk(config_opencat, s2ef_val_dict, 
+      val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+      save=save)
+    s2ef_test_dict, test_count = save_chunk(config_opencat, s2ef_test_dict, 
+      test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+      save=save)
       
       
   # free up memory
@@ -454,24 +456,21 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
   
     
   ### Calculate n_train, n_val, n_test here
-  n_train = len(s2ef_train_dict)
-  n_val = len(s2ef_val_dict)
-  n_test = len(s2ef_test_dict)
-  n_train += train_count * config_opencat['data_per_file']
-  n_val += val_count * config_opencat['data_per_file']
-  n_test += test_count * config_opencat['data_per_file']
+  n_train = len(s2ef_train_dict) + train_count * config_opencat['data_per_file']
+  n_val = len(s2ef_val_dict) + val_count * config_opencat['data_per_file']
+  n_test = len(s2ef_test_dict) + test_count * config_opencat['data_per_file']
    
    
   ### Save
-  s2ef_train_dict = save_chunk(config_opencat, s2ef_train_dict, train_count,
-    config_opencat['path_to_data_subtask_train'], 'training', save=save, 
-    last_iteration=True)
-  s2ef_val_dict = save_chunk(config_opencat, s2ef_val_dict, val_count,
-    config_opencat['path_to_data_subtask_val'], 'validation', save=save, 
-    last_iteration=True)
-  s2ef_test_dict = save_chunk(config_opencat, s2ef_test_dict, test_count,
-    config_opencat['path_to_data_subtask_test'], 'testing', save=save, 
-    last_iteration=True)
+  s2ef_train_dict, train_count = save_chunk(config_opencat, s2ef_train_dict,
+    train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+    save=save, last_iteration=True)
+  s2ef_val_dict, val_count = save_chunk(config_opencat, s2ef_val_dict, 
+    val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+    save=save, last_iteration=True)
+  s2ef_test_dict, test_count = save_chunk(config_opencat, s2ef_test_dict, 
+    test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+    save=save, last_iteration=True)
   
   
   # print informative values
