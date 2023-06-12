@@ -425,7 +425,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     s2ef_val_dict_add = dict(
       list(
         s2ef_test_dict.items()
-      )[len(s2ef_test_dict) //2:]
+      )[:len(s2ef_test_dict) //(1/config_opencat['val_test_split'])]
     )
     # add to validation data
     s2ef_val_dict = {**s2ef_val_dict, **s2ef_val_dict_add}
@@ -436,7 +436,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     s2ef_test_dict = dict(
       list(
         s2ef_test_dict.items()
-      )[:len(s2ef_test_dict) //2]
+      )[len(s2ef_test_dict) //(1/config_opencat['val_test_split']):]
     )
     
     ### Save
