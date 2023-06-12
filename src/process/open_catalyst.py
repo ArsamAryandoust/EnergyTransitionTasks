@@ -227,6 +227,7 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
   is2res_train_dict = {}
   is2res_val_dict = {}
   is2res_test_dict = {}
+  train_count, val_count, test_count = 0, 0, 0
   id_counter = 0
   max_atoms = 0
   min_atoms = 1e10
@@ -278,11 +279,42 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
       entry_counter += 1
       
       
-      ### split off val here
-      
-      
-      ### Save data here
-            
+      ### every couple iterations, save some files and reduce length ###
+      if entry_counter % (10 * config_opencat['data_per_file']) == 0:
+        # shuffle dictionary entries
+        is2res_test_dict =  list(is2res_test_dict.items())
+        random.seed(config_opencat['seed'])
+        random.shuffle(is2res_test_dict)
+        is2res_test_dict = dict(is2res_test_dict)
+        # split off validation data
+        is2res_val_dict_add = dict(
+          list(
+            is2res_test_dict.items()
+          )[:len(is2res_test_dict) //(1/config_opencat['val_test_split'])]
+        )
+        # add to validation data
+        is2res_val_dict = {**is2res_val_dict, **is2res_val_dict_add}
+        # free up memory
+        del is2res_val_dict_add
+        gc.collect()
+        # reset remaining as testing data
+        is2res_test_dict = dict(
+          list(
+            is2res_test_dict.items()
+          )[len(is2res_test_dict) //(1/config_opencat['val_test_split']):]
+        )
+        
+        ### Save
+        is2res_train_dict, train_count = save_chunk(config_opencat, is2res_train_dict,
+          train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+          save=save)
+        is2res_val_dict, val_count = save_chunk(config_opencat, is2res_val_dict, 
+          val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+          save=save)
+        is2res_test_dict, test_count = save_chunk(config_opencat, is2res_test_dict, 
+          test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+          save=save)
+    
     # calculate min and max number of atoms
     min_atoms_array = atoms_array.min()
     max_atoms_array = atoms_array.max()
@@ -292,18 +324,93 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
       min_atoms = int(min_atoms_array)
     if max_atoms_array > max_atoms:
       max_atoms = int(max_atoms_array)
+      
+      
+    ### split off val here every couple of iteration
+    # shuffle dictionary entries
+    is2res_test_dict =  list(is2res_test_dict.items())
+    random.seed(config_opencat['seed'])
+    random.shuffle(is2res_test_dict)
+    is2res_test_dict = dict(is2res_test_dict)
+    # split off validation data
+    is2res_val_dict_add = dict(
+      list(
+        is2res_test_dict.items()
+      )[:len(is2res_test_dict) //(1/config_opencat['val_test_split'])]
+    )
+    # add to validation data
+    is2res_val_dict = {**is2res_val_dict, **is2res_val_dict_add}
+    # free up memory
+    del is2res_val_dict_add
+    gc.collect()
+    # reset remaining as testing data
+    is2res_test_dict = dict(
+      list(
+        is2res_test_dict.items()
+      )[len(is2res_test_dict) //(1/config_opencat['val_test_split']):]
+    )
     
+    ### Save
+    is2res_train_dict, train_count = save_chunk(config_opencat, is2res_train_dict,
+      train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+      save=save)
+    is2res_val_dict, val_count = save_chunk(config_opencat, is2res_val_dict, 
+      val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+      save=save)
+    is2res_test_dict, test_count = save_chunk(config_opencat, is2res_test_dict, 
+      test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+      save=save)
+      
+      
   # free up memory
   del is2res_dataset
   gc.collect()
   
-  
+  ### split off val here every couple of iteration
+  # shuffle dictionary entries
+  is2res_test_dict =  list(is2res_test_dict.items())
+  random.seed(config_opencat['seed'])
+  random.shuffle(is2res_test_dict)
+  is2res_test_dict = dict(is2res_test_dict)
+  # split off validation data
+  is2res_val_dict_add = dict(
+    list(
+      is2res_test_dict.items()
+    )[:len(is2res_test_dict) //(1/config_opencat['val_test_split'])]
+  )
+  # add to validation data
+  is2res_val_dict = {**is2res_val_dict, **is2res_val_dict_add}
+  # free up memory
+  del is2res_val_dict_add
+  gc.collect()
+  # reset remaining as testing data
+  is2res_test_dict = dict(
+    list(
+      is2res_test_dict.items()
+    )[len(is2res_test_dict) //(1/config_opencat['val_test_split']):]
+  )
+    
   ### Calculate n_train, n_val, n_test here
-  n_train, n_val, n_test = 0, 0, 0
+  n_train = len(is2res_train_dict) + train_count * config_opencat['data_per_file']
+  n_val = len(is2res_val_dict) + val_count * config_opencat['data_per_file']
+  n_test = len(is2res_test_dict) + test_count * config_opencat['data_per_file']
+   
+   
+  ### Save
+  is2res_train_dict, train_count = save_chunk(config_opencat, is2res_train_dict,
+    train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+    save=save, last_iteration=True)
+  is2res_val_dict, val_count = save_chunk(config_opencat, is2res_val_dict, 
+    val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+    save=save, last_iteration=True)
+  is2res_test_dict, test_count = save_chunk(config_opencat, is2res_test_dict, 
+    test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+    save=save, last_iteration=True)
   
-  # print Some values
+  
+  # print informative values
   print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
-  print_split_results(n_train, n_val, n_test)   
+  print_split_results(n_train, n_val, n_test)
   
 
 
