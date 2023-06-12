@@ -522,7 +522,7 @@ def save_chunk(config_opencat: dict, data_dict: dict, chunk_counter: int,
   """
   
   ### Save resulting data in chunks
-  while len(data_dict.index) > config_opencat['data_per_file'] or last_iteration:
+  while len(data_dict) > config_opencat['data_per_file'] or last_iteration:
     # increment chunk counter 
     chunk_counter += 1
     
