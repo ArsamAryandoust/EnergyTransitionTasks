@@ -380,7 +380,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
       
       
       ### every couple iterations, save some files and reduce length ###
-      if entry_counter % 10 * config_opencat['data_per_file'] == 0:
+      if entry_counter % (10 * config_opencat['data_per_file']) == 0:
         # shuffle dictionary entries
         s2ef_test_dict =  list(s2ef_test_dict.items())
         random.seed(config_opencat['seed'])
