@@ -378,6 +378,42 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
       atoms_array[entry_counter] = datapoint.natoms
       entry_counter += 1
       
+      
+      ### every couple iterations, save some files and reduce length ###
+      if entry_counter % 10 * config_opencat['data_per_file'] == 0:
+        # shuffle dictionary entries
+        keys =  list(s2ef_test_dict.keys())
+        random.seed(config_opencat['seed'])
+        random.shuffle(keys)
+        s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
+        # split off validation data
+        s2ef_val_dict_add = dict(
+          list(s2ef_test_dict.items())[
+            len(s2ef_test_dict)//(1/config_opencat['val_test_split']):
+          ]
+        )
+        # add to validation data
+        s2ef_val_dict = {**s2ef_val_dict, **s2ef_val_dict_add}
+        # free up memory
+        del s2ef_val_dict_add
+        gc.collect()
+        # reset remaining as testing data
+        s2ef_test_dict = dict(
+          list(s2ef_test_dict.items())[
+            :len(s2ef_test_dict)//(1/config_opencat['val_test_split'])
+          ]
+        )
+    
+    ### Save
+    s2ef_train_dict, train_count = save_chunk(config_opencat, s2ef_train_dict,
+      train_count, config_opencat['path_to_data_subtask_train'], 'training', 
+      save=save)
+    s2ef_val_dict, val_count = save_chunk(config_opencat, s2ef_val_dict, 
+      val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
+      save=save)
+    s2ef_test_dict, test_count = save_chunk(config_opencat, s2ef_test_dict, 
+      test_count, config_opencat['path_to_data_subtask_test'], 'testing', 
+      save=save)
     
     # calculate min and max number of atoms
     min_atoms_array = atoms_array.min()
