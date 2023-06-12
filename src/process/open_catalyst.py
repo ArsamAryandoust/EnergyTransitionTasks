@@ -539,14 +539,22 @@ def save_chunk(config_opencat: dict, data_dict: dict, chunk_counter: int,
     if save and len(data_dict) > 0:
       
       # set saving dict
-      save_dict = dict(list(data_dict)[:config_opencat['data_per_file']])
+      save_dict = dict(
+        list(
+          data_dict.items()
+        )[:config_opencat['data_per_file']]
+      )
       
       # save to json file
       with open(path_to_saving, 'w') as w_file:
         json.dump(save_dict, w_file)
       
     # delete saved chunk
-    data_dict = dict(list(data_dict)[config_opencat['data_per_file']:])
+    data_dict = dict(
+      list(
+        data_dict.items()
+      )[config_opencat['data_per_file']:]
+    )
     
     # must be set to exit loop on last iteration
     last_iteration = False
