@@ -385,7 +385,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
         keys =  list(s2ef_test_dict.keys())
         random.seed(config_opencat['seed'])
         random.shuffle(keys)
-        s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
+        s2ef_test_dict = dict([(key, s2ef_test_dict[key]) for key in keys])
         # split off validation data
         s2ef_val_dict_add = dict(
           list(s2ef_test_dict.items())[
@@ -431,7 +431,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     keys =  list(s2ef_test_dict.keys())
     random.seed(config_opencat['seed'])
     random.shuffle(keys)
-    s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
+    s2ef_test_dict = dict([(key, s2ef_test_dict[key]) for key in keys])
     # split off validation data
     s2ef_val_dict_add = dict(
       list(s2ef_test_dict.items())[
@@ -471,7 +471,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
   keys =  list(s2ef_test_dict.keys())
   random.seed(config_opencat['seed'])
   random.shuffle(keys)
-  s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
+  s2ef_test_dict = dict([(key, s2ef_test_dict[key]) for key in keys])
   # split off validation data
   s2ef_val_dict_add = dict(
     list(s2ef_test_dict.items())[
@@ -534,7 +534,7 @@ def save_chunk(config_opencat: dict, data_dict: dict, chunk_counter: int,
     keys =  list(data_dict.keys())
     random.seed(config_opencat['seed'])
     random.shuffle(keys)
-    data_dict = [(key, data_dict[key]) for key in keys]
+    data_dict = dict([(key, data_dict[key]) for key in keys])
     
     
     # save chunk
