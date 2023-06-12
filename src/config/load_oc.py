@@ -169,11 +169,11 @@ def config_OC(config: dict, subtask: str, save: bool) -> dict:
     config_opencat['spatial_test_split'] * (middle_n_atoms-min_atoms))
   b_high = middle_n_atoms + round(
     config_opencat['spatial_test_split'] *(max_atoms-middle_n_atoms)) 
-  n_atoms_test_bounds = (b_low, b_high)
+  n_atom_bounds = (b_low, b_high)
   
   # dictionary saving rules
   config_opencat['spatial_ood'] = {
-    'n_atoms_test_bounds' : n_atoms_test_bounds
+    'n_atom_bounds' : n_atom_bounds
   }
   
   

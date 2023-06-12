@@ -50,13 +50,35 @@ def process_oc20_s2ef(config_opencat: dict, save: bool):
   p_val_ood_ads = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_ads']
   p_val_ood_cat = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_cat']
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_s2ef_val_ood_both']
+
   
-  # create train, val, test data
-  n_train, n_val, n_test = create_s2ef_data(config_opencat, 
-    [p_train, p_val_id, p_val_ood_ads, p_val_ood_cat, p_val_ood_both], 
-    save=save)
+  # Create training data from all in distribution datasets
+  config_opencat['subsample_frac'] *= 0.1
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  config_opencat['subsample_frac'] *= 10
+  n_train = len(s2ef_data_dict)
   
-  # print out the splitting ratios
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create validation data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
+  n_val = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create testing data from out-of-distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, 
+    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both])
+  n_test = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
   print_split_results(n_train, n_val, n_test)
   
   
@@ -73,12 +95,34 @@ def process_oc20_is2res(config_opencat: dict, save: bool):
   p_val_ood_cat = config_opencat['path_to_data_raw_oc20_is2res_val_ood_cat']
   p_val_ood_both = config_opencat['path_to_data_raw_oc20_is2res_val_ood_both']
 
-  # create train, val, test data
-  n_train, n_val, n_test = create_is2res_data(config_opencat, 
-    [p_train, p_val_id, p_val_ood_ads, p_val_ood_cat, p_val_ood_both], 
-    save=save, single_lmdb=True)
+
+  # Create training data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_train], single_lmdb=True)
+  n_train = len(is2res_data_dict)
+    
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+    
+  # Create validation data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_val_id], single_lmdb=True)
+  n_val = len(is2res_data_dict)
   
-  # print out the splitting ratios
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create testing data from out-of-distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, 
+    [p_val_ood_ads, p_val_ood_cat, p_val_ood_both], single_lmdb=True)
+  n_test = len(is2res_data_dict)
+  
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
   print_split_results(n_train, n_val, n_test)
   
   
@@ -93,11 +137,30 @@ def process_oc22_s2ef(config_opencat: dict, save: bool):
   p_val_id = config_opencat['path_to_data_raw_oc22_s2ef_val_id']
   p_val_ood = config_opencat['path_to_data_raw_oc22_s2ef_val_ood']
 
-  # create train, val, test data
-  n_train, n_val, n_test = create_s2ef_data(config_opencat, 
-    [p_train, p_val_id, p_val_ood], save=save)
+  # Create training data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_train])
+  n_train = len(s2ef_data_dict)
   
-  # print out the splitting ratios
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create validation data from all in distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_id])
+  n_val = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+      
+  # create validation data from out-of-distribution datasets
+  s2ef_data_dict = create_s2ef_data(config_opencat, [p_val_ood])
+  n_test = len(s2ef_data_dict)
+  
+  if save:
+    save_data(config_opencat, s2ef_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+      
   print_split_results(n_train, n_val, n_test)    
   
   
@@ -113,8 +176,34 @@ def process_oc22_is2res(config_opencat: dict, save: bool):
   p_val_ood = config_opencat['path_to_data_raw_oc22_is2res_val_ood']
   
   # Create training data from all in distribution datasets
-  create_is2res_data(config_opencat, [p_train, p_val_id, p_val_ood], save=save)
+  is2res_data_dict = create_is2res_data(config_opencat, [p_train])
+  n_train = len(is2res_data_dict)
   
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_train'], 'training')
+  
+  # Create training data from all in distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, [p_val_id])
+  n_val = len(is2res_data_dict)
+  
+  # save
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_val'], 'validation')
+  
+  # create validation data from out-of-distribution datasets
+  is2res_data_dict = create_is2res_data(config_opencat, [p_val_ood])
+  n_test = len(is2res_data_dict)
+  
+  # save
+  if save:
+    save_data(config_opencat, is2res_data_dict, 
+      config_opencat['path_to_data_subtask_test'], 'testing')
+  
+  # print results
+  print_split_results(n_train, n_val, n_test)      
+
 
 
 def create_add_data(config_opencat: dict, save: bool) -> pd.DataFrame:
@@ -229,15 +318,13 @@ def load_dataset(path:str, single_lmdb:bool=False) -> (
   
   
   
-def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
+def create_is2res_data(config_opencat: dict, path_list: list[str], 
   single_lmdb=False):
   """
   """
 
   # create empty dictionary to save results and initialize minimums and maximums
-  is2res_train_dict = {}
-  is2res_val_dict = {}
-  is2res_test_dict = {}
+  is2res_data_dict = {}
   id_counter = 0
   max_atoms = 0
   min_atoms = 1e10
@@ -265,34 +352,19 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
       datapoint = is2res_dataset[data_index]
       
       # save datapoint information in results dictionary
-      if (config_opencat['spatial_ood']['n_atom_bounds'][0] < datapoint.natoms
-        and datapoint.natoms < config_opencat['spatial_ood']['n_atom_bounds'][1]
-      ):
-        is2res_train_dict[id_counter] = {
-          'relexed_energy' : datapoint.y_relaxed,
-          'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
-          'initial_structure' : datapoint.pos.tolist(),
-          'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
-        }
-        
-      else:
-        is2res_test_dict[id_counter] = {
-          'relexed_energy' : datapoint.y_relaxed,
-          'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
-          'initial_structure' : datapoint.pos.tolist(),
-          'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
-        }
-      id_counter += 1
+      is2res_data_dict[id_counter] = {
+        'relexed_energy' : datapoint.y_relaxed,
+        'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
+        'initial_structure' : datapoint.pos.tolist(),
+        'relaxed_strucutre' : datapoint.pos_relaxed.tolist()
+      }
       
       # save number of atoms in system
       atoms_array[entry_counter] = datapoint.natoms
+      
+      # increment counters
+      id_counter += 1
       entry_counter += 1
-      
-      
-      ### split off val here
-      
-      
-      ### Save data here
             
     # calculate min and max number of atoms
     min_atoms_array = atoms_array.min()
@@ -304,30 +376,23 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
     if max_atoms_array > max_atoms:
       max_atoms = int(max_atoms_array)
     
+      
   # free up memory
   del is2res_dataset
   gc.collect()
   
-  
-  ### Calculate n_train, n_val, n_test here
-  n_train, n_val, n_test = 0, 0, 0
-  
-  # print Some values
   print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
-  print_split_results(n_train, n_val, n_test)   
   
+  return is2res_data_dict
 
 
 
-def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
+def create_s2ef_data(config_opencat: dict, path_list: list[str]):
   """
   """
   
   # create empty dictionary to save results
-  s2ef_train_dict = {}
-  s2ef_val_dict = {}
-  s2ef_test_dict = {}
-  train_count, val_count, test_count = 0, 0, 0
+  s2ef_data_dict = {}
   id_counter = 0
   max_atoms = 0
   min_atoms = 1e10
@@ -355,30 +420,19 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
       datapoint = s2ef_dataset[data_index]
       
       # save datapoint information in results dictionary
-      if (config_opencat['spatial_ood']['n_atom_bounds'][0] < datapoint.natoms
-        and datapoint.natoms < config_opencat['spatial_ood']['n_atom_bounds'][1]
-      ):
-        s2ef_train_dict[id_counter] = {
-          'energy' : datapoint.y,
-          'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
-          'structure' : datapoint.pos.tolist(),
-          'forces' : datapoint.force.tolist()
-        }
-        
-      else:
-        s2ef_test_dict[id_counter] = {
-          'energy' : datapoint.y,
-          'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
-          'structure' : datapoint.pos.tolist(),
-          'forces' : datapoint.force.tolist()
-        }
+      s2ef_data_dict[id_counter] = {
+        'energy' : datapoint.y,
+        'atomic_numbers' : datapoint.atomic_numbers.int().tolist(),
+        'structure' : datapoint.pos.tolist(),
+        'forces' : datapoint.force.tolist()
+      }
       id_counter += 1
       
       # save number of atoms in system
       atoms_array[entry_counter] = datapoint.natoms
       entry_counter += 1
       
-    
+            
     # calculate min and max number of atoms
     min_atoms_array = atoms_array.min()
     max_atoms_array = atoms_array.max()
@@ -389,136 +443,46 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
     if max_atoms_array > max_atoms:
       max_atoms = int(max_atoms_array)
       
-      
-      
-    ### split off val here every couple of iteration
-    # shuffle dictionary entries
-    keys =  list(s2ef_test_dict.keys())
-    random.seed(config_opencat['seed'])
-    random.shuffle(keys)
-    s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
-    # split off validation data
-    s2ef_val_dict_add = dict(
-      list(s2ef_test_dict.items())[
-        len(s2ef_test_dict)//(1/config_opencat['val_test_split']):
-      ]
-    )
-    # add to validation data
-    s2ef_val_dict = {**s2ef_val_dict, **s2ef_val_dict_add}
-    # free up memory
-    del s2ef_val_dict_add
-    gc.collect()
-    # reset remaining as testing data
-    s2ef_test_dict = dict(
-      list(s2ef_test_dict.items())[
-        :len(s2ef_test_dict)//(1/config_opencat['val_test_split'])
-      ]
-    )
-    
-    ### Save
-    s2ef_train_dict = save_chunk(config_opencat, s2ef_train_dict, train_count,
-      config_opencat['path_to_data_subtask_train'], 'training', save=save)
-    s2ef_val_dict = save_chunk(config_opencat, s2ef_val_dict, val_count,
-      config_opencat['path_to_data_subtask_val'], 'validation', save=save)
-    s2ef_test_dict = save_chunk(config_opencat, s2ef_test_dict, test_count,
-      config_opencat['path_to_data_subtask_test'], 'testing', save=save)
-      
-      
   # free up memory
   del s2ef_dataset
   gc.collect()
   
-  ### split off val here every couple of iteration
-  # shuffle dictionary entries
-  keys =  list(s2ef_test_dict.keys())
-  random.seed(config_opencat['seed'])
-  random.shuffle(keys)
-  s2ef_test_dict = [(key, s2ef_test_dict[key]) for key in keys]
-  # split off validation data
-  s2ef_val_dict_add = dict(
-    list(s2ef_test_dict.items())[
-      len(s2ef_test_dict)//(1/config_opencat['val_test_split']):
-    ]
-  )
-  # add to validation data
-  s2ef_val_dict = {**s2ef_val_dict, **s2ef_val_dict_add}
-  # free up memory
-  del s2ef_val_dict_add
-  gc.collect()
-  # reset remaining as testing data
-  s2ef_test_dict = dict(
-    list(s2ef_test_dict.items())[
-      :len(s2ef_test_dict)//(1/config_opencat['val_test_split'])
-    ]
-  )
-  
-    
-  ### Calculate n_train, n_val, n_test here
-  n_train = len(s2ef_train_dict)
-  n_val = len(s2ef_val_dict)
-  n_test = len(s2ef_test_dict)
-  n_train += train_count * config_opencat['data_per_file']
-  n_val += val_count * config_opencat['data_per_file']
-  n_test += test_count * config_opencat['data_per_file']
-   
-   
-  ### Save
-  s2ef_train_dict = save_chunk(config_opencat, s2ef_train_dict, train_count,
-    config_opencat['path_to_data_subtask_train'], 'training', save=save, 
-    last_iteration=True)
-  s2ef_val_dict = save_chunk(config_opencat, s2ef_val_dict, val_count,
-    config_opencat['path_to_data_subtask_val'], 'validation', save=save, 
-    last_iteration=True)
-  s2ef_test_dict = save_chunk(config_opencat, s2ef_test_dict, test_count,
-    config_opencat['path_to_data_subtask_test'], 'testing', save=save, 
-    last_iteration=True)
-  
-  
-  # print informative values
   print("\nNumber of atoms are: {} - {}\n".format(min_atoms, max_atoms))
-  print_split_results(n_train, n_val, n_test)
-
+  
+  return s2ef_data_dict
   
 
-def save_chunk(config_opencat: dict, data_dict: dict, chunk_counter: int,
-  saving_path: str, filename: str, save: bool, last_iteration=False):
+  
+def save_data(config_opencat: dict, data_dict: dict, path_to_folder: str, 
+  name_base: str):
   """
-  Save a chunk of dictionary in case it exceeds the number of data points per
-  file that we want, or in case we are in the last iteration.
   """
   
-  ### Save resulting data in chunks
-  while len(data_dict.index) > config_opencat['data_per_file'] or last_iteration:
-    # increment chunk counter 
-    chunk_counter += 1
+  # create shuffled list of ordered integers
+  random_list = list(range(len(data_dict)))
+  random.seed(config_opencat['seed'])
+  random.shuffle(random_list)
+  
+  # create list of data_per_file sized samples
+  sample_list = []
+  for i in range(0, len(random_list), config_opencat['data_per_file']):
+    sample_list.append(random_list[i:i + config_opencat['data_per_file']])
+  
+
+  # iterate over list of lists
+  for index, samples in enumerate(sample_list):
     
-    # create path
-    path_to_saving = '{}_{}.json'.format(saving_path + filename, chunk_counter)
+    # get subset of dictionary entries
+    save_dict = dict((k, data_dict[k]) for k in samples)
     
-    # shuffle
-    keys =  list(data_dict.keys())
-    random.seed(config_opencat['seed'])
-    random.shuffle(keys)
-    data_dict = [(key, data_dict[key]) for key in keys]
+    # set path for saving
+    filename = name_base + '_' + str(index+1) + '.json'
+    saving_path = path_to_folder + filename
     
-    
-    # save chunk
-    if save and len(data_dict) > 0:
-      
-      # set saving dict
-      save_dict = dict(list(data_dict)[:config_opencat['data_per_file']])
-      
-      # save to json file
-      with open(path_to_saving, 'w') as w_file:
-        json.dump(save_dict, w_file)
-      
-    # delete saved chunk
-    data_dict = dict(list(data_dict)[config_opencat['data_per_file']:])
-    
-    # must be set to exit loop on last iteration
-    last_iteration = False
-      
-  return data_dict, chunk_counter 
+    # save to json file
+    with open(saving_path, 'w') as w_file:
+      json.dump(save_dict, w_file)
+  
   
   
 def print_split_results(n_train: int, n_val: int, n_test: int):
