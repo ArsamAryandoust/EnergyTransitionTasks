@@ -280,7 +280,7 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
       
       
       ### every couple iterations, save some files and reduce length ###
-      if entry_counter % (10 * config_opencat['data_per_file']) == 0:
+      if entry_counter % (100 * config_opencat['data_per_file']) == 0:
         # shuffle dictionary entries
         is2res_test_dict =  list(is2res_test_dict.items())
         random.seed(config_opencat['seed'])
@@ -476,7 +476,7 @@ def create_s2ef_data(config_opencat: dict, path_list: list[str], save: bool):
       
       
       ### every couple iterations, save some files and reduce length ###
-      if entry_counter % (10 * config_opencat['data_per_file']) == 0:
+      if entry_counter % (100 * config_opencat['data_per_file']) == 0:
         # shuffle dictionary entries
         s2ef_test_dict =  list(s2ef_test_dict.items())
         random.seed(config_opencat['seed'])
