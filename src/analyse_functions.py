@@ -23,6 +23,15 @@ def remove_outliers_with_quantiles(x, q):
     x = x[~outlier_indices]
     return x
 
+def remove_outliers_with_tukey_fences(x):
+    q1, q3 = torch.quantile(x, torch.tensor([0.25, 0.75]))
+    iqr = q3 - q1
+    f1 = q1 - 1.5*iqr
+    f2 = q3 + 1.5*iqr
+    outliers_indices = torch.logical_or(x < f1, x > f2)
+    x = x[~outliers_indices]
+    return x
+
 def create_distribution(x, min, max, n_bins=10000):
     histogram = torch.histc(x, bins=n_bins, min=min, max=max)
     distribution = histogram / torch.sum(histogram)
@@ -58,7 +67,7 @@ def plot_heatmap(x, x_label, y_label, path, show=False):
         plt.show()
     plt.close()
 
-def simb_score(dataset, n_bins=10000, features_to_skip=[], q=0.99, device='cpu'):
+def simb_score(dataset, n_bins=10000, features_to_skip=[], device='cpu'):
     n_features = dataset.shape[1]
     js_divergences = []
     uniform_distribution = torch.ones(n_bins).to(device) / n_bins
@@ -67,7 +76,7 @@ def simb_score(dataset, n_bins=10000, features_to_skip=[], q=0.99, device='cpu')
         if feature in features_to_skip:
             continue
         dataset_slice = dataset[:, feature]
-        dataset_slice = remove_outliers_with_quantiles(dataset_slice, q)
+        dataset_slice = remove_outliers_with_tukey_fences(dataset_slice)
         min, max = torch.min(dataset_slice), torch.max(dataset_slice)
         distribution = create_distribution(dataset_slice, min, max, n_bins=n_bins)
         js_divergence= compute_js_divergence(distribution, uniform_distribution)
@@ -77,7 +86,7 @@ def simb_score(dataset, n_bins=10000, features_to_skip=[], q=0.99, device='cpu')
     simb_score = torch.mean(js_divergences)
     return simb_score, js_divergences
 
-def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_skip=[], q=0.99, device='cpu'):
+def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_skip=[], device='cpu'):
     n_features = train_set.shape[1]
     js_divergences_validation, js_divergences_test = [], []
 
@@ -88,9 +97,9 @@ def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_s
         validation_slice = validation_set[:, feature]
         test_slice = test_set[:, feature]
 
-        train_slice = remove_outliers_with_quantiles(train_slice, q)
-        validation_slice = remove_outliers_with_quantiles(validation_slice, q)
-        test_slice = remove_outliers_with_quantiles(test_slice ,q)
+        train_slice = remove_outliers_with_tukey_fences(train_slice)
+        validation_slice = remove_outliers_with_tukey_fences(validation_slice)
+        test_slice = remove_outliers_with_tukey_fences(test_slice)
 
         slice = torch.cat((train_slice, validation_slice, test_slice), dim=0)
         min, max = torch.min(slice), torch.max(slice)
@@ -111,6 +120,38 @@ def stood_score(train_set, validation_set, test_set, n_bins=10000, features_to_s
     stood_score_val = torch.mean(js_divergences_validation)
     stood_score_test = torch.mean(js_divergences_test)
     return stood_score_val, stood_score_test, js_divergences_validation, js_divergences_test
+
+def outlier_score(dataset, features_to_skip=[], device='cpu'):
+    n_features = dataset.shape[1]
+    outlier_subscores = []
+
+    for feature in tqdm(range(n_features)):
+        if feature in features_to_skip:
+            continue
+        dataset_slice = dataset[:, feature]
+        q1, q3 = torch.quantile(dataset_slice, torch.tensor([0.25, 0.75]))
+        iqr = q3 - q1
+        f1 = q1 - 1.5*iqr
+        f2 = q3 + 1.5*iqr
+        e1 = q1 - 3*iqr
+        e2 = q3 + 3*iqr
+        extreme_outliers_indices = torch.logical_or(dataset_slice <= e1, dataset_slice >= e2)
+        left_outliers_indices = torch.logical_or(dataset_slice <= f1, dataset_slice >= e1)
+        right_outliers_indices = torch.logical_or(dataset_slice <= e2, dataset_slice >= f2)
+        extreme_outliers_scores = dataset_slice[extreme_outliers_indices]
+        left_outliers_scores = dataset_slice[left_outliers_indices]
+        right_outliers_scores = dataset_slice[right_outliers_indices]
+        extreme_outliers_scores[:] = 1
+        left_outliers_scores = (left_outliers_scores - e1)/(f1 - e1)
+        right_outliers_scores = (right_outliers_scores - f2)/(e2 - f2)
+        outliers_scores_sum = extreme_outliers_scores.sum() + left_outliers_scores.sum() + right_outliers_scores.sum()
+        outliers_scores_len = extreme_outliers_scores.shape[0] + left_outliers_scores.shape[0] + right_outliers_scores.shape[0]
+        outlier_subscore = outliers_scores_sum/outliers_scores_len
+        outlier_subscores.append(outlier_subscore)
+        
+    outlier_subscores = torch.tensor(outlier_subscores).to(device)
+    outlier_score = torch.mean(outlier_subscores)
+    return outlier_score, outlier_subscores
 
 def io_score(features, labels, features_to_skip=[], device='cpu'):
     n_features = features.shape[1]
