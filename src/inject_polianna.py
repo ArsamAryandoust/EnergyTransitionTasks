@@ -40,7 +40,7 @@ def calculate_bag_of_words(vocab: Vocab, X_split: np.ndarray, add: np.ndarray):
     counts = []
     for sample in X_split:
         id = sample[-1]
-        data = add["x_st"][str(id)]
+        data = add["x_st"][str(int(id))]
         tokenized_text = [data[key]["text"] for key in data.keys()]
         counter = Counter(tokenized_text)
         sample_counts = torch.zeros(len(vocab))
