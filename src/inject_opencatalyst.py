@@ -26,7 +26,7 @@ def get_max_atomic_number(dataset):
 
 def calculate_bag_of_atoms(X_split: dict[int, list[int]], add: np.ndarray, num_atoms: int) -> np.ndarray:
     features = []
-    for sample_id in tqdm(X_split.keys()):
+    for sample_id in X_split.keys():
         sample_count = np.zeros((num_atoms))   
         counter = Counter()
         counter.update(X_split[sample_id])
@@ -69,6 +69,24 @@ def inject_oc(dataset, mode: str = "boa"):
     dataset.test = X_test, Y_test
 
     return dataset
+
+def inject_oc_split(split:dict, additional_data:dict[str, np.ndarray]):
+
+    if "y_t" not in split:
+        raise ValueError("Dataset has no single label, cannot inject.")
+
+    num_atoms = 118
+
+    additional_data = np.concatenate([additional_data["x_s_1"], additional_data["x_s_2"], additional_data["x_s_3"]])
+
+    X_split, Y_split = split["x_s"], split["y_t"]
+        
+    X_split = calculate_bag_of_atoms(X_split, additional_data, num_atoms)
+
+    Y_split = np.array(list(Y_split.values())).reshape(-1, 1)
+
+    return X_split, Y_split
+
 
 if __name__ == "__main__":
     name = "OpenCatalyst"

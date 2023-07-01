@@ -4,7 +4,6 @@
 
 # Polianna
 ./run_main.sh -baseline Polianna article_level 1.0
-./run_main.sh -baseline Polianna text_level 1.0
 
 # WF
 ./run_main.sh -baseline WindFarm days_177 0.1
@@ -18,4 +17,11 @@
 # ClimART
 ./run_main.sh -baseline ClimART pristine 0.1
 ./run_main.sh -baseline ClimART clear_sky 0.05
+
+# OpenCatalyst
+./run_main.sh -baseline OpenCatalyst oc20_s2ef 1.0
+./run_main.sh -baseline OpenCatalyst oc20_is2re 1.0
+./run_main.sh -baseline OpenCatalyst oc22_s2ef 1.0
+./run_main.sh -baseline OpenCatalyst oc22_is2re 1.0
+
 

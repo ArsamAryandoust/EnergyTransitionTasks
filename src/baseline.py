@@ -1,8 +1,6 @@
 import selberai.data.load_data as load_data
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 import numpy as np
-from pyJoules.energy_meter import measure_energy
-from pyJoules.handler.csv_handler import CSVHandler
 import shutil
 from pathlib import Path
 from xgboost import XGBClassifier, XGBRegressor
@@ -12,13 +10,10 @@ from inject_opencatalyst import inject_oc
 
 import time
 import math
-energy_file = "energy_consumption.csv"
-csv_handler = CSVHandler(energy_file)
 
 from codecarbon import track_emissions
 
 @track_emissions(offline=True, country_iso_code="CHE")
-@measure_energy(handler = csv_handler)
 def train_RF_baseline(train_data: tuple[np.ndarray, np.ndarray], test_data: tuple[np.ndarray, np.ndarray], num_estimators: int, seed: int = 42, task: str="regression", max_samples:float = 0.1, max_depth:int=None):
     """
     Fits a Random Forest model to the training data. 
@@ -65,7 +60,7 @@ def train_RF_baseline(train_data: tuple[np.ndarray, np.ndarray], test_data: tupl
 
     return score
 
-@measure_energy(handler = csv_handler)
+@track_emissions(offline=True, country_iso_code="CHE")
 def train_XGBoost_baseline(train_data: tuple[np.ndarray, np.ndarray], test_data: tuple[np.ndarray, np.ndarray], num_estimators: int, task: str="regression"):
     print("Fitting a XGBoost model:")
     t = time.time()
@@ -119,7 +114,7 @@ def run_baseline(config: dict, name: str, subtask: str, max_samples=1.0, standar
         dataset.train = scaler.fit_transform(X), Y
         X, Y = dataset.test
         dataset.test = scaler.transform(X), Y
-    
+
     if name == "Polianna":
         score = train_RF_baseline(dataset.train, dataset.test, num_trees, max_samples=max_samples, max_depth=max_depth, task="classification")
     else:
@@ -128,8 +123,6 @@ def run_baseline(config: dict, name: str, subtask: str, max_samples=1.0, standar
     
     with open(results_dir / f"score_RF.txt", "w") as f:
         f.write(str(score))
-    csv_handler.save_data()
-    shutil.move(energy_file, results_dir / f"energy_RF_{num_trees}_{max_samples}_{max_depth if max_depth is not None else 'inf'}.csv")
     shutil.move("emissions.csv", results_dir / f"emissions_RF_{num_trees}_{max_samples}_{max_depth if max_depth is not None else 'inf'}.csv")
 
 if __name__ == "__main__":
