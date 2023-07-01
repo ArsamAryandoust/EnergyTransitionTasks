@@ -17,13 +17,11 @@
 
 # Polianna
 ./run_main.sh -analyse Polianna article_level
-./run_main.sh -analyse Polianna text_level
 
 # OpenCatalyst
-# ./run_main.sh -analyse OpenCatalyst oc20_s2ef
-# ./run_main.sh -analyse OpenCatalyst oc20_is2res
-# ./run_main.sh -analyse OpenCatalyst oc22_s2ef
-# ./run_main.sh -analyse OpenCatalyst oc22_is2res
-
+./run_main.sh -analyse OpenCatalyst oc20_is2re
+./run_main.sh -analyse OpenCatalyst oc22_s2ef
+./run_main.sh -analyse OpenCatalyst oc22_is2re
+./run_main.sh -analyse OpenCatalyst oc20_s2ef
 
 
