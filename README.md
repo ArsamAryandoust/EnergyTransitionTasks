@@ -1,6 +1,6 @@
 <img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Uber_Movement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Open_Catalyst-ready-blue"/> <img src="https://img.shields.io/badge/Polianna-ready-blue"/>
 
-# Unified machine learning tasks and datasets for enhancing the global energy transition
+# Unified machine learning tasks and datasets for enhancing renewable energy
 
 * [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
 
@@ -20,8 +20,7 @@
 
 ## Citation
 
-
-
+Aryandoust A., Rigoni, T., Di Stefano, F., Patt, A. Unified machine learning tasks and datasets for enhancing renewable energy. Preprint at https://arxiv.org/abs/2311.06876 (2023).
 
 ## Contributing
 
@@ -47,8 +46,5 @@ problems with these or want to suggest ways to improve these, your feedback is
 highly appreciated. For this, please go to the `Discussions` tab, create a 
 `New discussion`, and give us your detailed feedback.
 
-
-
-<!-- ## Getting started -->
 
 
