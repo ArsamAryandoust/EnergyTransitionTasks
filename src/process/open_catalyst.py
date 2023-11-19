@@ -351,9 +351,9 @@ def create_is2res_data(config_opencat: dict, path_list: list[str], save: bool,
     )
     
     ### Save
-    is2res_train_dict, train_count = save_chunk(config_opencat, is2res_train_dict,
-      train_count, config_opencat['path_to_data_subtask_train'], 'training', 
-      save=save)
+    is2res_train_dict, train_count = save_chunk(config_opencat, 
+      is2res_train_dict, train_count, 
+      config_opencat['path_to_data_subtask_train'], 'training', save=save)
     is2res_val_dict, val_count = save_chunk(config_opencat, is2res_val_dict, 
       val_count, config_opencat['path_to_data_subtask_val'], 'validation', 
       save=save)
