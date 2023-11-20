@@ -1,5 +1,3 @@
-<img src="https://img.shields.io/badge/Building_Electricity-ready-blue"/> <img src="https://img.shields.io/badge/Wind_Farm-ready-blue"/> <img src="https://img.shields.io/badge/Uber_Movement-ready-blue"/> <img src="https://img.shields.io/badge/ClimART-ready-blue"/> <img src="https://img.shields.io/badge/Open_Catalyst-ready-blue"/> <img src="https://img.shields.io/badge/Polianna-ready-blue"/>
-
 # Unified machine learning tasks and datasets for enhancing renewable energy
 
 * [Building Electricity](https://github.com/ArsamAryandoust/EnergyTransitionTasks/tree/master/datasets/BuildingElectricity)
@@ -22,29 +20,59 @@
 
 Aryandoust A., Rigoni, T., Di Stefano, F., Patt, A. Unified machine learning tasks and datasets for enhancing renewable energy. Preprint at https://arxiv.org/abs/2311.06876 (2023).
 
-## Contributing
-
-Artificial intelligence (AI) and its subfield of machine learning (ML) have a
-significant potential for enhancing technologies, policies and social processes
-that we urgently need for mitigating and adapting to climate change. Improving the
-design of AI and ML models for tackling the energy transition, however, requires
-knowledge about the characteristics of prediction tasks and datasets that are involved.
-The current literature lacks a collection of relevant prediction tasks and their
-datasets, as well as an analysis of their characteristics and relationships to each
-other. In this repository, we review the literature of prediction tasks that are
-relevant for enhancing the global energy transition and process a collection of
-public datasets into a single tabular data format (.csv) for these to simplify the
-design of new AI and ML models for solving them.
-
-* If you have published or unpublished datasets that fit our purpose, your 
-contribution is highly appreciated. For changes to code, please download this 
-repository, create a new branch, push your changes to the repository, and 
-create a pull request to the `latest_release` branch.
-
-* If you are using the datasets we provide here and have identified any 
-problems with these or want to suggest ways to improve these, your feedback is 
-highly appreciated. For this, please go to the `Discussions` tab, create a 
-`New discussion`, and give us your detailed feedback.
 
 
+## Collaborators
 
+
+We use two long-lived branches for this project, "develop" and "master".
+
+
+```
+------------------------------------develop-------------------------------------
+
+-------------------------------------master-------------------------------------
+```
+
+In order to get started with contributing code, follow these steps:
+  1. `git clone https://github.com/ArsamAryandoust/DC3_plus`
+  or `git clone https://<your_personal_access_token>@github.com/ArsamAryandoust/DC3_plus`
+  2. `git checkout develop`
+  3. `git branch <your_personal_branch>`
+  4. `git checkout <your_personal_branch>`
+  
+```
+            ----------------<your_personal_branch>----------------
+
+------------------------------------develop-------------------------------------
+
+-------------------------------------master-------------------------------------
+```
+
+All changes that you make should be done to <your_personal_branch>. In a running workflow, where others from the team are contributing to the project simultaneously, you should always make sure that your code has no collision with the latest changes to the "develop" branch, before opening a pull request. For this, please follow these steps:
+  1. `git checkout <your_personal_branch>`
+  2. `git fetch origin develop:develop`
+  3. `git merge develop` (resolve conflicts locally, if they occur)
+  4. `git push -u origin <your_personal_branch>`
+  5. On the remote host, create a pull request for <your_personal_branch> into the "develop" branch 
+  
+  
+While making changes to <your_personal_branch>, you can create arbitrary short-lived branches named <your_feature_branch> originating from <your_personal_branch>. Make sure you test and merge/rebase these smaller feature branches before pushing <your_personal_branch> to the remote repository and openning a pull request.
+
+```
+                     -------<your_feature_branch>-------
+
+            ----------------<your_personal_branch>----------------
+
+------------------------------------develop-------------------------------------
+
+-------------------------------------master-------------------------------------
+```
+
+
+
+Warning notice:
+
+Do NOT use Rebase on commits that you have already pushed to a remote repository!
+
+Instead, use Rebase only for cleaning up your local commit history before merging it into a shared team branch.
