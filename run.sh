@@ -11,11 +11,11 @@ done
 if [ $update -eq 1 ]; then
   # Pull latest code from EnergyTransitionTasks
   git stash push .
-  git pull origin lead_contributions
+  git pull origin lead_dev
 
-  # Clone code from selberai branch latest_release
+  # Clone code from selberai branch lead_dev
   sudo rm -r src/selberai
-  git clone -b lead_contributions https://github.com/Selber-AI/selberai
+  git clone -b lead_dev https://github.com/Selber-AI/selberai
   mv selberai/selberai src/
   sudo rm -r selberai
 
