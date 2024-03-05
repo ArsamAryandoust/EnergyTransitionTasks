@@ -1,18 +1,11 @@
-# Modify the sys.path variable such that python will find the selberai package. This will be removed when the package gets published
 import sys
-# docker
-sys.path.append("/selberai")
-# conda
 import os
-from pathlib import Path
-home_dir = Path(os.path.expanduser('~'))
-sys.path.append(str(home_dir / "selberai"))
 
 import yaml
 import parse_args, test_dataset, analyse_dataset, shuffle 
 import baseline
 
-from selberai.data import download_data, upload_data
+from data import download_data, upload_data
 from process import building_electricity, wind_farm, uber_movement, climart
 from process import polianna, open_catalyst
 
@@ -85,26 +78,3 @@ if __name__ == "__main__":
     baseline.run_baseline(config, args.baseline[0], args.baseline[1], float(args.baseline[2]) if len(args.baseline) > 2 else 1.0)
   
   print("Successfully executed all instructions!")
-
-
-
-"""
-import prep_open_catalyst
-
-# process open catalyst project data
-if HYPER.PROCESS_OPENCATALYST:
-    
-    # tell us whats going on
-    print('Processing Open Catalyst data')
-    
-    # create hyper parameters
-    HYPER_OPENCATALYST = hyper_opencatalyst.HyperOpenCatalyst()
-    
-    # augment data
-    _ = prep_open_catalyst.create_augment_data(HYPER_OPENCATALYST)
-    
-    # create train validation testing data
-    _, _, _ = prep_open_catalyst.train_val_test_create(HYPER_OPENCATALYST)
-    
-    
-"""
