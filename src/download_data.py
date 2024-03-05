@@ -1,109 +1,22 @@
-import os
-import json
-import requests
-import shutil
+"""TODO:
+This module will contain all classes and functions required for uploading any 
+dataset to the specified public data repository. We will use these to upload 
+both our raw data to a remote repository as well as our unified data.
 
-config = {
-  'base_url': 'https://dataverse.harvard.edu',
-  'BuildingElectricity': 'doi:10.7910/DVN/O2MDHX'
-}
-
-
-def download(name: str, subtask: str, path_to_data: str, path_to_token: str):
-  """
-  """
-  print("Downloading {} data from {} to {}!".format(name, config['base_url'],
-    path_to_data))
-  
-  # set saving path
-  path_to_folder = 'datasets/{}/processed/'.format(name)
-  path_to_file = path_to_data + 'files.zip'
-  if not os.path.isdir(path_to_data):
-    os.mkdir(path_to_data)
-  
-  # create requests session
-  s = requests.Session()
-  
-  # set basic data and construct url
-  dataverse_server = config['base_url']
-  persistentId = config[name]
-  if path_to_token is None:
-    url_persistent_id = (
-      "{}/api/access/dataset/:persistentId/?persistentId={}".format(
-        dataverse_server, persistentId))
-  
-  else:
-    # import api_key
-    with open(path_to_token, 'r') as token_file:
-      api_key = token_file.read().replace('\n', '')
-    url_persistent_id = (
-      "{}/api/access/dataset/:persistentId/?persistentId={}&key={}".format(
-        dataverse_server, persistentId, api_key))
-      
-  
-  ###
-  # To do: implement sample only download ###
-  ###
-  
-  ###
-  # To do: implement subtask only download ###
-  ###
-  
-  
-  # download data
-  r = s.get(url_persistent_id)
-  
-  # write data
-  with open(path_to_file, 'wb') as file:
-    file.write(r.content)
-    
-  # unzip archive
-  shutil.unpack_archive(path_to_file, path_to_data)
-  
-  # remove .zip file
-  os.remove(path_to_file)
-
-
+- use a new jupyter notebook on path 'EnergyTransitionTasks/notebooks/' or 
+  'EnergyTransitionTasks/src/main.py' as the main entry point for loading this 
+  module and calling its functions.
+- use 'EnergyTransitionTasks/config.yml' to specify your configurations and 
+  load it as a dictionary that you pass to functions defined in this module.
 
 """
-def download(config: dict, dataset_name: str):
 
-  # set saving path
-  path_to_folder = config['dataverse'][dataset_name]['saving_path']
-  path_to_file = path_to_folder + 'files.zip'
-  if os.path.isdir(path_to_folder):
-    # this check is needed when downloading processed data
-    directory_content = os.listdir(path_to_folder)
-    if len(directory_content) > 0:
-      print("Directory is not empty. Check if data is not already downloaded!")
-      exit(1)
-  else:
-    os.mkdir(path_to_folder)
-    print("Downloading data!")
-  
-  # create requests session
-  s = requests.Session()
-  
-  # set basic data and construct url
-  with open(config['dataverse']['path_to_token'], 'r') as token:
-    api_key = token.read().replace('\n', '')
-  dataverse_server = config['dataverse']['base_url']
-  persistentId = config['dataverse'][dataset_name]['persistentId']
-  url_persistent_id = (
-    "{}/api/access/dataset/:persistentId/?persistentId={}&key={}".format(
-      dataverse_server, persistentId, api_key))
-      
-  # download data
-  r = s.get(url_persistent_id)
-  
-  # write data
-  with open(path_to_file, 'wb') as file:
-    file.write(r.content)
+def download(cfg: dict, data_name:str):
+    """(Placeholder) Download the data_name dataset from specified repository
+    according to cfg.
     
-  # unzip archive
-  shutil.unpack_archive(path_to_file, path_to_folder)
-  
-  # remove .zip file
-  os.remove(path_to_file)
-"""
-
+    """
+    
+    return 0
+    
+    

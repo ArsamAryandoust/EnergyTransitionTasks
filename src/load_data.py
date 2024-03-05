@@ -5,7 +5,7 @@ import numpy as np
 import json
 from concurrent.futures import ProcessPoolExecutor
 
-import selberai.data.download_data as download_data
+import data.download_data as download_data
 
 class Dataset:
   """
