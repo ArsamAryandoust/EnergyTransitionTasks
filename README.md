@@ -33,8 +33,8 @@ We use two long-lived branches for this project, "develop" and "master".
 
 
 In order to get started with contributing code, follow these steps:
-  1. `git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks`
-  or
+  1. `git clone https://github.com/ArsamAryandoust/EnergyTransitionTasks` or
+  
   `git clone https://<your_personal_access_token>@github.com/ArsamAryandoust/EnergyTransitionTasks`
   2. `cd EnergyTransitionTasks`
   3. `git checkout develop`
