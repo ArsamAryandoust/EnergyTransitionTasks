@@ -8,7 +8,7 @@ Example:
 --------
 Execute by running:
     
-    $ python main.py
+    $ python src/main.py
 
 """
 

@@ -8,6 +8,9 @@ both our raw data to a remote repository as well as our unified data.
   module and calling its functions.
 - use 'EnergyTransitionTasks/config.yml' to specify your configurations and 
   load it as a dictionary that you pass to functions defined in this module.
+- decide what best goes into cfg.yml, and what best is passed as additional
+  arguments to the implemented functions.
+- introduce classes and other objects where useful!
 
 """
 
